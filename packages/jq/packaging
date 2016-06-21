@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+cd jq
+tar zxf jq-1.5.tar.gz
+cd jq-1.5
+./configure --prefix=${BOSH_INSTALL_TARGET}
+make -j8
+make install

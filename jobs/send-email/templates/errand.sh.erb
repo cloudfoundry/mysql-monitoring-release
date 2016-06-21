@@ -1,0 +1,13 @@
+#!/bin/bash
+uaa_domain=uaa.<%= p('cf.system_domain') %>
+client_username=<%= p('mysql-monitoring.client.username') %>
+client_secret=<%= p('mysql-monitoring.client.secret') %>
+
+client_token=$(curl -X POST \
+--data 'grant_type=client_credentials' \
+"https://${uaa_domain}/oauth/token" \
+--user "${client_username}:${client_secret}" \
+<% if p('ssl.skip_cert_verify') %>--insecure <% end %> \
+| /var/vcap/packages/jq/bin/jq --raw-output '.access_token')
+
+echo $client_token
