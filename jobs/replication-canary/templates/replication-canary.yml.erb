@@ -1,0 +1,10 @@
+---
+PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
+MySQL:
+  ReadIPs: <%= p('cf_mysql.mysql.cluster_ips') %>
+  WriteHost: <%= p('cf_mysql.host') %>
+  Port: <%= p('cf_mysql.mysql.port') %>
+Canary:
+  Database: <%= p('mysql-monitoring.replication-canary.canary_database') %>
+  Username: <%= p('mysql-monitoring.replication-canary.canary_username') %>
+  Password: <%= p('mysql-monitoring.replication-canary.canary_password') %>

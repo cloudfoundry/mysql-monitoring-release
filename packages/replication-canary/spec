@@ -1,0 +1,8 @@
+---
+name: replication-canary
+
+dependencies:
+- golang
+
+files:
+- github.com/pivotal-cf-experimental/replication-canary/**/*

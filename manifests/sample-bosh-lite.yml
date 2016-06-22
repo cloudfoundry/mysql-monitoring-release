@@ -13,6 +13,15 @@ compilation:
 
 jobs:
 - instances: 1
+  name: canary
+  templates:
+  - name: replication-canary
+    release: mysql-monitoring
+  networks:
+  - name: monitoring
+  resource_pool: monitoring
+
+- instances: 1
   name: send-email
   lifecycle: errand
   templates:
@@ -21,16 +30,25 @@ jobs:
   networks:
   - name: monitoring
   resource_pool: monitoring
-  properties:
-    cf:
-      system_domain: REPLACE_WITH_SYSTEM_DOMAIN
-    ssl:
-      skip_cert_verify: false
-    mysql-monitoring:
-      client:
-        username: mysql-monitoring
-        secret: REPLACE_WITH_CLIENT_SECRET
-      recipient_email: REPLACE_WITH_OPERATOR_EMAIL
+
+properties:
+  cf:
+    system_domain: REPLACE_WITH_SYSTEM_DOMAIN
+  ssl:
+    skip_cert_verify: false
+  cf_mysql:
+    mysql:
+      cluster_ips:
+      - FROM_CF_MYSQL_DEPLOYMENT
+      port: FROM_CF_MYSQL_DEPLOYMENT
+    host: FROM_CF_MYSQL_DEPLOYMENT
+  mysql-monitoring:
+    client:
+      username: mysql-monitoring
+      secret: REPLACE_WITH_CLIENT_SECRET
+    recipient_email: REPLACE_WITH_OPERATOR_EMAIL
+    replication-canary:
+      canary_password: REPLACE_WITH_CANARY_PASSWORD
 
 networks:
 - name: monitoring
