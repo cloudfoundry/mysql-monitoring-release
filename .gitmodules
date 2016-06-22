@@ -4,3 +4,6 @@
 [submodule "src/github.com/GeertJohan/fgt"]
 	path = src/github.com/GeertJohan/fgt
 	url = git@github.com:GeertJohan/fgt
+[submodule "src/github.com/pivotal-cf-experimental/replication-canary"]
+	path = src/github.com/pivotal-cf-experimental/replication-canary
+	url = git@github.com:pivotal-cf-experimental/replication-canary
