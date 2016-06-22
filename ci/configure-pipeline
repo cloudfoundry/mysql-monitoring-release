@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -eu
+
+PIPELINE_SUFFIX="${1:-}"
+
+set_env() {
+  MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  CI_DIR="$( cd "${MY_DIR}/.." && pwd )"
+  WORKSPACE_DIR="$( cd "${MY_DIR}/../.." && pwd )"
+  CREDENTIALS_FILE="${CREDENTIALS_FILE:-deployments-core-services/credentials.yml}"
+  if [[ "${CREDENTIALS_FILE}" != /* ]]; then
+    CREDENTIALS_FILE="${WORKSPACE_DIR}/${CREDENTIALS_FILE}"
+  fi
+}
+
+set_pipeline_name() {
+  PIPELINE_NAME=mysql-monitoring-release
+  PIPELINE_PATH=${MY_DIR}/pipelines/${PIPELINE_NAME}.yml
+}
+
+fly_pipeline() {
+  fly -t concourse set-pipeline \
+        -p "${PIPELINE_NAME}" \
+        -c ${PIPELINE_PATH} \
+        -l ${CREDENTIALS_FILE}
+}
+
+main() {
+  set_env
+  set_pipeline_name
+  fly_pipeline
+}
+
+main

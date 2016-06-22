@@ -1,0 +1,29 @@
+---
+resources:
+- name: mysql-monitoring-release-repo
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf-experimental/mysql-monitoring-release
+    branch: master
+    private_key: {{git-private-key}}
+    ignore_paths:
+    - ci
+
+jobs:
+- name: unit-tests
+  plan:
+  - get: mysql-monitoring-release-repo
+    trigger: true
+  - task: unit-tests
+    config:
+      platform: &platform linux
+      image: &image docker:///pivotalcf/mysql-restore
+      inputs:
+      - name: mysql-monitoring-release-repo
+      run:
+        path: mysql-monitoring-release-repo/scripts/test-unit
+
+groups:
+- name: mysql-monitoring-release
+  jobs:
+  - unit-tests
