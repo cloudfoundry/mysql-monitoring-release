@@ -1,0 +1,27 @@
+---
+name: replication-canary
+
+templates:
+  replication-canary_ctl.sh.erb: bin/replication-canary_ctl
+
+packages:
+- cf-mysql-common
+
+properties:
+  cf_mysql.mysql.cluster_ips:
+    description: 'List of IP address of servers used to read data from'
+  cf_mysql.mysql.port:
+    description: 'Database port for contacting mysql'
+    default: 3306
+  cf_mysql.mysql.admin_username:
+    description: 'Database username'
+    default: 'root'
+  cf_mysql.mysql.admin_password:
+    description: 'Database password'
+    default: 'password'
+  cf_mysql.host:
+    description: 'Host to write data to'
+
+  cf-mysql-monitoring.replication-canary.canary_password:
+    description: 'Canary user password'
+    default: 'password'

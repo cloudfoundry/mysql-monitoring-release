@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -eux
+
+job_dir=/var/vcap/jobs/replication-canary
+run_dir=/var/vcap/sys/run/replication-canary
+log_dir=/var/vcap/sys/log/replication-canary
+pidfile=$run_dir/replication-canary.pid
+
+source /var/vcap/packages/common/utils.sh
+
+case $1 in
+
+  start)
+    log "Starting replication-canary..."
+    pid_guard $pidfile "Replication Canary"
+
+    mkdir -p $run_dir
+    mkdir -p $log_dir
+
+    log "Starting replication-canary... done"
+    ;;
+
+  stop)
+    log "Stopping replication-canary..."
+    kill_and_wait $pidfile
+    log "Stopping replication-canary... done"
+    ;;
+
+  *)
+    echo "Usage: replication-canary_ctl {start|stop}"
+    ;;
+
+esac
