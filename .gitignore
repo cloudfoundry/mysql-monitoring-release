@@ -20,3 +20,4 @@ releases/**/*.tgz
 bin/
 pkg/
 *.iml
+.manifests
