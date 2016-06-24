@@ -21,3 +21,4 @@ bin/
 pkg/
 *.iml
 .manifests
+manifest-generation/bosh-lite-stubs/property-overrides-monitoring.yml
