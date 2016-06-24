@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -eux
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+WORKSPACE_DIR="$( cd "${MY_DIR}/../../../" && pwd )"
+
+DIRECTOR_IP_FILE="${DIRECTOR_IP_FILE:?}"
+BOSH_PASSWORD_FILE="${BOSH_PASSWORD_FILE:?}"
+export BOSH_USER=${BOSH_USER:?}
+
+function check_if_deployment_exists () {
+    DEPLOYMENT_NAME=${1:?"Pass deployment name as first argument"}
+    deployments_output=$( bosh deployments )
+    echo ${deployments_output} | grep ${DEPLOYMENT_NAME}
+}
+
+pushd ${WORKSPACE_DIR}
+  DIRECTOR_IP=$(cat ${DIRECTOR_IP_FILE})
+  BOSH_PASSWORD=$(cat ${BOSH_PASSWORD_FILE} | jq -r '.bosh_password')
+  export BOSH_PASSWORD
+popd
+
+bosh -n target "${DIRECTOR_IP}"
+
+echo "DEPLOYMENT_NAME: ${DEPLOYMENT_NAME:?}"
+
+set +e
+check_if_deployment_exists ${DEPLOYMENT_NAME}
+DEPLOYMENT_GREP_RESULT=$?
+set -e
+
+# A value of 0 indicates grep matched successfully,
+# and hence the deployment exists
+if [ "${DEPLOYMENT_GREP_RESULT}" -eq 0 ]; then
+  bosh -n delete deployment ${DEPLOYMENT_NAME} --force
+else
+  echo "deployment ${DEPLOYMENT_NAME} not found - nothing to delete"
+fi
+
+bosh -n cleanup --all
