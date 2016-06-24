@@ -5,7 +5,7 @@ packages:
 templates:
   errand.sh.erb: bin/run
 properties:
-  cf.system_domain:
+  domain:
     description: 'Domain reserved for CF operator, base URL where the login, uaa, and other non-user apps listen'
   ssl.skip_cert_verify:
     description: 'specifies that the job is allowed to skip ssl cert verification'

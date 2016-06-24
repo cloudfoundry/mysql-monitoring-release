@@ -2,8 +2,8 @@
 set -e
 set -o pipefail
 
-uaa_domain=uaa.<%= p('cf.system_domain') %>
-notifications_domain=notifications.<%= p('cf.system_domain') %>
+uaa_domain=uaa.<%= p('domain') %>
+notifications_domain=notifications.<%= p('domain') %>
 client_username=<%= p('mysql-monitoring.client.username') %>
 client_secret=<%= p('mysql-monitoring.client.secret') %>
 recipient_email=<%= p('mysql-monitoring.recipient_email') %>

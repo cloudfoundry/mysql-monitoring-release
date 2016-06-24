@@ -1,0 +1,17 @@
+job_overrides:
+  additional_releases:
+  - name: mysql-monitoring
+    version: (( release_versions.mysql-monitoring.version || "latest" ))
+
+  colocated_jobs:
+  - name: mysql_z1
+    additional_templates:
+    - {release: mysql-monitoring, name: send-email}
+  - name: mysql_z2
+    additional_templates:
+    - {release: mysql-monitoring, name: send-email}
+  - name: mysql_z3
+    additional_templates:
+    - {release: mysql-monitoring, name: send-email}
+
+  additional_jobs: []

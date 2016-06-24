@@ -1,0 +1,5 @@
+iaas_settings:
+  <<: (( merge || nil ))
+  additional_resource_pools: []
+
+  additional_disk_pools: []
