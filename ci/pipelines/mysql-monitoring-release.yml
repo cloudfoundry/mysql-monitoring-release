@@ -21,6 +21,7 @@ resources:
   source:
     user: cloudfoundry-incubator
     repository: notifications-release
+    access_token: {{git-writer-github-access-token}}
 
 - name: notifications-release-repo
   type: git
