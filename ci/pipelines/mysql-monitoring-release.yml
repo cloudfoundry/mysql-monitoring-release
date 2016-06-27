@@ -220,7 +220,6 @@ jobs:
         inputs:
         - name: notifications-release-repo
         - name: mysql-monitoring-release
-        - name: cf-mysql-release
         - name: deployments-core-services
         - name: bosh-lite-environment
         outputs:
