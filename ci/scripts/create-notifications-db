@@ -6,7 +6,7 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 WORKSPACE_DIR="$( cd ${MY_DIR}/../../.. && pwd )"
 CF_MYSQL_CI_DIR="${WORKSPACE_DIR}/cf-mysql-ci"
 
-: "${BOSH_SSH_KEY:?}"
+: "${BOSH_LITE_SSH_KEY:?}"
 : "${ENV_TARGET_FILE:?}"
 : "${ENV_METADATA:?}"
 
@@ -31,7 +31,7 @@ function close-ssh-tunnels() {
 
 function open_ssh_tunnel_to_bosh_lite() {
   SSH_KEY_FILE="bosh-lite-key"
-  echo "${BOSH_SSH_KEY}" > "${SSH_KEY_FILE}"
+  echo "${BOSH_LITE_SSH_KEY}" > "${SSH_KEY_FILE}"
   chmod 600 "${SSH_KEY_FILE}"
 
   ssh -L ${MYSQL_TUNNEL_PORT}:${MYSQL_VM_IP}:${MYSQL_VM_PORT} \
