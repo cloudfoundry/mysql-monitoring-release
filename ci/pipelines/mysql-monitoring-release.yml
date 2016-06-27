@@ -192,7 +192,7 @@ jobs:
       trigger: true
     - get: notifications-release
       params:
-        globs: notifications-(.*).tgz
+        globs: [notifications-(.*).tgz]
     - get: notifications-release-repo
     - get: deployments-core-services
     - get: bosh-lite-stemcell
