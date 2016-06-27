@@ -7,7 +7,62 @@ resources:
     branch: master
     private_key: {{git-private-key}}
     ignore_paths:
-    - ci
+    - ci/pipelines
+
+- name: cf-mysql-release
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry/cf-mysql-release.git
+    branch: releases/v24
+    private_key: {{git-writer-private-key}}
+
+- name: notifications-release
+  type: github-release
+  source:
+    user: cloudfoundry-incubator
+    repository: notifications-release
+
+- name: notifications-release-repo
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry-incubator/notifications-release.git
+    branch: master
+    private_key: {{git-writer-private-key}}
+
+- name: bosh-lite-environment
+  type: pool
+  source:
+    uri: git@github.com:pivotal-cf-experimental/core-services-oss-env-resource-pool
+    branch: master
+    pool: bosh-lites-working
+    private_key: {{git-writer-private-key}}
+
+- name: bosh-lite-stemcell
+  type: bosh-io-stemcell
+  source:
+    name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+
+- name: cf-mysql-ci
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry-incubator/cf-mysql-ci
+    branch: master
+    private_key: {{git-private-key}}
+
+- name: deployments-core-services
+  type: git
+  source:
+    uri: git@github.com:pivotal-cf/deployments-core-services.git
+    branch: master
+    private_key: {{git-private-key}}
+
+- name: bosh-lite-deployment
+  type: bosh-deployment
+  source:
+    username: {{bosh-lite-username}}
+    password: {{bosh-lite-password}}
+    deployment: cf-warden-mysql
+    ignore_ssl: true
 
 jobs:
 - name: unit-tests
@@ -23,7 +78,166 @@ jobs:
       run:
         path: mysql-monitoring-release-repo/scripts/test-unit
 
-groups:
-- name: mysql-monitoring-release
-  jobs:
-  - unit-tests
+### DATA-LOSS
+- name: claim-bosh-lite-data-loss
+  plan:
+  - aggregate:
+    - get: mysql-monitoring-release-repo
+      passed: [unit-tests]
+      trigger: true
+    - put: bosh-lite-environment
+      params:
+        acquire: true
+
+- name: release-data-loss-environment-manual
+  plan:
+  - try:
+      do:
+      - get: bosh-lite-environment
+        passed: [claim-bosh-lite-data-loss]
+      - put: bosh-lite-environment
+        params:
+          release: bosh-lite-environment
+
+- name: delete-data-loss-deployment
+  plan:
+  - aggregate:
+    - get: bosh-lite-environment
+      passed: [claim-bosh-lite-data-loss]
+      trigger: true
+    - get: cf-mysql-release
+      trigger: true
+    - get: cf-mysql-ci
+    - get: mysql-monitoring-release
+      resource: mysql-monitoring-release-repo
+      passed: [claim-bosh-lite-data-loss]
+      trigger: true
+  - &delete-mysql-monitoring-deployment
+    task: delete-mysql-monitoring-deployment
+    config:
+      platform: *platform
+      image: *image
+      inputs:
+      - name: mysql-monitoring-release
+      - name: bosh-lite-environment
+      params:
+        DIRECTOR_IP_FILE: bosh-lite-environment/name
+        BOSH_USER: {{bosh-lite-username}}
+        BOSH_PASSWORD_FILE: bosh-lite-environment/metadata
+        DEPLOYMENT_NAME: cf-warden-mysql
+      run:
+        path: mysql-monitoring-release/ci/scripts/delete-deployment
+
+- name: deploy-to-standalone-data-loss
+  plan:
+  - aggregate:
+    - get: mysql-monitoring-release
+      resource: mysql-monitoring-release-repo
+      passed: [delete-data-loss-deployment]
+      trigger: true
+    - get: cf-mysql-ci
+    - get: cf-mysql-release
+      passed: [delete-data-loss-deployment]
+    - get: bosh-lite-stemcell
+    - get: bosh-lite-environment
+      passed: [delete-data-loss-deployment]
+      trigger: true
+  - aggregate:
+    - &create-release
+      task: create-release
+      config:
+        platform: *platform
+        image: *image
+        inputs:
+        - name: cf-mysql-ci
+        - name: cf-mysql-release
+        outputs:
+        - name: release-tarball
+        params:
+          RELEASE_RELATIVE_DIR: cf-mysql-release/
+          TAG_MATCH: v24
+        run:
+          path: cf-mysql-ci/scripts/create_release
+    - task: make-manifest
+      config:
+        platform: *platform
+        image: *image
+        inputs:
+        - name: cf-mysql-ci
+        - name: cf-mysql-release
+        - name: bosh-lite-environment
+        outputs:
+          - name: deployment-manifest
+        params:
+          OUTPUT_FILE: deployment-manifest/deployment.yml
+          MINIMAL_MODE: true
+          ENV_TARGET_FILE: bosh-lite-environment/name
+          ENV_METADATA: bosh-lite-environment/metadata
+        run:
+          path: cf-mysql-ci/scripts/bosh-lite/make_manifest
+  - &deploy-to-bosh-lite
+    put: bosh-lite-deployment
+    params:
+      target_file: bosh-lite-environment/name
+      manifest: deployment-manifest/deployment.yml
+      releases: [release-tarball/*.tgz]
+      stemcells: [bosh-lite-stemcell/*.tgz]
+
+- name: deploy-notifications-data-loss
+  plan:
+  - aggregate:
+    - get: mysql-monitoring-release
+      resource: mysql-monitoring-release-repo
+      passed: [deploy-to-standalone-data-loss]
+      trigger: true
+    - get: notifications-release
+      params:
+        globs: notifications-(.*).tgz
+    - get: notifications-release-repo
+    - get: deployments-core-services
+    - get: bosh-lite-stemcell
+    - get: bosh-lite-environment
+      passed: [deploy-to-standalone-data-loss]
+      trigger: true
+  - aggregate:
+    - task: create_notifications_db
+      config:
+        platform: *platform
+        image: *image
+        inputs:
+        - name: mysql-monitoring-release
+        - name: bosh-lite-environment
+        params:
+          BOSH_LITE_SSH_KEY: {{bosh-lite-private-key}}
+          ENV_TARGET_FILE: bosh-lite-environment/name
+          ENV_METADATA: bosh-lite-environment/metadata
+        run:
+          path: mysql-monitoring-release/ci/scripts/create-notifications-db
+    - task: make-manifest
+      config:
+        platform: *platform
+        image: *image
+        inputs:
+        - name: notifications-release-repo
+        - name: mysql-monitoring-release
+        - name: cf-mysql-release
+        - name: deployments-core-services
+        - name: bosh-lite-environment
+        outputs:
+          - name: deployment-manifest
+        params:
+          OUTPUT_FILE: deployment-manifest/deployment.yml
+          ENV_TARGET_FILE: bosh-lite-environment/name
+          ENV_METADATA: bosh-lite-environment/metadata
+        run:
+          path: mysql-monitoring-release/ci/scripts/make-notifications-lite-manifest
+  - &deploy-to-bosh-lite
+    put: bosh-lite-deployment
+    params:
+      target_file: bosh-lite-environment/name
+      manifest: deployment-manifest/deployment.yml
+      releases: [notifications-release/*.tgz]
+      stemcells: [bosh-lite-stemcell/*.tgz]
+
+
+groups: [{name: mysql-monitoring-release, jobs: [unit-tests,claim-bosh-lite-data-loss,release-data-loss-environment-manual,delete-data-loss-deployment,deploy-to-standalone-data-loss,deploy-notifications-data-loss]}]
