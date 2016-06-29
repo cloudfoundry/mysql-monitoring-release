@@ -8,10 +8,9 @@ properties:
       canary_database: repcanary
       canary_username: repcanary
       canary_password: REPLACE_WITH_REPCANARY_PASSWORD
+      write_host: 10.244.7.2
   ssl:
     skip_ssl_validation: true
-  cf_mysql:
-    host: 10.244.7.2
 
 property_overrides:
   <<: (( merge ))

@@ -15,8 +15,6 @@ properties:
   cf_mysql.mysql.port:
     description: 'Database port for contacting mysql'
     default: 3306
-  cf_mysql.host:
-    description: 'Host to write data to'
 
   mysql-monitoring.replication-canary.canary_database:
     description: 'Canary database'
@@ -26,3 +24,5 @@ properties:
     default: 'repcanary'
   mysql-monitoring.replication-canary.canary_password:
     description: 'Canary user password'
+  mysql-monitoring.replication-canary.write_host:
+    description: 'Host to write data to'
