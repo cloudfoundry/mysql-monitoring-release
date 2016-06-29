@@ -28,7 +28,7 @@ pushd "${RELEASE_DIR}" > /dev/null
     -p ${CF_MYSQL_RELEASE_DIR}/manifest-generation/bosh-lite-stubs/property-overrides.yml \
     -i ${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/iaas-settings-monitoring.yml \
     -i ${CF_MYSQL_RELEASE_DIR}/manifest-generation/bosh-lite-stubs/iaas-settings.yml \
-    -j ${RELEASE_DIR}/manifest-generation/examples/job-overrides.yml \
+    -j ${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/job-overrides.yml \
     > mysql-monitoring.yml
 
   bosh deployment mysql-monitoring.yml

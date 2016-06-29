@@ -14,4 +14,11 @@ job_overrides:
     additional_templates:
     - {release: mysql-monitoring, name: send-email}
 
-  additional_jobs: []
+additional_jobs:
+- name: replication-canary
+  instances: 1
+  networks:
+  - name: mysql1
+  resource_pool: monitoring
+  templates:
+  - {release: mysql-monitoring, name: replication-canary}
