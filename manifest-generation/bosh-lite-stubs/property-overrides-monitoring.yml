@@ -1,0 +1,33 @@
+properties:
+  mysql-monitoring:
+    client:
+      username: mysql-monitoring
+      secret: REPLACE_WITH_CLIENT_SECRET
+    recipient_email: REPLACE_WITH_EMAIL
+    replication-canary:
+      canary_database: repcanary
+      canary_username: repcanary
+      canary_password: REPLACE_WITH_REPCANARY_PASSWORD
+  ssl:
+    skip_ssl_validation: true
+  cf_mysql:
+    host: 10.244.7.2
+
+property_overrides:
+  <<: (( merge ))
+  broker:
+    <<: (( merge ))
+    quota_enforcer:
+      <<: (( merge ))
+      ignored_users:
+      - (( properties.mysql-monitoring.replication-canary.canary_username ))
+  mysql:
+    <<: (( merge ))
+    interrupt_notify_cmd: "/var/vcap/jobs/send-email/bin/run"
+    seeded_databases:
+    - name: (( properties.mysql-monitoring.replication-canary.canary_database ))
+      username: (( properties.mysql-monitoring.replication-canary.canary_username ))
+      password: (( properties.mysql-monitoring.replication-canary.canary_password ))
+    server_audit_excluded_users:
+    - (( properties.mysql-monitoring.replication-canary.canary_username ))
+
