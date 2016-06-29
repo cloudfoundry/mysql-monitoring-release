@@ -11,7 +11,7 @@ packages:
 
 properties:
   cf_mysql.mysql.cluster_ips:
-    description: 'List of IP address of servers used to read data from'
+    description: 'List of IP addresses of servers used to read data from'
   cf_mysql.mysql.port:
     description: 'Database port for contacting mysql'
     default: 3306
