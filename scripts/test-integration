@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -eux
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# This script assumes that it lives one directory below the release directory.
+RELEASE_DIR="$( cd $MY_DIR/.. && pwd )"
+
+source ${RELEASE_DIR}/.envrc
+
+# Remove and reinstall the ginkgo binary as it might be from the wrong target architecture
+rm -rf ${RELEASE_DIR}/bin/ginkgo
+rm -rf ${RELEASE_DIR}/bin/fgt
+
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/GeertJohan/fgt
+
+echo -e "\nTesting Replication Canary..."
+${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/replication-canary/bin/test-integration "$@"
