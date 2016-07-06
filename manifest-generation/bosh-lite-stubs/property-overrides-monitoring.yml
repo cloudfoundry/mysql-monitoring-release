@@ -14,6 +14,10 @@ properties:
       - 10.244.9.2
       write_host: 10.244.7.3
       mysql_port: 3306
+      notifications_client_username: mysql-monitoring
+      notifications_client_secret: REPLACE_WITH_CLIENT_SECRET
+      canary_alert_to: notifications-bosh-lite@core-services-bosh-lite.cf-app.com
+      canary_alert_from: no-reply@core-services-bosh-lite.cf-app.com
   ssl:
     skip_ssl_validation: true
 

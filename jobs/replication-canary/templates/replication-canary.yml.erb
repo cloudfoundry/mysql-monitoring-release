@@ -8,3 +8,11 @@ Canary:
   Database: <%= p('mysql-monitoring.replication-canary.canary_database') %>
   Username: <%= p('mysql-monitoring.replication-canary.canary_username') %>
   Password: <%= p('mysql-monitoring.replication-canary.canary_password') %>
+  LogFileLocation: /var/vcap/sys/log/replication-canary/chirps.combined.log
+Notifications:
+  ClientUsername: <%= p('mysql-monitoring.replication-canary.notifications_client_username') %>
+  ClientSecret: <%= p('mysql-monitoring.replication-canary.notifications_client_secret') %>
+  NotificationsDomain: notifications.<%= p('domain') %>
+  UAADomain: uaa.<%= p('domain') %>
+  ToAddress: <%= p('mysql-monitoring.replication-canary.canary_alert_to') %>
+  FromAddress: <%= p('mysql-monitoring.replication-canary.canary_alert_from') %>

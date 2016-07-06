@@ -10,6 +10,8 @@ packages:
 - replication-canary
 
 properties:
+  domain:
+    description: 'Domain reserved for CF operator, base URL where the login, uaa, and other non-user apps listen'
   mysql-monitoring.replication-canary.read_ips:
     description: 'List of IP addresses of servers used to read data from'
   mysql-monitoring.replication-canary.write_host:
@@ -25,3 +27,11 @@ properties:
     default: 'repcanary'
   mysql-monitoring.replication-canary.canary_password:
     description: 'Canary user password'
+  mysql-monitoring.replication-canary.notifications_client_username:
+    description: 'Username of the UAA client used to send mysql monitoring notifications'
+  mysql-monitoring.replication-canary.notifications_client_secret:
+    description: 'Secret of the UAA client used to send mysql monitoring notifications'
+  mysql-monitoring.replication-canary.canary_alert_to:
+    description: 'The email address to send mysql monitoring notifications to'
+  mysql-monitoring.replication-canary.canary_alert_from:
+    description: 'The reply-to email address for emails sent from mysql monitoring notifications'

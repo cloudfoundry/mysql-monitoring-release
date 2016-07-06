@@ -1,5 +1,17 @@
 # mysql-monitoring-release
 
+## Notifications
+
+Requires [notifications-release](https://github.com/cloudfoundry-incubator/notifications-release)
+
+Don't forget to first create a database for the notifications, e.g.
+
+```
+mysql -uroot -ppassword -h10.244.7.2 -e "CREATE DATABASE notifications_db"
+```
+
+Then use that in your `notifications-db-stub.yml`, e.g. `tcp://root:password@10.244.7.2:3306/notifications_db`
+
 ## Adding the UAA client
 
 A client is required for sending notifications. With the `cf-uaac` gem installed:
@@ -10,7 +22,8 @@ $ uaac target https://uaa.${YOUR_SYSTEM_DOMAIN}
 $ uaac token client get admin
 $ uaac client add mysql-monitoring \
   --authorized_grant_types client_credentials \
-  --authorities emails.write
+  --authorities notifications.write,critical_notifications.write,emails.write,emails.write \
+  --secret ${MYSQL_MONITORING_NOTIFICATIONS_CLIENT_SECRET:-"REPLACE_WITH_CLIENT_SECRET"}
 ```
 
 ## Setup
@@ -25,3 +38,5 @@ In your bosh deployment manifest make sure you:
   username: VALUE_OF_mysql-monitoring.replication-canary.canary_username
   password: VALUE_OF_mysql-monitoring.replication-canary.canary_password
 ```
+1. Replace the client username (`mysql-monitoring.replication-canary.notifications_client_username`) with the one created above
+1. Replace the client secret (`mysql-monitoring.replication-canary.notifications_client_secret`)  with the one created above
