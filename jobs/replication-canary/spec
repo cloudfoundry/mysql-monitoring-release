@@ -33,5 +33,3 @@ properties:
     description: 'Secret of the UAA client used to send mysql monitoring notifications'
   mysql-monitoring.replication-canary.canary_alert_to:
     description: 'The email address to send mysql monitoring notifications to'
-  mysql-monitoring.replication-canary.canary_alert_from:
-    description: 'The reply-to email address for emails sent from mysql monitoring notifications'
