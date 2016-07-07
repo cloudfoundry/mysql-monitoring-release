@@ -15,7 +15,7 @@ job_overrides:
     - {release: mysql-monitoring, name: send-email}
 
 additional_jobs:
-- name: replication-canary
+- name: mysql-monitor
   instances: 1
   networks:
   - name: mysql1
