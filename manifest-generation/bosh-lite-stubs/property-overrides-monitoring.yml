@@ -17,6 +17,11 @@ properties:
       notifications_client_username: mysql-monitoring
       notifications_client_secret: REPLACE_WITH_CLIENT_SECRET
       canary_alert_to: notifications-bosh-lite@core-services-bosh-lite.cf-app.com
+      switchboard_domains:
+      - https://proxy-0-p-mysql.bosh-lite.com
+      - https://proxy-1-p-mysql.bosh-lite.com
+      switchboard_username: username
+      switchboard_password: password
   ssl:
     skip_ssl_validation: true
 

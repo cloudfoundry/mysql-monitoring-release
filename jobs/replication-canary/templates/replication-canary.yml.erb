@@ -14,3 +14,7 @@ Notifications:
   NotificationsDomain: notifications.<%= p('domain') %>
   UAADomain: uaa.<%= p('domain') %>
   ToAddress: <%= p('mysql-monitoring.replication-canary.canary_alert_to') %>
+Switchboard:
+  Domains: <%= p('mysql-monitoring.replication-canary.switchboard_domains').compact %>
+  Username: <%= p('mysql-monitoring.replication-canary.switchboard_username') %>
+  Password: <%= p('mysql-monitoring.replication-canary.switchboard_password') %>
