@@ -27,10 +27,16 @@ properties:
     default: 'repcanary'
   mysql-monitoring.replication-canary.canary_password:
     description: 'Canary user password'
+  mysql-monitoring.replication-canary.uaa_admin_client_username:
+    description: 'Username of the UAA client used to create the notifications client'
+    default: admin
+  mysql-monitoring.replication-canary.uaa_admin_client_secret:
+    description: 'Secret of the UAA client used to create the notifications client'
   mysql-monitoring.replication-canary.notifications_client_username:
-    description: 'Username of the UAA client used to send mysql monitoring notifications'
+    description: 'Username of the UAA client used to send mysql monitoring notifications. This will be created using the uaa admin client.'
+    default: mysql-monitoring
   mysql-monitoring.replication-canary.notifications_client_secret:
-    description: 'Secret of the UAA client used to send mysql monitoring notifications'
+    description: 'Secret of the UAA client used to send mysql monitoring notifications. This will be used when creating the client.'
   mysql-monitoring.replication-canary.canary_alert_to:
     description: 'The email address to send mysql monitoring notifications to'
   mysql-monitoring.replication-canary.switchboard_domains:

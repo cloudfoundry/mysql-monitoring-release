@@ -9,6 +9,8 @@ Canary:
   Username: <%= p('mysql-monitoring.replication-canary.canary_username') %>
   Password: <%= p('mysql-monitoring.replication-canary.canary_password') %>
 Notifications:
+  AdminClientUsername: <%= p('mysql-monitoring.replication-canary.uaa_admin_client_username') %>
+  AdminClientSecret: <%= p('mysql-monitoring.replication-canary.uaa_admin_client_secret') %>
   ClientUsername: <%= p('mysql-monitoring.replication-canary.notifications_client_username') %>
   ClientSecret: <%= p('mysql-monitoring.replication-canary.notifications_client_secret') %>
   NotificationsDomain: notifications.<%= p('domain') %>
