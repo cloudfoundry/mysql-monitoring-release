@@ -27,6 +27,7 @@ case $1 in
 
     $executable \
         -configPath=$config_path \
+        -logLevel="debug" \
         >>$log_dir/replication-canary.combined.log 2>>$log_dir/replication-canary.combined.log &
 
     log "Starting replication-canary... done"
