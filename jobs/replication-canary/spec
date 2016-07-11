@@ -12,10 +12,8 @@ packages:
 properties:
   domain:
     description: 'Domain reserved for CF operator, base URL where the login, uaa, and other non-user apps listen'
-  mysql-monitoring.replication-canary.read_ips:
+  mysql-monitoring.replication-canary.cluster_ips:
     description: 'List of IP addresses of servers used to read data from'
-  mysql-monitoring.replication-canary.write_host:
-    description: 'Host to write data to'
   mysql-monitoring.replication-canary.mysql_port:
     description: 'Database port for contacting mysql'
     default: 3306

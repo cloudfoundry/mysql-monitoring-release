@@ -8,11 +8,10 @@ properties:
       canary_database: repcanary
       canary_username: repcanary
       canary_password: REPLACE_WITH_REPCANARY_PASSWORD
-      read_ips:
+      cluster_ips:
       - 10.244.7.2
       - 10.244.8.2
       - 10.244.9.2
-      write_host: 10.244.7.3
       mysql_port: 3306
       uaa_admin_client_secret: admin-secret
       notifications_client_secret: REPLACE_WITH_CLIENT_SECRET

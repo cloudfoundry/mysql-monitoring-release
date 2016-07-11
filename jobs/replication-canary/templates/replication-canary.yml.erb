@@ -1,8 +1,7 @@
 ---
 PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
 MySQL:
-  ReadIPs: <%= p('mysql-monitoring.replication-canary.read_ips').compact %>
-  WriteHost: <%= p('mysql-monitoring.replication-canary.write_host') %>
+  ClusterIPs: <%= p('mysql-monitoring.replication-canary.cluster_ips').compact %>
   Port: <%= p('mysql-monitoring.replication-canary.mysql_port') %>
 Canary:
   Database: <%= p('mysql-monitoring.replication-canary.canary_database') %>
