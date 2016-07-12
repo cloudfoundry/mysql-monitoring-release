@@ -1,4 +1,11 @@
----
+<%
+  def switchboard_urls
+    count = p('mysql-monitoring.replication-canary.switchboard_count')
+    domain = p('domain')
+
+    count.times.map{ |i| "https://proxy-#{i}-p-mysql.#{domain}" }
+  end
+%>---
 PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
 MySQL:
   ClusterIPs: <%= p('mysql-monitoring.replication-canary.cluster_ips').compact %>
@@ -16,6 +23,6 @@ Notifications:
   UAADomain: uaa.<%= p('domain') %>
   ToAddress: <%= p('mysql-monitoring.replication-canary.canary_alert_to') %>
 Switchboard:
-  Domains: <%= p('mysql-monitoring.replication-canary.switchboard_domains').compact %>
+  Domains: <%= JSON.generate(switchboard_urls) %>
   Username: <%= p('mysql-monitoring.replication-canary.switchboard_username') %>
   Password: <%= p('mysql-monitoring.replication-canary.switchboard_password') %>

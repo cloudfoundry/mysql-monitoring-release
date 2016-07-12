@@ -37,8 +37,8 @@ properties:
     description: 'Secret of the UAA client used to send mysql monitoring notifications. This will be used when creating the client.'
   mysql-monitoring.replication-canary.canary_alert_to:
     description: 'The email address to send mysql monitoring notifications to'
-  mysql-monitoring.replication-canary.switchboard_domains:
-    description: 'List of Switchboard API domains'
+  mysql-monitoring.replication-canary.switchboard_count:
+    description: 'The number of switchboard proxies'
   mysql-monitoring.replication-canary.switchboard_username:
     description: 'Basic Auth username to contact the Switchboard API'
   mysql-monitoring.replication-canary.switchboard_password:
