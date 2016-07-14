@@ -1,8 +1,4 @@
 ---
-jq/jq-1.5.tar.gz:
-  object_id: b8e4bb66-a72e-4d37-b9b6-cdd5bf819160
-  sha: 6eef3705ac0a322e8aa0521c57ce339671838277
-  size: 739309
 golang/go1.6.1.linux-amd64.tar.gz:
   object_id: ca65b93a-2606-473e-8dd7-044563a1eb39
   sha: c73492474dcc7a233772d27e948b74468d9f1849
