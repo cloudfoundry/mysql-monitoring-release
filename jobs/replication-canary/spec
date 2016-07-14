@@ -4,14 +4,17 @@ name: replication-canary
 templates:
   replication-canary_ctl.sh.erb: bin/replication-canary_ctl
   replication-canary.yml.erb: config/replication-canary.yml
+  syslog_forwarder.conf.erb: config/syslog_forwarder.conf
 
 packages:
 - cf-mysql-common
 - replication-canary
+- syslog_aggregator
 
 properties:
   domain:
     description: 'Domain reserved for CF operator, base URL where the login, uaa, and other non-user apps listen'
+
   mysql-monitoring.replication-canary.cluster_ips:
     description: 'List of IP addresses of servers used to read data from'
   mysql-monitoring.replication-canary.mysql_port:
@@ -25,6 +28,7 @@ properties:
     default: 'repcanary'
   mysql-monitoring.replication-canary.canary_password:
     description: 'Canary user password'
+
   mysql-monitoring.replication-canary.uaa_admin_client_username:
     description: 'Username of the UAA client used to create the notifications client'
     default: admin
@@ -37,9 +41,21 @@ properties:
     description: 'Secret of the UAA client used to send mysql monitoring notifications. This will be used when creating the client.'
   mysql-monitoring.replication-canary.canary_alert_to:
     description: 'The email address to send mysql monitoring notifications to'
+
   mysql-monitoring.replication-canary.switchboard_count:
     description: 'The number of switchboard proxies'
   mysql-monitoring.replication-canary.switchboard_username:
     description: 'Basic Auth username to contact the Switchboard API'
   mysql-monitoring.replication-canary.switchboard_password:
     description: 'Basic Auth password to contact the Switchboard API'
+
+  syslog_aggregator.address:
+    description: "IP address for syslog aggregator"
+  syslog_aggregator.port:
+    description: "TCP port of syslog aggregator"
+  syslog_aggregator.all:
+    description: "Define whether forwarders should also send non-mysql syslog activity to the aggregator."
+    default: false
+  syslog_aggregator.transport:
+    description: "Transport to be used when forwarding logs (tcp|udp|relp)."
+    default: "tcp"
