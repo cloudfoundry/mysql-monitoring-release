@@ -1,0 +1,41 @@
+#!/bin/bash
+set -eu
+set -o pipefail
+
+uaa_domain=uaa.<%= p('domain') %>
+notifications_domain=notifications.<%= p('domain') %>
+
+admin_client_username=<%= p('mysql-monitoring.admin_client.username') %>
+admin_client_secret=<%= p('mysql-monitoring.admin_client.secret') %>
+
+client_username=<%= p('mysql-monitoring.client.username') %>
+client_secret=<%= p('mysql-monitoring.client.secret') %>
+
+recipient_email=<%= p('mysql-monitoring.recipient_email') %>
+
+subject="p-mysql alert 100"
+body_html="{alert-code 100}<br /> Hello, just wanted to let you know that the MySQL node/cluster has gone down and has been disallowed from re-joining by the interruptor."
+kind_id="p-mysql"
+
+job_dir=/var/vcap/jobs/send-email
+run_dir=/var/vcap/sys/run/send-email
+log_dir=/var/vcap/sys/log/send-email
+package_dir=/var/vcap/packages/notifications-client
+executable_name=notifications-client
+
+executable=$package_dir/bin/$executable_name
+
+mkdir -p "${log_dir}"
+
+$executable \
+    --uaaDomain="${uaa_domain}" \
+    --notificationsDomain="${notifications_domain}" \
+    --uaaAdminClientUsername="${admin_client_username}" \
+    --uaaAdminClientSecret="${admin_client_secret}" \
+    --uaaClientUsername="${client_username}" \
+    --uaaClientSecret="${client_secret}" \
+    --toAddress="${recipient_email}" \
+    --subject="${subject}" \
+    --bodyHTML="${body_html}" \
+    --kindID="${kind_id}" \
+    >>$log_dir/notifications-client.combined.log 2>>$log_dir/notifications-client.combined.log

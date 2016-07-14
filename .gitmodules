@@ -7,3 +7,6 @@
 [submodule "src/github.com/pivotal-cf-experimental/replication-canary"]
 	path = src/github.com/pivotal-cf-experimental/replication-canary
 	url = git@github.com:pivotal-cf-experimental/replication-canary
+[submodule "src/github.com/pivotal-cf-experimental/notifications-client"]
+	path = src/github.com/pivotal-cf-experimental/notifications-client
+	url = git@github.com:pivotal-cf-experimental/notifications-client.git

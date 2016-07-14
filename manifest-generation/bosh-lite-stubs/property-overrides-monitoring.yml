@@ -1,8 +1,11 @@
 properties:
   mysql-monitoring:
+    admin_client:
+      username: admin
+      secret: &uaa-admin-client-secret admin-secret
     client:
       username: mysql-monitoring
-      secret: REPLACE_WITH_CLIENT_SECRET
+      secret: &notifications-client-secret REPLACE_WITH_CLIENT_SECRET
     recipient_email: REPLACE_WITH_EMAIL
     replication-canary:
       canary_database: repcanary
@@ -13,8 +16,8 @@ properties:
       - 10.244.8.2
       - 10.244.9.2
       mysql_port: 3306
-      uaa_admin_client_secret: admin-secret
-      notifications_client_secret: REPLACE_WITH_CLIENT_SECRET
+      uaa_admin_client_secret: *uaa-admin-client-secret
+      notifications_client_secret: *notifications-client-secret
       canary_alert_to: notifications-bosh-lite@core-services-bosh-lite.cf-app.com
       switchboard_count: 2
       switchboard_username: username
