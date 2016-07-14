@@ -12,6 +12,7 @@ client_username=<%= p('mysql-monitoring.client.username') %>
 client_secret=<%= p('mysql-monitoring.client.secret') %>
 
 recipient_email=<%= p('mysql-monitoring.recipient_email') %>
+skip_cert_verify=<%= p('ssl.skip_cert_verify') %>
 
 subject="p-mysql alert 100"
 body_html="{alert-code 100}<br /> Hello, just wanted to let you know that the MySQL node/cluster has gone down and has been disallowed from re-joining by the interruptor."
@@ -38,4 +39,5 @@ $executable \
     --subject="${subject}" \
     --bodyHTML="${body_html}" \
     --kindID="${kind_id}" \
+    --skipSSLCertVerify="${skip_cert_verify}" \
     >>$log_dir/notifications-client.combined.log 2>>$log_dir/notifications-client.combined.log

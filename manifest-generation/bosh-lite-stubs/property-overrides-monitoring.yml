@@ -23,7 +23,7 @@ properties:
       switchboard_username: username
       switchboard_password: password
   ssl:
-    skip_ssl_validation: true
+    skip_cert_verify: true
 
 property_overrides:
   <<: (( merge ))
