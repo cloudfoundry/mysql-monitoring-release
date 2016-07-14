@@ -18,7 +18,6 @@ properties:
       mysql_port: 3306
       uaa_admin_client_secret: *uaa-admin-client-secret
       notifications_client_secret: *notifications-client-secret
-      canary_alert_to: notifications-bosh-lite@core-services-bosh-lite.cf-app.com
       switchboard_count: 2
       switchboard_username: username
       switchboard_password: password

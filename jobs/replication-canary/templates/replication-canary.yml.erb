@@ -21,7 +21,7 @@ Notifications:
   ClientSecret: <%= p('mysql-monitoring.replication-canary.notifications_client_secret') %>
   NotificationsDomain: notifications.<%= p('domain') %>
   UAADomain: uaa.<%= p('domain') %>
-  ToAddress: <%= p('mysql-monitoring.replication-canary.canary_alert_to') %>
+  ToAddress: <%= p('mysql-monitoring.recipient_email') %>
 Switchboard:
   Domains: <%= JSON.generate(switchboard_urls) %>
   Username: <%= p('mysql-monitoring.replication-canary.switchboard_username') %>
