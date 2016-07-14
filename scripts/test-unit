@@ -18,3 +18,6 @@ go get github.com/GeertJohan/fgt
 
 echo -e "\nTesting Replication Canary..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/replication-canary/bin/test "$@"
+
+echo -e "\nTesting Notifications Client..."
+${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/notifications-client/bin/test "$@"
