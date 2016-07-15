@@ -8,6 +8,7 @@
 %>---
 NotifyOnly: <%= p('mysql-monitoring.notify_only') %>
 WriteReadDelay: <%= p('mysql-monitoring.replication-canary.write_read_delay') %>
+PollFrequency: <%= p('mysql-monitoring.replication-canary.poll_frequency') %>
 PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
 MySQL:
   ClusterIPs: <%= p('mysql-monitoring.replication-canary.cluster_ips').compact %>
