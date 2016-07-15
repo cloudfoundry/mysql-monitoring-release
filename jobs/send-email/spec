@@ -24,3 +24,4 @@ properties:
 
   mysql-monitoring.recipient_email:
     description: 'The email address to send mysql monitoring notifications to'
+    default: ''
