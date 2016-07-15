@@ -6,6 +6,7 @@
     count.times.map{ |i| "https://proxy-#{i}-p-mysql.#{domain}" }
   end
 %>---
+NotifyOnly: <%= p('mysql-monitoring.notify_only') %>
 PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
 MySQL:
   ClusterIPs: <%= p('mysql-monitoring.replication-canary.cluster_ips').compact %>

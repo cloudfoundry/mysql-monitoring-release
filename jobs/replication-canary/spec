@@ -29,6 +29,9 @@ properties:
   mysql-monitoring.replication-canary.canary_password:
     description: 'Canary user password'
 
+  mysql-monitoring.notify_only:
+    description: 'When true, replication failure will not shut traffic off at the proxy'
+    default: false
   mysql-monitoring.recipient_email:
     description: 'The email address to send mysql monitoring notifications to'
   mysql-monitoring.replication-canary.uaa_admin_client_username:
