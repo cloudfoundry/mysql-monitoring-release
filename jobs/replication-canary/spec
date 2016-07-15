@@ -28,6 +28,9 @@ properties:
     default: 'repcanary'
   mysql-monitoring.replication-canary.canary_password:
     description: 'Canary user password'
+  mysql-monitoring.replication-canary.write_read_delay:
+    description: 'This property configures how long the canary waits to read the chirps after writing (in seconds)'
+    default: 1
 
   mysql-monitoring.notify_only:
     description: 'When true, replication failure will not shut traffic off at the proxy'
