@@ -18,9 +18,7 @@ subject="p-mysql alert 100"
 body_html="{alert-code 100}<br /> Hello, just wanted to let you know that the MySQL node/cluster has gone down and has been disallowed from re-joining by the interruptor."
 kind_id="p-mysql"
 
-job_dir=/var/vcap/jobs/send-email
-run_dir=/var/vcap/sys/run/send-email
-log_dir=/var/vcap/sys/log/send-email
+log_dir=/var/vcap/sys/log/mysql
 package_dir=/var/vcap/packages/notifications-client
 executable_name=notifications-client
 
