@@ -5,10 +5,20 @@
 
     count.times.map{ |i| "https://proxy-#{i}-p-mysql.#{domain}" }
   end
-%>---
+
+  poll_frequency = p('mysql-monitoring.replication-canary.poll_frequency')
+  write_read_delay = p('mysql-monitoring.replication-canary.write_read_delay')
+
+  # This is a duplicate validation as in the actual replication canary. It is here so that the job will
+  # exit 1 at template evaluation time, not runtime, i.e. the deploy should fail before rolling the cluster.
+  if write_read_delay >= poll_frequency
+    raise 'Invalid configuration - poll_frequency should be greater than write_read_delay'
+  end
+%>
+---
 NotifyOnly: <%= p('mysql-monitoring.notify_only') %>
-WriteReadDelay: <%= p('mysql-monitoring.replication-canary.write_read_delay') %>
-PollFrequency: <%= p('mysql-monitoring.replication-canary.poll_frequency') %>
+WriteReadDelay: <%= write_read_delay %>
+PollFrequency: <%= poll_frequency %>
 PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
 MySQL:
   ClusterIPs: <%= p('mysql-monitoring.replication-canary.cluster_ips').compact %>
