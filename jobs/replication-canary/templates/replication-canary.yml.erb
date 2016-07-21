@@ -23,6 +23,7 @@ PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
 MySQL:
   ClusterIPs: <%= p('mysql-monitoring.replication-canary.cluster_ips').compact %>
   Port: <%= p('mysql-monitoring.replication-canary.mysql_port') %>
+  GaleraHealthcheckPort: 9200 # From cf-mysql-release/jobs/mysql/templates/galera_healthcheck_config.yaml.erb
 Canary:
   Database: <%= p('mysql-monitoring.replication-canary.canary_database') %>
   Username: <%= p('mysql-monitoring.replication-canary.canary_username') %>
