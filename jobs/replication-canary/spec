@@ -30,7 +30,7 @@ properties:
     description: 'Canary user password'
   mysql-monitoring.replication-canary.write_read_delay:
     description: 'This property configures how long the canary waits to read the chirps after writing (in seconds)'
-    default: 1
+    default: 20
   mysql-monitoring.replication-canary.poll_frequency:
     description: 'Configure how frequently the canary polls the cluster for replication failure (in seconds)'
     default: 30
