@@ -28,13 +28,14 @@ pushd "${RELEASE_DIR}" > /dev/null
       > "${tmpdir}/bosh-lite-cf-manifest.yml"
   fi
 
-  ${CF_MYSQL_RELEASE_DIR}/scripts/generate-deployment-manifest \
+  "${CF_MYSQL_RELEASE_DIR}/scripts/generate-deployment-manifest" \
     -c "${tmpdir}/bosh-lite-cf-manifest.yml" \
-    -p ${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/property-overrides-monitoring.yml \
-    -p ${CF_MYSQL_RELEASE_DIR}/manifest-generation/bosh-lite-stubs/property-overrides.yml \
-    -i ${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/iaas-settings-monitoring.yml \
-    -i ${CF_MYSQL_RELEASE_DIR}/manifest-generation/bosh-lite-stubs/iaas-settings.yml \
-    -j ${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/job-overrides.yml \
+    -p "${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/property-overrides-monitoring.yml" \
+    -p "${CF_MYSQL_RELEASE_DIR}/manifest-generation/bosh-lite-stubs/property-overrides.yml" \
+    -i "${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/iaas-settings-monitoring.yml" \
+    -i "${CF_MYSQL_RELEASE_DIR}/manifest-generation/bosh-lite-stubs/iaas-settings.yml" \
+    -j "${RELEASE_DIR}/manifest-generation/bosh-lite-stubs/job-overrides.yml" \
+    "$@" \
     > mysql-monitoring.yml
 
   bosh deployment mysql-monitoring.yml
