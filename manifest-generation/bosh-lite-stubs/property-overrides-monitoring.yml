@@ -1,4 +1,5 @@
 properties:
+  domain: bosh-lite.com
   mysql-monitoring:
     admin_client:
       username: admin
