@@ -14,6 +14,8 @@ packages:
 properties:
   domain:
     description: 'Domain reserved for CF operator, base URL where the login, uaa, and other non-user apps listen'
+  cf_mysql.external_host:
+    description: 'Domain of the route registered for the UI via NATS (with the router in cf-release)'
 
   mysql-monitoring.replication-canary.cluster_ips:
     description: 'List of IP addresses of servers used to read data from'
