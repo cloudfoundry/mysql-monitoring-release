@@ -1,4 +1,6 @@
 properties:
+  cf_mysql:
+    external_host: p-mysql.bosh-lite.com
   domain: bosh-lite.com
   mysql-monitoring:
     admin_client:
