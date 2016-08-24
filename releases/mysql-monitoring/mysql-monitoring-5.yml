@@ -1,0 +1,42 @@
+---
+packages:
+- name: cf-mysql-common
+  version: 21c3986b1c04c28ded89be4b9dc3f4c754d3be58
+  fingerprint: 21c3986b1c04c28ded89be4b9dc3f4c754d3be58
+  sha1: 1a5082261b80b6aa8a68a136ae4eda8493c991ab
+  dependencies: []
+- name: golang
+  version: 48ce7b3927e6f7e6576fff21a7dc9d22b7ba9c62
+  fingerprint: 48ce7b3927e6f7e6576fff21a7dc9d22b7ba9c62
+  sha1: 6a38a1cb5ad54e998a150fdfcbdb7a07cc1daf81
+  dependencies: []
+- name: notifications-client
+  version: 132e14990b25ab63792f88e543116dc3f2475577
+  fingerprint: 132e14990b25ab63792f88e543116dc3f2475577
+  sha1: 637f3b896adae008a2fc6ad730ff348f53a0cc8e
+  dependencies:
+  - golang
+- name: replication-canary
+  version: 1f45cf0441b9813d9831540a3d79acd0fa29eaa0
+  fingerprint: 1f45cf0441b9813d9831540a3d79acd0fa29eaa0
+  sha1: 7e472529050a09ff1da24a80ce42dfea5005e204
+  dependencies:
+  - golang
+- name: syslog_aggregator
+  version: 078da6dcb999c1e6f5398a6eb739182ccb4aba25
+  fingerprint: 078da6dcb999c1e6f5398a6eb739182ccb4aba25
+  sha1: 324da9ff7022e47740708ea7d9a869cd83cdfccb
+  dependencies: []
+jobs:
+- name: replication-canary
+  version: f8378b347c1a085c5b60b5314754aba51f3b2065
+  fingerprint: f8378b347c1a085c5b60b5314754aba51f3b2065
+  sha1: 1a332ace9080a3eff28f3dc1c84a8d300ca5ce93
+- name: send-email
+  version: 730315eeb4489464bed18be3548dd09ac589bf71
+  fingerprint: 730315eeb4489464bed18be3548dd09ac589bf71
+  sha1: 68d4f16f6ea0de067b51327460021d929283e2e0
+commit_hash: 6e19486e
+uncommitted_changes: true
+name: mysql-monitoring
+version: '5'
