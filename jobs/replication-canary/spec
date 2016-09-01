@@ -2,6 +2,7 @@
 name: replication-canary
 
 templates:
+  manual-write: bin/manual-write
   replication-canary_ctl.sh.erb: bin/replication-canary_ctl
   replication-canary.yml.erb: config/replication-canary.yml
   syslog_forwarder.conf.erb: config/syslog_forwarder.conf
