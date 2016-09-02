@@ -12,5 +12,6 @@ export PATH=$GOROOT/bin:$PATH
 go install github.com/pivotal-cf-experimental/replication-canary
 
 go install github.com/pivotal-cf-experimental/replication-canary/canary/writer
+go install github.com/pivotal-cf-experimental/replication-canary/canary/reader
 
 rm -rf ${BOSH_INSTALL_TARGET}/src ${BOSH_INSTALL_TARGET}/pkg

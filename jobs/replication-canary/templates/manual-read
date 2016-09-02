@@ -6,7 +6,7 @@ job_dir=/var/vcap/jobs/replication-canary
 package_dir=/var/vcap/packages/replication-canary
 config_path="${job_dir}/config/replication-canary.yml"
 
-executable_name=writer
+executable_name=reader
 executable="${package_dir}/bin/${executable_name}"
 
 "${executable}" \
