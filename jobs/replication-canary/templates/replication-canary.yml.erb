@@ -37,6 +37,6 @@ Notifications:
   UAADomain: uaa.<%= p('domain') %>
   ToAddress: <%= p('mysql-monitoring.recipient_email') %>
 Switchboard:
-  URLs: <%= JSON.generate(switchboard_urls) %>
+  Domains: <%= JSON.generate(switchboard_urls) %>
   Username: <%= p('mysql-monitoring.replication-canary.switchboard_username') %>
   Password: <%= p('mysql-monitoring.replication-canary.switchboard_password') %>
