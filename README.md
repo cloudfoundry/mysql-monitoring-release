@@ -40,3 +40,21 @@ In your bosh deployment manifest make sure you:
 ```
 1. Replace the client username (`mysql-monitoring.replication-canary.notifications_client_username`) with the one created above
 1. Replace the client secret (`mysql-monitoring.replication-canary.notifications_client_secret`)  with the one created above
+
+## Deploying as the backing store for Cloud Foundry
+
+In order to use [cf-mysql-release](https://github.com/cloudfoundry/cf-mysql-release) as the internal database for Cloud Foundry,
+various components of Cloud Foundry like UAA and CAPI require the backing database to be online before they will start successfully.
+However, the replication canary also has a dependency on UAA to obtain a token for sending emails via the notifications service.
+
+The easiest way to break this dependency cycle when adding this monitoring to a Cloud Foundry deployment is as follows:
+- ensure `max_in_flight=1` (mysql always needs this anyway)
+- ensure `serial: true` in the update block
+- re-order jobs in manifest as follows:
+ - consul
+ - other jobs e.g. NATS, router
+ - mysql DBs
+ - mysql proxies
+ - UAA/CC
+ - replication-canary
+ - everything else including Diego
