@@ -21,4 +21,6 @@ additional_jobs:
   - name: mysql1
   resource_pool: monitoring
   templates:
-  - {release: mysql-monitoring, name: replication-canary}
+  - release: mysql-monitoring
+    name: replication-canary
+    consumes: {mysql: nil, proxy: nil}
