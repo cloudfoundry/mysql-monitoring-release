@@ -1,9 +1,39 @@
 <%
+  cluster_ips = nil
+  if_p('mysql-monitoring.replication-canary.cluster_ips') do |ips|
+    # cluster_ips may contain nil values due to lack of flexibility in spiff
+    cluster_ips = ips.compact
+  end.else do
+    cluster_ips = link('mysql').instances.map { |instance| instance.address }
+  end
+
+  proxy_username = nil
+  if_p('mysql-monitoring.replication-canary.switchboard_username') do |username|
+    # cluster_ips may contain nil values due to lack of flexibility in spiff
+    proxy_username = username
+  end.else do
+    proxy_username = link('proxy').p('cf_mysql.proxy.api_username')
+  end
+
+  proxy_password = nil
+  if_p('mysql-monitoring.replication-canary.switchboard_password') do |password|
+    # cluster_ips may contain nil values due to lack of flexibility in spiff
+    proxy_password = password
+  end.else do
+    proxy_password = link('proxy').p('cf_mysql.proxy.api_password')
+  end
+
   def switchboard_urls
-    count = p('mysql-monitoring.replication-canary.switchboard_count')
+    proxy_count = nil
+    if_p('mysql-monitoring.replication-canary.switchboard_count') do |count|
+      proxy_count = count
+    end.else do
+      proxy_count = link('proxy').instances.count
+    end
+
     external_host = p('cf_mysql.external_host')
 
-    count.times.map{ |i| "https://proxy-#{i}-#{external_host}" }
+    proxy_count.times.map{ |i| "https://proxy-#{i}-#{external_host}" }
   end
 
   poll_frequency = p('mysql-monitoring.replication-canary.poll_frequency')
@@ -21,7 +51,7 @@ WriteReadDelay: <%= write_read_delay %>
 PollFrequency: <%= poll_frequency %>
 PidFile: /var/vcap/sys/run/replication-canary/replication-canary.pid
 MySQL:
-  ClusterIPs: <%= p('mysql-monitoring.replication-canary.cluster_ips').compact %>
+  ClusterIPs: <%= cluster_ips %>
   Port: <%= p('mysql-monitoring.replication-canary.mysql_port') %>
   GaleraHealthcheckPort: 9200 # From cf-mysql-release/jobs/mysql/templates/galera_healthcheck_config.yaml.erb
 Canary:
@@ -38,5 +68,5 @@ Notifications:
   ToAddress: <%= p('mysql-monitoring.recipient_email') %>
 Switchboard:
   URLs: <%= JSON.generate(switchboard_urls) %>
-  Username: <%= p('mysql-monitoring.replication-canary.switchboard_username') %>
-  Password: <%= p('mysql-monitoring.replication-canary.switchboard_password') %>
+  Username: <%= proxy_username %>
+  Password: <%= proxy_password %>

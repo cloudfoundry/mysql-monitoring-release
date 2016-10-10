@@ -1,0 +1,50 @@
+---
+- type: replace
+  path: /releases/-
+  value:
+    name: mysql-monitoring
+    version: latest
+
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: mysql-monitor
+    instances: 1
+    jobs:
+    - {release: mysql-monitoring, name: replication-canary}
+    azs: [z1]
+    networks:
+    - name: default
+    vm_type: default
+    stemcell: default
+
+- type: replace
+  path: /properties/mysql-monitoring?/replication-canary/uaa_admin_client_secret
+  value: ((mysql_monitoring_replication_canary_uaa_admin_client_secret))
+- type: replace
+  path: /properties/mysql-monitoring?/replication-canary/canary_password
+  value: ((mysql_monitoring_replication_canary_canary_password))
+- type: replace
+  path: /properties/mysql-monitoring?/replication-canary/notifications_client_secret
+  value: ((mysql_monitoring_replication_canary_notifications_client_secret))
+- type: replace
+  path: /properties/domain?
+  value: ((domain))
+- type: replace
+  path: /properties/mysql-monitoring?/recipient_email
+  value: ((mysql_monitoring_recipient_email))
+- type: replace
+  path: /properties/cf_mysql/mysql/seeded_databases?/-
+  value:
+    name: canary_db
+    username: repcanary
+    password: ((mysql_monitoring_replication_canary_canary_password))
+- type: replace
+  path: /properties/cf_mysql/mysql/server_audit_excluded_users?/-
+  value: repcanary
+- type: replace
+  path: /properties/cf_mysql/mysql/interrupt_notify_cmd?
+  value: "/var/vcap/jobs/send-email/bin/run"
+- type: replace
+  path: /properties/cf_mysql/quota_enforcer?/ignored_users
+  value: repcanary

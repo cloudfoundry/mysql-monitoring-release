@@ -1,0 +1,5 @@
+mysql_monitoring_replication_canary_uaa_admin_client_secret: admin-secret
+mysql_monitoring_replication_canary_canary_password: password
+mysql_monitoring_replication_canary_notifications_client_secret: secret
+domain: bosh-lite.com
+mysql_monitoring_recipient_email: notifications-bosh-lite@core-services-bosh-lite.cf-app.com

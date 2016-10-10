@@ -13,6 +13,14 @@ packages:
 - replication-canary
 - syslog_aggregator
 
+consumes:
+- name: mysql
+  type: mysql
+  optional: true
+- name: proxy
+  type: proxy
+  optional: true
+
 properties:
   domain:
     description: 'Domain reserved for CF operator, base URL where the login, uaa, and other non-user apps listen'
@@ -20,7 +28,7 @@ properties:
     description: 'Domain of the route registered for the UI via NATS (with the router in cf-release)'
 
   mysql-monitoring.replication-canary.cluster_ips:
-    description: 'List of IP addresses of servers used to read data from'
+    description: 'Optional. List of IP addresses of servers used to read data from'
   mysql-monitoring.replication-canary.mysql_port:
     description: 'Database port for contacting mysql'
     default: 3306
@@ -56,7 +64,7 @@ properties:
     description: 'Secret of the UAA client used to send mysql monitoring notifications. This will be used when creating the client.'
 
   mysql-monitoring.replication-canary.switchboard_count:
-    description: 'The number of switchboard proxies'
+    description: 'Optional. The number of switchboard proxies'
   mysql-monitoring.replication-canary.switchboard_username:
     description: 'Basic Auth username to contact the Switchboard API'
   mysql-monitoring.replication-canary.switchboard_password:
