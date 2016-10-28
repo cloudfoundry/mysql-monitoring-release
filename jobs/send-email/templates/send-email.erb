@@ -3,6 +3,7 @@ set -eu
 set -o pipefail
 
 domain=<%= p('domain') %>
+cluster_identifier=<%= p('mysql-monitoring.cluster_identifier') %>
 uaa_domain="uaa.${domain}"
 notifications_domain=notifications.<%= p('domain') %>
 
@@ -15,7 +16,7 @@ client_secret=<%= p('mysql-monitoring.client.secret') %>
 recipient_email=<%= p('mysql-monitoring.recipient_email') %>
 skip_cert_verify=<%= p('ssl.skip_cert_verify') %>
 
-subject="[${domain}] P-Mysql Alert 100"
+subject="[${domain}][${cluster_identifier}] P-Mysql Alert 100"
 body_html="{alert-code 100}<br /> Hello, just wanted to let you know that the MySQL node/cluster has gone down and has been disallowed from re-joining by the interrupter."
 kind_id="p-mysql"
 

@@ -28,11 +28,14 @@
   path: /properties/mysql-monitoring?/replication-canary/notifications_client_secret
   value: ((mysql_monitoring_replication_canary_notifications_client_secret))
 - type: replace
-  path: /properties/domain?
-  value: ((domain))
-- type: replace
   path: /properties/mysql-monitoring?/recipient_email
   value: ((mysql_monitoring_recipient_email))
+- type: replace
+  path: /properties/mysql-monitoring?/cluster_identifier
+  value: ((mysql_monitoring_cluster_identifier))
+- type: replace
+  path: /properties/domain?
+  value: ((domain))
 - type: replace
   path: /properties/cf_mysql/mysql/seeded_databases?/-
   value:
