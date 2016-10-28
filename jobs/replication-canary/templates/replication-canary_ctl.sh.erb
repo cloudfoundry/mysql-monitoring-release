@@ -33,9 +33,8 @@ case $1 in
     $executable \
         -configPath="${config_path}" \
         -logLevel="debug" \
-        2>&1 \
-        | tee -a "${log_file}" \
-        | logger -p local1.error -t replication-canary &
+        1> >(tee -a >(logger -p local1.info -t replication-canary) "${log_file}") \
+        2> >(tee -a >(logger -p local1.error -t replication-canary) "${log_file}") &
 
     log "Starting replication-canary... done"
     ;;
