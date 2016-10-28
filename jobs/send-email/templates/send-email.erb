@@ -2,7 +2,8 @@
 set -eu
 set -o pipefail
 
-uaa_domain=uaa.<%= p('domain') %>
+domain=<%= p('domain') %>
+uaa_domain="uaa.${domain}"
 notifications_domain=notifications.<%= p('domain') %>
 
 admin_client_username=<%= p('mysql-monitoring.admin_client.username') %>
@@ -14,19 +15,16 @@ client_secret=<%= p('mysql-monitoring.client.secret') %>
 recipient_email=<%= p('mysql-monitoring.recipient_email') %>
 skip_cert_verify=<%= p('ssl.skip_cert_verify') %>
 
-subject="p-mysql alert 100"
-body_html="{alert-code 100}<br /> Hello, just wanted to let you know that the MySQL node/cluster has gone down and has been disallowed from re-joining by the interruptor."
+subject="[${domain}] P-Mysql Alert 100"
+body_html="{alert-code 100}<br /> Hello, just wanted to let you know that the MySQL node/cluster has gone down and has been disallowed from re-joining by the interrupter."
 kind_id="p-mysql"
 
 log_dir=/var/vcap/sys/log/mysql
 package_dir=/var/vcap/packages/notifications-client
-executable_name=notifications-client
-
-executable=$package_dir/bin/$executable_name
 
 mkdir -p "${log_dir}"
 
-$executable \
+"${package_dir}/bin/notifications-client" \
     --uaaDomain="${uaa_domain}" \
     --notificationsDomain="${notifications_domain}" \
     --uaaAdminClientUsername="${admin_client_username}" \
