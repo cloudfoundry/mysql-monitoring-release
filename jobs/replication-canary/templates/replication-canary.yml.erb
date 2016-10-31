@@ -66,6 +66,7 @@ Notifications:
   NotificationsDomain: notifications.<%= p('domain') %>
   UAADomain: uaa.<%= p('domain') %>
   ToAddress: <%= p('mysql-monitoring.recipient_email') %>
+  SystemDomain: <%= p('domain') %>
 Switchboard:
   URLs: <%= JSON.generate(switchboard_urls) %>
   Username: <%= proxy_username %>
