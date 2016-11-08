@@ -9,7 +9,7 @@ properties:
     client:
       username: mysql-monitoring
       secret: &notifications-client-secret REPLACE_WITH_CLIENT_SECRET
-    cluster_identifier: cluster-identifier
+    cluster_identifier: some-cluster-identifier
     recipient_email: notifications-bosh-lite@core-services-bosh-lite.cf-app.com
     replication-canary:
       canary_database: repcanary
