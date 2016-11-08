@@ -67,6 +67,7 @@ Notifications:
   UAADomain: uaa.<%= p('domain') %>
   ToAddress: <%= p('mysql-monitoring.recipient_email') %>
   SystemDomain: <%= p('domain') %>
+  ClusterIdentifier: <%= p('mysql-monitoring.cluster_identifier') %>
 Switchboard:
   URLs: <%= JSON.generate(switchboard_urls) %>
   Username: <%= proxy_username %>

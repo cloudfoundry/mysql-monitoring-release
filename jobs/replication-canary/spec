@@ -73,6 +73,9 @@ properties:
   mysql-monitoring.replication-canary.switchboard_password:
     description: 'Basic Auth password to contact the Switchboard API'
 
+  mysql-monitoring.cluster_identifier:
+    description: 'The cluster identifier will be included in the subject of replication notification e-mails. It should be a unique identifier.'
+
   syslog_aggregator.address:
     description: "IP address for syslog aggregator"
   syslog_aggregator.port:
