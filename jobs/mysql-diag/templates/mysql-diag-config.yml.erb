@@ -1,0 +1,15 @@
+<%=
+
+config = {
+  nodes: link('mysql').instances.map { |m|
+      {
+        host: m.address,
+        api_port: 9200,
+        name: m.name + "/" + m.id
+      }
+    }
+  }
+
+JSON.dump(config)
+
+%>

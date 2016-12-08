@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -ex
+
+# add mysql-diag to path
+if [ ! -f /usr/local/bin/mysql-diag ]; then
+  ln -s /var/vcap/packages/mysql-diag/bin/mysql-diag /usr/local/bin/mysql-diag
+fi
+

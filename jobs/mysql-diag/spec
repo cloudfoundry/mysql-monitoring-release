@@ -1,0 +1,15 @@
+---
+name: mysql-diag
+
+templates:
+  mysql-diag-config.yml.erb: config/mysql-diag-config.yml
+  pre-start.erb: bin/pre-start
+
+packages:
+- mysql-diag
+
+consumes:
+- name: mysql
+  type: mysql
+
+properties: {}

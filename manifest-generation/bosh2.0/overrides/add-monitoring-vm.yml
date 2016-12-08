@@ -12,6 +12,7 @@
     instances: 1
     jobs:
     - {release: mysql-monitoring, name: replication-canary}
+    - {release: mysql-monitoring, name: mysql-diag}
     azs: [z1]
     networks:
     - name: default

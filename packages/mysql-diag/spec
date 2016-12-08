@@ -1,0 +1,8 @@
+---
+name: mysql-diag
+
+dependencies:
+- golang
+
+files:
+- github.com/pivotal-cf/mysql-diag/**/*
