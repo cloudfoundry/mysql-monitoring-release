@@ -21,6 +21,14 @@ consumes:
   type: proxy
   optional: true
 
+provides:
+- name: replication-canary
+  type: db
+  properties:
+  - mysql-monitoring.replication-canary.canary_username
+  - mysql-monitoring.replication-canary.canary_password
+
+
 properties:
   domain:
     description: 'Domain reserved for CF operator, base URL where the login, uaa, and other non-user apps listen'

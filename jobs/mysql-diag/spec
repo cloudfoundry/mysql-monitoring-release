@@ -11,5 +11,11 @@ packages:
 consumes:
 - name: mysql
   type: mysql
+- name: replication-canary
+  type: db
 
-properties: {}
+properties:
+  cf_mysql.mysql.port:
+    description: 'Mysql port'
+    default: 3306
+
