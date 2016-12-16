@@ -19,3 +19,6 @@ properties:
     description: 'Mysql port'
     default: 3306
 
+  cf_mysql.mysql.galera_healthcheck.port:
+    description: 'Port used by sidecar process to listen on'
+    default: 9200

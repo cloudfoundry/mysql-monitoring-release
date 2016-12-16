@@ -8,8 +8,6 @@
 
 gobosh -e lite -d cf-mysql deploy ~/workspace/cf-mysql-release/manifest-generation/cf-mysql-template-v2.yml \
   -o ~/workspace/mysql-monitoring-release/manifest-generation/bosh2.0/overrides/add-monitoring-vm.yml \
-  -o ~/workspace/cf-mysql-release/manifest-generation/bosh2.0/overrides/no-broker.yml \
-  -o ~/workspace/cf-mysql-release/manifest-generation/bosh2.0/overrides/no-proxy-route.yml \
   -l ~/workspace/cf-mysql-release/manifest-generation/bosh2.0/bosh-lite/default-vars.yml \
   -l ~/workspace/mysql-monitoring-release/manifest-generation/bosh2.0/bosh-lite/default-vars.yml \
   $*
