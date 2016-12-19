@@ -52,3 +52,6 @@
 - type: replace
   path: /properties/cf_mysql/quota_enforcer?/ignored_users
   value: repcanary
+- type: replace
+  path: /properties/cf?/skip_ssl_validation
+  value: ((cf_skip_ssl_validation))

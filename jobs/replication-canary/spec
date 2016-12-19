@@ -27,6 +27,7 @@ provides:
   properties:
   - mysql-monitoring.replication-canary.canary_username
   - mysql-monitoring.replication-canary.canary_password
+  - mysql-monitoring.replication-canary.api_port
 
 
 properties:
@@ -57,6 +58,9 @@ properties:
   mysql-monitoring.replication-canary.poll_frequency:
     description: 'Configure how frequently the canary polls the cluster for replication failure (in seconds)'
     default: 30
+  mysql-monitoring.replication-canary.api_port:
+    description: 'Port number for interrogating the canary via HTTP'
+    default: 8111
 
   mysql-monitoring.notify_only:
     description: 'When true, replication failure will not shut traffic off at the proxy'
@@ -94,3 +98,4 @@ properties:
   syslog_aggregator.transport:
     description: "Transport to be used when forwarding logs (tcp|udp|relp)."
     default: "tcp"
+
