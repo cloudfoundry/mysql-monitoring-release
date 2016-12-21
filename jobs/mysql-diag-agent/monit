@@ -1,0 +1,5 @@
+check process mysql-diag-agent
+  with pidfile /var/vcap/sys/run/mysql-diag-agent/mysql-diag-agent.pid
+  start program "/var/vcap/jobs/mysql-diag-agent/bin/mysql-diag-agent_ctl start" with timeout 10 seconds
+  stop program "/var/vcap/jobs/mysql-diag-agent/bin/mysql-diag-agent_ctl stop" with timeout 10 seconds
+  group vcap

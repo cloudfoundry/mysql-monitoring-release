@@ -1,0 +1,21 @@
+---
+name: mysql-diag-agent
+
+templates:
+  mysql-diag-agent.yml.erb: config/mysql-diag-agent.yml
+  mysql-diag-agent_ctl.sh.erb: bin/mysql-diag-agent_ctl
+
+packages:
+- mysql-diag-agent
+
+provides:
+- name: mysql-diag-agent
+  type: agent
+
+properties:
+  mysql-monitoring.mysql-diag-agent.port:
+    description: "The agent will provide information on this port via HTTP"
+    default: 8112
+
+
+

@@ -20,6 +20,10 @@
     stemcell: default
 
 - type: replace
+  path: /instance_groups/name=mysql/jobs/-
+  value: {release: mysql-monitoring, name: mysql-diag-agent}
+
+- type: replace
   path: /properties/mysql-monitoring?/replication-canary/uaa_admin_client_secret
   value: ((mysql_monitoring_replication_canary_uaa_admin_client_secret))
 - type: replace

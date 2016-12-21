@@ -1,0 +1,11 @@
+<%=
+
+config = {
+    Port: p('mysql-monitoring.mysql-diag-agent.port'),
+    PidFile: '/var/vcap/sys/run/mysql-diag-agent/mysql-diag-agent.pid'
+  }
+
+# JSON is valid yaml
+JSON.pretty_generate(config)
+
+%>
