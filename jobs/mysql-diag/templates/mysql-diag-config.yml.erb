@@ -13,7 +13,6 @@ config = {
         password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
         host: m.address,
         mysql_port: p('cf_mysql.mysql.port'),
-        galeraHealth_port: p('cf_mysql.mysql.galera_healthcheck.port'),
         name: m.name,
         uuid: m.id
       }
