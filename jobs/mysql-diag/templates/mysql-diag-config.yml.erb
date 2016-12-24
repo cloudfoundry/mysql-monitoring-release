@@ -14,7 +14,8 @@ config = {
         host: m.address,
         mysql_port: p('cf_mysql.mysql.port'),
         name: m.name,
-        uuid: m.id
+        uuid: m.id,
+        agent_port: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.port')
       }
     }
   }

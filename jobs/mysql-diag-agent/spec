@@ -11,6 +11,8 @@ packages:
 provides:
 - name: mysql-diag-agent
   type: agent
+  properties:
+  - mysql-monitoring.mysql-diag-agent.port
 
 properties:
   mysql-monitoring.mysql-diag-agent.port:
