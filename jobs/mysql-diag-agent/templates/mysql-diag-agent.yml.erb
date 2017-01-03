@@ -1,8 +1,10 @@
 <%=
 
 config = {
+    PidFile: '/var/vcap/sys/run/mysql-diag-agent/mysql-diag-agent.pid',
     Port: p('mysql-monitoring.mysql-diag-agent.port'),
-    PidFile: '/var/vcap/sys/run/mysql-diag-agent/mysql-diag-agent.pid'
+    Username: p('mysql-monitoring.mysql-diag-agent.username'),
+    Password: p('mysql-monitoring.mysql-diag-agent.password'),
   }
 
 # JSON is valid yaml

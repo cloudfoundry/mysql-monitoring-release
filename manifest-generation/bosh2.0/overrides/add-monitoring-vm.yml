@@ -59,3 +59,7 @@
 - type: replace
   path: /properties/cf?/skip_ssl_validation
   value: ((cf_skip_ssl_validation))
+
+- type: replace
+  path: /properties/mysql-monitoring?/mysql-diag-agent?/password
+  value: ((mysql_monitoring_mysql_diag_agent_password))

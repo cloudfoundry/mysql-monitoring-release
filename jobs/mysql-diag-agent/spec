@@ -13,11 +13,19 @@ provides:
   type: agent
   properties:
   - mysql-monitoring.mysql-diag-agent.port
+  - mysql-monitoring.mysql-diag-agent.username
+  - mysql-monitoring.mysql-diag-agent.password
 
 properties:
   mysql-monitoring.mysql-diag-agent.port:
     description: "The agent will provide information on this port via HTTP"
     default: 8112
 
+  mysql-monitoring.mysql-diag-agent.username:
+    description: "Basic auth username for the agent"
+    default: mysql-diag-user
+
+  mysql-monitoring.mysql-diag-agent.password:
+    description: "Basic auth password for the agent"
 
 

@@ -15,7 +15,9 @@ config = {
         mysql_port: p('cf_mysql.mysql.port'),
         name: m.name,
         uuid: m.id,
-        agent_port: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.port')
+        agent_port: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.port'),
+        agent_username: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.username'),
+        agent_password: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.password')
       }
     }
   }
