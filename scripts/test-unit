@@ -22,5 +22,8 @@ ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/replication-canary/bin/tes
 echo -e "\nTesting Mysql-Diag..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag/bin/test "$@"
 
+echo -e "\nTesting Mysql-Diag-Agent..."
+${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag-agent/bin/test "$@"
+
 echo -e "\nTesting Notifications Client..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/notifications-client/bin/test "$@"
