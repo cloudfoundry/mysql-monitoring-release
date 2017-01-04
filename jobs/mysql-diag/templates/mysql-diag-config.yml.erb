@@ -7,7 +7,7 @@ config = {
     password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
     api_port: link('replication-canary').p('mysql-monitoring.replication-canary.api_port')
   },
-  nodes: link('mysql').instances.map { |m|
+  mysql: link('mysql').instances.map { |m|
       {
         username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
         password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
