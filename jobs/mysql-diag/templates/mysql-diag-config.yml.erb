@@ -5,22 +5,26 @@ config = {
     # recycle the same username/pw for basic auth, keeps the number of credentials down
     username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
     password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
-    api_port: link('replication-canary').p('mysql-monitoring.replication-canary.api_port')
+    api_port: link('replication-canary').p('mysql-monitoring.replication-canary.api_port'),
   },
-  mysql: link('mysql').instances.map { |m|
+  mysql: {
+    username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
+    password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
+    port: p('cf_mysql.mysql.port'),
+    agent: {
+      username: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.username'),
+      password: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.password'),
+      port: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.port'),
+    },
+    nodes: link('mysql').instances.map { |m|
       {
-        username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
-        password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
         host: m.address,
-        mysql_port: p('cf_mysql.mysql.port'),
         name: m.name,
         uuid: m.id,
-        agent_port: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.port'),
-        agent_username: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.username'),
-        agent_password: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.password')
       }
     }
   }
+}
 
 # JSON is valid yaml
 JSON.pretty_generate(config)
