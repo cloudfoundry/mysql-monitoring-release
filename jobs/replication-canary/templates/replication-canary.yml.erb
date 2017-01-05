@@ -1,46 +1,37 @@
 <%
   cluster_ips = nil
-  if_p('mysql-monitoring.replication-canary.cluster_ips') do |ips|
-    # cluster_ips may contain nil values due to lack of flexibility in spiff
-    cluster_ips = ips.compact
+  if_link('mysql') do |mysql|
+    cluster_ips = mysql.instances.map { |instance| instance.address }
   end.else do
-    cluster_ips = link('mysql').instances.map { |instance| instance.address }
+    # cluster_ips may contain nil values due to lack of flexibility in spiff
+    cluster_ips = p('mysql-monitoring.replication-canary.cluster_ips').compact
   end
 
   proxy_username = nil
-  if_p('mysql-monitoring.replication-canary.switchboard_username') do |username|
-    # cluster_ips may contain nil values due to lack of flexibility in spiff
-    proxy_username = username
-  end.else do
-    proxy_username = link('proxy').p('cf_mysql.proxy.api_username')
-  end
-
   proxy_password = nil
-  if_p('mysql-monitoring.replication-canary.switchboard_password') do |password|
-    proxy_password = password
+  if_link('proxy') do |proxy|
+    proxy_username = proxy.p('cf_mysql.proxy.api_username')
+    proxy_password = proxy.p('cf_mysql.proxy.api_password')
   end.else do
-    proxy_password = link('proxy').p('cf_mysql.proxy.api_password')
+    # cluster_ips may contain nil values due to lack of flexibility in spiff
+    proxy_username = p('mysql-monitoring.replication-canary.switchboard_username')
+    proxy_password = p('mysql-monitoring.replication-canary.switchboard_password')
   end
 
   def switchboard_urls
-    proxy_count = nil
-    if_p('mysql-monitoring.replication-canary.switchboard_count') do |count|
-      proxy_count = count
-    end.else do
-      proxy_count = link('proxy').instances.count
-    end
-
-    if_p('cf_mysql.external_host') do |external_host|
-      return proxy_count.times.map{ |i| "https://proxy-#{i}-#{external_host}" }
-    end.else do
-      link('proxy').if_p('cf_mysql.external_host') do |external_host|
+    if_link('proxy') do |proxy|
+      proxy_count = proxy.instances.count
+      proxy.if_p('cf_mysql.external_host') do |external_host|
          return proxy_count.times.map{ |i| "https://proxy-#{i}-#{external_host}" }
-      end.else_if_p('cf_mysql.proxy.api_port') do |api_port|
-        proxy_ips = link('proxy').instances.map { |instance| instance.address }
-        return proxy_ips.map{ |proxy_ip| "http://#{proxy_ip}:#{api_port}" }
       end.else do
-        return []
+        api_port = p('cf_mysql.proxy.api_port')
+        proxy_ips = proxy.instances.map { |instance| instance.address }
+        return proxy_ips.map{ |proxy_ip| "http://#{proxy_ip}:#{api_port}" }
       end
+    end.else do
+      proxy_count = p('mysql-monitoring.replication-canary.switchboard_count')
+      external_host = p('cf_mysql.external_host')
+      proxy_count.times.map{ |i| "https://proxy-#{i}-#{external_host}" }
     end
   end
 
