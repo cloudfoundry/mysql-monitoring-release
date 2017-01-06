@@ -82,6 +82,7 @@ properties:
     description: 'Optional. The number of switchboard proxies'
   mysql-monitoring.replication-canary.switchboard_username:
     description: 'Basic Auth username to contact the Switchboard API'
+    default: proxy
   mysql-monitoring.replication-canary.switchboard_password:
     description: 'Basic Auth password to contact the Switchboard API'
 

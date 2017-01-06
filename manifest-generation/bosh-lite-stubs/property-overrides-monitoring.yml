@@ -23,7 +23,6 @@ properties:
       uaa_admin_client_secret: *uaa-admin-client-secret
       notifications_client_secret: *notifications-client-secret
       switchboard_count: 2
-      switchboard_username: username
       switchboard_password: password
   ssl:
     skip_cert_verify: true
