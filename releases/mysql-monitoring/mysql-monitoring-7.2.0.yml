@@ -1,0 +1,62 @@
+---
+packages:
+- name: cf-mysql-common
+  version: 3703ec53ed39aaea97930e0bde0a891fbd83be37
+  fingerprint: 3703ec53ed39aaea97930e0bde0a891fbd83be37
+  sha1: f1be0f2e961410aee16a44c7af0aba18c833c422
+  dependencies: []
+- name: golang
+  version: 48ce7b3927e6f7e6576fff21a7dc9d22b7ba9c62
+  fingerprint: 48ce7b3927e6f7e6576fff21a7dc9d22b7ba9c62
+  sha1: 6a38a1cb5ad54e998a150fdfcbdb7a07cc1daf81
+  dependencies: []
+- name: mysql-diag-agent
+  version: 4ff65264535b49b1c08f0feebbd1d14cceee4804
+  fingerprint: 4ff65264535b49b1c08f0feebbd1d14cceee4804
+  sha1: 8b899b9c64ef27868edc4b7c19bd353f2c6bdf57
+  dependencies:
+  - golang
+- name: mysql-diag
+  version: d2fee92440cadcb6155b5b4030ce4fb7892929d4
+  fingerprint: d2fee92440cadcb6155b5b4030ce4fb7892929d4
+  sha1: c86c3655ea84a40f5fd567f2ba46090fb0c5c3f4
+  dependencies:
+  - golang
+- name: notifications-client
+  version: e7473139dd0bd98b711fedf065dd8e2fdbcbf209
+  fingerprint: e7473139dd0bd98b711fedf065dd8e2fdbcbf209
+  sha1: bc75bd760b2e973d714bcb5dfac4ae5f5ec33a22
+  dependencies:
+  - golang
+- name: replication-canary
+  version: cdbc5aba3006effcf66a5d33542b61a5400615d7
+  fingerprint: cdbc5aba3006effcf66a5d33542b61a5400615d7
+  sha1: 5f6b4213ec92132933d0e9a27f3cf2ddfd4159bd
+  dependencies:
+  - golang
+- name: syslog_aggregator
+  version: 078da6dcb999c1e6f5398a6eb739182ccb4aba25
+  fingerprint: 078da6dcb999c1e6f5398a6eb739182ccb4aba25
+  sha1: 324da9ff7022e47740708ea7d9a869cd83cdfccb
+  dependencies: []
+jobs:
+- name: mysql-diag-agent
+  version: 931cb8aac32264de29290cb9648bd644a995a687
+  fingerprint: 931cb8aac32264de29290cb9648bd644a995a687
+  sha1: eaa0153435269df7f023e00ed3a0a9503d3ff001
+- name: mysql-diag
+  version: c155e9c17d82b3900a57d749cab87e6a920f0717
+  fingerprint: c155e9c17d82b3900a57d749cab87e6a920f0717
+  sha1: 900e96b88457d969c438aaa3c640b086613cb5de
+- name: replication-canary
+  version: d22c230dcce6577213d39b7fbd39755ebea97160
+  fingerprint: d22c230dcce6577213d39b7fbd39755ebea97160
+  sha1: 73ebf96d6a23709803c944868f21debd924b2963
+- name: send-email
+  version: ba38d436420068064aa9a4592d87577d8ed253f7
+  fingerprint: ba38d436420068064aa9a4592d87577d8ed253f7
+  sha1: 52f034884ac4b9d63c5b417e162d1bf31cddf471
+commit_hash: 281b614f
+uncommitted_changes: true
+name: mysql-monitoring
+version: 7.2.0
