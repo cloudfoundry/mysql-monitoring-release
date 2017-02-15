@@ -22,7 +22,7 @@
     if_link('proxy') do |proxy|
       proxy_count = proxy.instances.count
       proxy.if_p('cf_mysql.external_host') do |external_host|
-         return proxy_count.times.map{ |i| "https://proxy-#{i}-#{external_host}" }
+         return proxy_count.times.map{ |i| "https://#{i}-proxy-#{external_host}" }
       end.else do
         api_port = proxy.p('cf_mysql.proxy.api_port')
         proxy_ips = proxy.instances.map { |instance| instance.address }
@@ -31,7 +31,7 @@
     end.else do
       proxy_count = p('mysql-monitoring.replication-canary.switchboard_count')
       external_host = p('cf_mysql.external_host')
-      proxy_count.times.map{ |i| "https://proxy-#{i}-#{external_host}" }
+      proxy_count.times.map{ |i| "https://#{i}-proxy-#{external_host}" }
     end
   end
 
