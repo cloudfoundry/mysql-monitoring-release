@@ -43,6 +43,13 @@
   if write_read_delay >= poll_frequency
     raise 'Invalid configuration - poll_frequency should be greater than write_read_delay'
   end
+
+  domain = ''
+  if_link('cloud_controller') do |cc|
+    domain = cc.p('system_domain')
+  end.else do
+    domain = p('domain')
+  end
 %>
 ---
 NotifyOnly: <%= p('mysql-monitoring.notify_only') %>
@@ -62,10 +69,10 @@ Notifications:
   AdminClientSecret: <%= p('mysql-monitoring.replication-canary.uaa_admin_client_secret') %>
   ClientUsername: <%= p('mysql-monitoring.replication-canary.notifications_client_username') %>
   ClientSecret: <%= p('mysql-monitoring.replication-canary.notifications_client_secret') %>
-  NotificationsDomain: notifications.<%= p('domain') %>
-  UAADomain: uaa.<%= p('domain') %>
+  NotificationsDomain: notifications.<%= domain %>
+  UAADomain: uaa.<%= domain %>
   ToAddress: <%= p('mysql-monitoring.recipient_email') %>
-  SystemDomain: <%= p('domain') %>
+  SystemDomain: <%= domain %>
   ClusterIdentifier: <%= p('mysql-monitoring.cluster_identifier') %>
 Switchboard:
   URLs: <%= JSON.generate(switchboard_urls) %>

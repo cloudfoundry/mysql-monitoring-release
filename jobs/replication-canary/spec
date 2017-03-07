@@ -20,6 +20,9 @@ consumes:
 - name: proxy
   type: proxy
   optional: true
+- name: cloud_controller
+  type: cloud_controller
+  optional: true
 
 provides:
 - name: replication-canary
