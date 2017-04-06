@@ -1,0 +1,5 @@
+check process mysql-metrics
+  with pidfile /var/vcap/sys/run/mysql-metrics/mysql-metrics.pid
+  start program "/var/vcap/jobs/mysql-metrics/bin/mysql-metrics_ctl start" with timeout 10 seconds
+  stop program "/var/vcap/jobs/mysql-metrics/bin/mysql-metrics_ctl stop" with timeout 10 seconds
+  group vcap

@@ -1,0 +1,9 @@
+---
+name: mysql-metrics
+
+dependencies:
+- golang
+
+files:
+- github.com/pivotal-cf-experimental/mysql-metrics/**/*
+

@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -eux
+
+job_dir=/var/vcap/jobs/mysql-metrics
+run_dir=/var/vcap/sys/run/mysql-metrics
+log_dir=/var/vcap/sys/log/mysql-metrics
+package_dir=/var/vcap/packages/mysql-metrics
+
+pidfile="${run_dir}/mysql-metrics.pid"
+config_path="${job_dir}/config/mysql-metrics-config.yml"
+
+log_file="${log_dir}/mysql-metrics.combined.log"
+metric_path="${log_dir}/mysql-metrics.log"
+
+executable_name=mysql-metrics
+
+executable="${package_dir}/bin/${executable_name}"
+
+source /var/vcap/packages/cf-mysql-common/pid_utils.sh
+
+case $1 in
+
+  start)
+    log "Starting mysql-metrics..."
+    pid_guard "${pidfile}" "Mysql-diag agent"
+
+    mkdir -p "${run_dir}"
+    mkdir -p "${log_dir}"
+
+    # Start syslog forwarding
+    #/var/vcap/packages/syslog_aggregator/setup_syslog_forwarder.sh ${job_dir}/config
+
+    $executable \
+        -c="${config_path}" \
+        -l="${metric_path}" \
+        1> >(tee -a >(logger -p local1.info -t mysql-metrics) "${log_file}") \
+        2> >(tee -a >(logger -p local1.error -t mysql-metrics) "${log_file}") &
+
+    log "Starting mysql-metrics... done"
+    ;;
+
+  stop)
+    log "Stopping mysql-metrics..."
+    kill_and_wait "${pidfile}"
+    log "Stopping mysql-metrics... done"
+    ;;
+
+  *)
+    echo "Usage: mysql-metrics_ctl {start|stop}"
+    ;;
+
+esac

@@ -16,3 +16,6 @@
 [submodule "src/github.com/pivotal-cf/mysql-diag-agent"]
 	path = src/github.com/pivotal-cf/mysql-diag-agent
 	url = git@github.com:pivotal-cf/mysql-diag-agent
+[submodule "src/github.com/pivotal-cf-experimental/mysql-metrics"]
+	path = src/github.com/pivotal-cf-experimental/mysql-metrics
+	url = git@github.com:pivotal-cf-experimental/mysql-metrics.git

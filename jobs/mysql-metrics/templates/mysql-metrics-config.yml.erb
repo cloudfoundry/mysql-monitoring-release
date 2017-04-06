@@ -1,0 +1,13 @@
+<%=
+
+config = {
+  username: "root", 
+  password: "password",
+  pidfile: "/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid"
+}
+
+# JSON is valid yaml
+JSON.pretty_generate(config)
+
+%>
+
