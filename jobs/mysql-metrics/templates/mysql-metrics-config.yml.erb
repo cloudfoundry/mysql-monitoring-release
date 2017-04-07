@@ -3,7 +3,8 @@
 config = {
   username: "root", 
   password: "password",
-  pidfile: "/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid"
+  pidfile: "/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid",
+  metrics_frequency: p('mysql-metrics.metrics_frequency')
 }
 
 # JSON is valid yaml

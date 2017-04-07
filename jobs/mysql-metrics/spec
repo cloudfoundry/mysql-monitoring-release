@@ -13,5 +13,8 @@ properties:
     description: "database username for mysql metrics"
   mysql-metrics.password:
     description: "database password for mysql metrics"
+  mysql-metrics.metrics_frequency:
+    description: "interval to poll metrics in seconds"
+    default: 30
 
 
