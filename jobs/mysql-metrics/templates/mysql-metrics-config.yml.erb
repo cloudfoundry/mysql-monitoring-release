@@ -1,11 +1,14 @@
 <%=
 
 config = {
-  username: "root", 
+  username: "root",
   password: "password",
   pidfile: "/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid",
   metrics_frequency: p('mysql-metrics.metrics_frequency')
 }
+if config[:metrics_frequency] < p('mysql-metrics.minimum_metrics_frequency')
+  raise 'metrics_frequency < minimum_metrics_frequency: collecting metrics at this rate is not advised'
+end
 
 # JSON is valid yaml
 JSON.pretty_generate(config)
