@@ -1,8 +1,8 @@
 <%=
 
 config = {
-  username: "root",
-  password: "password",
+  username: p('mysql-metrics.username'),
+  password: p('mysql-metrics.password'),
   pidfile: "/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid",
   metrics_frequency: p('mysql-metrics.metrics_frequency')
 }
