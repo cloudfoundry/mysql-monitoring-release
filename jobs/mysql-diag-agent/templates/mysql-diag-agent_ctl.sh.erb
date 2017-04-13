@@ -26,14 +26,17 @@ case $1 in
 
     mkdir -p "${run_dir}"
     mkdir -p "${log_dir}"
+    chown -R vcap:vcap "${run_dir}"
+    chown -R vcap:vcap "${log_dir}"
 
     # Start syslog forwarding
     #/var/vcap/packages/syslog_aggregator/setup_syslog_forwarder.sh ${job_dir}/config
 
-    $executable \
+    su - vcap -c -o pipefail \
+        "$executable \
         -c="${config_path}" \
-        1> >(tee -a >(logger -p local1.info -t mysql-diag-agent) "${log_file}") \
-        2> >(tee -a >(logger -p local1.error -t mysql-diag-agent) "${log_file}") &
+        1> >(tee -a >(logger -p local1.info -t mysql-diag-agent) \"${log_file}\") \
+        2> >(tee -a >(logger -p local1.error -t mysql-diag-agent) \"${log_file}\") &"
 
     log "Starting mysql-diag-agent... done"
     ;;
