@@ -35,8 +35,8 @@ case $1 in
     su - vcap -c -o pipefail \
         "$executable \
         -c="${config_path}" \
-        1> >(tee -a >(logger -p local1.info -t mysql-diag-agent) \"${log_file}\") \
-        2> >(tee -a >(logger -p local1.error -t mysql-diag-agent) \"${log_file}\") &"
+        1> >(tee -a >(logger -p local1.info -t mysql-diag-agent) "${log_file}") \
+        2> >(tee -a >(logger -p local1.error -t mysql-diag-agent) "${log_file}") &"
 
     log "Starting mysql-diag-agent... done"
     ;;
