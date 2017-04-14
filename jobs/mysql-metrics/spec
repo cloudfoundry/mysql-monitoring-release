@@ -9,8 +9,6 @@ packages:
 - mysql-metrics
 
 properties:
-  mysql-metrics.username:
-    description: "database username for mysql metrics"
   mysql-metrics.password:
     description: "database password for mysql metrics"
   mysql-metrics.metrics_frequency:
