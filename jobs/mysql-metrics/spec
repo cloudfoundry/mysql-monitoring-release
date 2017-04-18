@@ -2,6 +2,7 @@
 name: mysql-metrics
 
 templates:
+  metric-mapping-config.yml.erb: config/metric-mapping-config.yml
   mysql-metrics-config.yml.erb: config/mysql-metrics-config.yml
   mysql-metrics_ctl.sh.erb: bin/mysql-metrics_ctl
 

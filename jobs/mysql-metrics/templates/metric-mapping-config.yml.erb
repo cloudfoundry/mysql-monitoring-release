@@ -1,0 +1,130 @@
+---
+mappings:
+  questions:
+    key: /p-mysql/global_statuses/questions
+    unit: metric
+  innodb_buffer_pool_pages_free:
+    key: /p-mysql/innodb/buffer_pool_pages_free
+    unit: page
+  innodb_buffer_pool_pages_total:
+    key: /p-mysql/innodb/buffer_pool_pages_total
+    unit: page
+  innodb_buffer_pool_pages_data:
+    key: /p-mysql/innodb/buffer_pool_pages_data
+    unit: page
+  innodb_row_lock_current_waits:
+    key: /p-mysql/innodb/row_lock_current_waits
+    unit: lock
+  innodb_data_read:
+    key: /p-mysql/innodb/data_read
+    unit: byte
+  innodb_data_written:
+    key: /p-mysql/innodb/data_written
+    unit: byte
+  innodb_mutex_os_waits:
+    key: /p-mysql/innodb/mutex_os_waits
+    unit: event
+  innodb_mutex_spin_rounds:
+    key: /p-mysql/innodb/mutex_spin_rounds
+    unit: event
+  innodb_mutex_spin_waits:
+    key: /p-mysql/innodb/mutex_spin_waits
+    unit: event
+  innodb_os_log_fsyncs:
+    key: /p-mysql/innodb/os_log_fsyncs
+    unit: event
+  innodb_row_lock_time:
+    key: /p-mysql/innodb/row_lock_time
+    unit: millisecond
+  innodb_row_lock_waits:
+    key: /p-mysql/innodb/row_lock_waits
+    unit: event
+  connections:
+    key: /p-mysql/net/connections
+    unit: connection
+  max_used_connections:
+    key: /p-mysql/net/max_used_connections
+    unit: connection
+  com_delete:
+    key: /p-mysql/performance/com_delete
+    unit: query
+  com_delete_multi:
+    key: /p-mysql/performance/com_delete_multi
+    unit: query
+  com_insert:
+    key: /p-mysql/performance/com_insert
+    unit: query
+  com_insert_select:
+    key: /p-mysql/performance/com_insert_select
+    unit: query
+  com_replace_select:
+    key: /p-mysql/performance/com_replace_select
+    unit: query
+  com_select:
+    key: /p-mysql/performance/com_select
+    unit: query
+  com_update:
+    key: /p-mysql/performance/com_update
+    unit: query
+  com_update_multi:
+    key: /p-mysql/performance/com_update_multi
+    unit: query
+  created_tmp_disk_tables:
+    key: /p-mysql/performance/created_tmp_disk_tables
+    unit: table
+  created_tmp_files:
+    key: /p-mysql/performance/created_tmp_files
+    unit: file
+  created_tmp_tables:
+    key: /p-mysql/performance/created_tmp_tables
+    unit: table
+  cpu_time:
+    key: /p-mysql/performance/cpu_time
+    unit: second
+  open_files:
+    key: /p-mysql/performance/open_files
+    unit: file
+  open_tables:
+    key: /p-mysql/performance/open_tables
+    unit: table
+  qcache_hits:
+    key: /p-mysql/performance/qcache_hits
+    unit: hit
+  slow_queries:
+    key: /p-mysql/performance/slow_queries
+    unit: query
+  table_locks_waited:
+    key: /p-mysql/performance/table_locks_waited
+    unit: number
+  threads_connected:
+    key: /p-mysql/performance/threads_connected
+    unit: connection
+  threads_running:
+    key: /p-mysql/performance/threads_running
+    unit: thread
+  busy_time:
+    key: /p-mysql/performance/busy_time
+    unit: second
+<% if p('mysql-metrics.galera_metrics_enabled') %>
+  wsrep_cluster_size:
+    key: /p-mysql/galera/wsrep_cluster_size
+    unit: node
+  wsrep_local_recv_queue_avg:
+    key: /p-mysql/galera/wsrep_local_recv_queue_avg
+    unit: float
+  wsrep_local_send_queue_avg:
+    key: /p-mysql/galera/wsrep_local_send_queue_avg
+    unit: float
+  wsrep_local_index:
+    key: /p-mysql/galera/wsrep_local_index
+    unit: float
+  wsrep_local_state:
+    key: /p-mysql/galera/wsrep_local_state
+    unit: float
+  wsrep_ready:
+    key: /p-mysql/galera/wsrep_ready
+    unit: number
+  wsrep_cluster_status:
+    key: /p-mysql/galera/wsrep_cluster_status
+    unit: number
+<% end %>
