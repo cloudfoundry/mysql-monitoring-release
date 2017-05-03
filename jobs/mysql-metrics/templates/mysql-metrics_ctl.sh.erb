@@ -10,43 +10,42 @@ package_dir=/var/vcap/packages/mysql-metrics
 pidfile="${run_dir}/mysql-metrics.pid"
 config_path="${job_dir}/config/mysql-metrics-config.yml"
 
-log_file="${log_dir}/mysql-metrics.combined.log"
+log_file="${log_dir}/mysql-metrics.out.log"
+err_log_file="${log_dir}/mysql-metrics.err.log"
 metric_path="${log_dir}/mysql-metrics.log"
 
 executable_name=mysql-metrics
 
 executable="${package_dir}/bin/${executable_name}"
 
-source /var/vcap/packages/cf-mysql-common/pid_utils.sh
-
 case $1 in
 
   start)
-    log "Starting mysql-metrics..."
-    pid_guard "${pidfile}" "Mysql-diag agent"
-
     mkdir -p "${run_dir}"
     mkdir -p "${log_dir}"
     chown -R vcap:vcap "${run_dir}"
     chown -R vcap:vcap "${log_dir}"
 
-    # Start syslog forwarding
-    #/var/vcap/packages/syslog_aggregator/setup_syslog_forwarder.sh ${job_dir}/config
-
-    su - vcap -c -o pipefail \
-        "$executable \
+    /sbin/start-stop-daemon \
+      --pidfile "${pidfile}" \
+      --make-pidfile \
+      --chuid vcap:vcap \
+      --background \
+      --start \
+      --exec ${executable}  \
+      -- \
         -c="${config_path}" \
         -l="${metric_path}" \
-        1> >(tee -a >(logger -p local1.info -t mysql-metrics) "${log_file}") \
-        2> >(tee -a >(logger -p local1.error -t mysql-metrics) "${log_file}") &"
-
-    log "Starting mysql-metrics... done"
+         >> "${log_file}" \
+        2>> "${err_log_file}"
     ;;
 
   stop)
-    log "Stopping mysql-metrics..."
-    kill_and_wait "${pidfile}"
-    log "Stopping mysql-metrics... done"
+    /sbin/start-stop-daemon \
+      --pidfile "$PIDFILE" \
+      --retry TERM/20/QUIT/1/KILL \
+      --oknodo \
+      --stop
     ;;
 
   *)
