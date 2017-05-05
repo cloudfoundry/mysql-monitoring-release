@@ -14,4 +14,6 @@ builds:
     version: 7.2.0
   c47b95f3-1f8a-4797-ada1-0f80b308e9e2:
     version: 8.0.0
+  afb2277e-b38d-41c2-9c33-31486835d3b3:
+    version: 8.1.0
 format-version: '2'
