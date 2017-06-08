@@ -9,5 +9,3 @@ $(dirname $0)/install-git-hooks
 has_remote_branch && git pull
 
 git submodule foreach --recursive git submodule sync && git submodule update --init --recursive
-
-git clean -ffd
