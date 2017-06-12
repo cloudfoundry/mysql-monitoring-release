@@ -31,7 +31,10 @@ case $1 in
     # Start syslog forwarding
     /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder.sh ${job_dir}/config
     <% end.else do %>
-    rm -f /etc/rsyslog.d/00-syslog_forwarder.conf
+    if [[ -e /etc/rsyslog.d/00-syslog_forwarder.conf ]]; then
+      rm -f /etc/rsyslog.d/00-syslog_forwarder.conf
+      /usr/sbin/service rsyslog restart
+    fi
     <% end %>
 
     $executable \
