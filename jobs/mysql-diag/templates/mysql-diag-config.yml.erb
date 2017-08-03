@@ -16,6 +16,10 @@ config = {
       password: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.password'),
       port: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.port'),
     },
+    threshold: {
+      disk_used_warning_percent: 80,
+      disk_inodes_used_warning_percent: 80
+    },
     nodes: link('mysql').instances.map { |m|
       {
         host: m.address,
