@@ -10,6 +10,9 @@ packages:
 - mysql-metrics
 
 properties:
+  mysql-metrics.username:
+    description: "database username for mysql metrics"
+    default: mysql-metrics
   mysql-metrics.password:
     description: "database password for mysql metrics"
   mysql-metrics.galera_metrics_enabled:
@@ -24,3 +27,6 @@ properties:
   mysql-metrics.origin:
     description: "origin tag when metrics are emitted"
     default: p-mysql
+  mysql-metrics.enable_leader_follower:
+    description: "enables leader follower tagging"
+    default: false
