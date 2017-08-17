@@ -19,6 +19,7 @@ properties:
 
   mysql-monitoring.client.username:
     description: 'Username of the UAA client used to send mysql monitoring notifications'
+    default: mysql-monitoring
   mysql-monitoring.client.secret:
     description: 'Secret of the UAA client used to send mysql monitoring notifications'
 
