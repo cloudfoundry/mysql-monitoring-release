@@ -27,6 +27,3 @@ properties:
   mysql-metrics.origin:
     description: "origin tag when metrics are emitted"
     default: p-mysql
-  mysql-metrics.enable_leader_follower:
-    description: "enables leader follower tagging"
-    default: false
