@@ -2,10 +2,14 @@
 internal_metrics:
   available:
     key: /<%= p("mysql-metrics.origin") %>/available
-<% if p("mysql-metrics.leader_follower_enabled") %>
+leader_follower_metrics:
   is_follower:
     key: /<%= p("mysql-metrics.origin") %>/follower/is_follower
-<% end %>
+    unit: integer
+  seconds_behind_master:
+    key: /<%= p("mysql-metrics.origin") %>/follower/seconds_behind_master
+    unit: integer
+
 mysql_metrics:
   max_connections:
     key: /<%= p("mysql-metrics.origin") %>/variables/max_connections

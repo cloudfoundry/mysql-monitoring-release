@@ -5,7 +5,8 @@ config = {
   password: p('mysql-metrics.password'),
   pidfile: '/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid',
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
-  origin: p('mysql-metrics.origin')
+  origin: p('mysql-metrics.origin'),
+  emit_leader_follower_metrics: p('mysql-metrics.leader_follower_enabled')
 }
 if config[:metrics_frequency] < p('mysql-metrics.minimum_metrics_frequency')
   raise 'metrics_frequency < minimum_metrics_frequency: collecting metrics at this rate is not advised'
