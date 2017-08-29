@@ -9,7 +9,15 @@ leader_follower_metrics:
   seconds_behind_master:
     key: /<%= p("mysql-metrics.origin") %>/follower/seconds_behind_master
     unit: integer
-
+  relay_log_space:
+    key: /p-mysql/follower/relay_log_space
+    unit: bytes
+  slave_io_running:
+    key: /p-mysql/follower/slave_io_running
+    unit: boolean
+  slave_sql_running:
+    key: /p-mysql/follower/slave_sql_running
+    unit: boolean
 mysql_metrics:
   max_connections:
     key: /<%= p("mysql-metrics.origin") %>/variables/max_connections
