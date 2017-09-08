@@ -5,40 +5,36 @@ import (
 	. "github.com/onsi/gomega"
 
 	"database/sql"
-	 _ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 
 	boshCliDirector "github.com/cloudfoundry/bosh-cli/director"
 	boshlogger "github.com/cloudfoundry/bosh-utils/logger"
 
+	"acceptance_tests/helpers"
 	"fmt"
-	"time"
-	"os"
 	"log"
+	"os"
+	"time"
 )
 
 var _ = Describe("mysql events", func() {
-	// connect to bosh // inject bosh director ip/env from os.Getenv
-	// maybe also inject bosh deployment
-	// grab mysql user and password from manifest // dedicated-mysql-utils has methods for this
-	// using bosh figure out the two mysql IPs
-	// run queries on each mysql IP to determine which is leader which is follower // possibly steal from adapter release
-	// use bosh to figure out instance id for leader/follower
-
 	var (
-		boshEnvironment    string
-		boshDeploymentName string
-		mysqlInstances           []boshCliDirector.Instance
-		director           boshCliDirector.Director
-		leaderInstance boshCliDirector.Instance
-		followerInstance boshCliDirector.Instance
+		boshEnvironment      string
+		boshDeploymentName   string
+		mysqlMetricsUsername string
+		mysqlMetricsPassword string
+		mysqlInstances       []boshCliDirector.Instance
+		director             boshCliDirector.Director
+		leaderInstance       boshCliDirector.Instance
+		followerInstance     boshCliDirector.Instance
 	)
 
-	getMysqlConnection := func(hostIp string) (*sql.DB, error) {
+	getMysqlConnection := func(hostIp, username, password string) (*sql.DB, error) {
 		return sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%d)/replication_monitoring?parseTime=true",
-			os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), hostIp, 3306))
+			username, password, hostIp, 3306))
 	}
 
-	filterMysqlInstances := func (instances []boshCliDirector.Instance) ([]boshCliDirector.Instance) {
+	filterMysqlInstances := func(instances []boshCliDirector.Instance) []boshCliDirector.Instance {
 		mysqlInstances := make([]boshCliDirector.Instance, 0)
 		for _, instance := range instances {
 			if instance.Group == "mysql" {
@@ -48,7 +44,7 @@ var _ = Describe("mysql events", func() {
 		return mysqlInstances
 	}
 
-	getMysqlInstancesFromDirector := func (director boshCliDirector.Director) ([]boshCliDirector.Instance){
+	getMysqlInstancesFromDirector := func(director boshCliDirector.Director) []boshCliDirector.Instance {
 		deployment, err := director.FindDeployment(boshDeploymentName)
 		Expect(err).NotTo(HaveOccurred())
 
@@ -61,7 +57,7 @@ var _ = Describe("mysql events", func() {
 	identifyLeaderAndFollower := func(instances []boshCliDirector.Instance) (boshCliDirector.Instance, boshCliDirector.Instance) {
 		var leader, follower boshCliDirector.Instance
 		for _, instance := range instances {
-			conn, err := getMysqlConnection(instance.IPs[0])
+			conn, err := getMysqlConnection(instance.IPs[0], mysqlMetricsUsername, mysqlMetricsPassword)
 			Expect(err).NotTo(HaveOccurred())
 
 			rows, err := conn.Query("show slave status")
@@ -76,21 +72,20 @@ var _ = Describe("mysql events", func() {
 		return leader, follower
 	}
 
-
-
 	BeforeSuite(func() {
-		boshEnvironment = os.Getenv("BOSH_ENVIRONMENT")
-		boshDeploymentName = os.Getenv("BOSH_DEPLOYMENT")
-		boshClientName := os.Getenv("BOSH_CLIENT")
-		boshClientSecret := os.Getenv("BOSH_CLIENT_SECRET") // TODO blow up if empty
-		boshCACert := os.Getenv("BOSH_CA_CERT")
+		boshEnvironment = helpers.GetEnvVar("BOSH_ENVIRONMENT")
+		boshDeploymentName = helpers.GetEnvVar("BOSH_DEPLOYMENT")
+		boshClientName := helpers.GetEnvVar("BOSH_CLIENT")
+		boshClientSecret := helpers.GetEnvVar("BOSH_CLIENT_SECRET")
+		boshCACert := helpers.GetEnvVar("BOSH_CA_CERT")
+		mysqlMetricsUsername = "mysql-metrics"
 
-		var boshLogger = boshlogger.New(boshlogger.LevelDebug, log.New(os.Stdout, "", log.LstdFlags))
+		var boshLogger = boshlogger.New(boshlogger.LevelNone, log.New(os.Stdout, "", log.LstdFlags))
 
 		config := boshCliDirector.Config{
 			Host:         boshEnvironment,
 			Port:         25555,
-			CACert: boshCACert,
+			CACert:       boshCACert,
 			Client:       boshClientName,
 			ClientSecret: boshClientSecret,
 		}
@@ -101,6 +96,14 @@ var _ = Describe("mysql events", func() {
 			boshCliDirector.NewNoopFileReporter(),
 		)
 		Expect(err).NotTo(HaveOccurred())
+
+		deployment, err := director.FindDeployment(boshDeploymentName)
+		Expect(err).NotTo(HaveOccurred())
+
+		manifest, err := deployment.Manifest()
+		Expect(err).NotTo(HaveOccurred())
+
+		mysqlMetricsPassword = helpers.GetManifestValue(manifest, "/instance_groups/name=mysql/properties/mysql_metrics_password")
 
 		mysqlInstances = getMysqlInstancesFromDirector(director)
 		Expect(len(mysqlInstances)).To(Equal(2)) // leader + follower
@@ -113,7 +116,7 @@ var _ = Describe("mysql events", func() {
 	})
 
 	It("records the timestamp at some interval on the leader node", func() {
-		conn, err := getMysqlConnection(leaderInstance.IPs[0])
+		conn, err := getMysqlConnection(leaderInstance.IPs[0], mysqlMetricsUsername, mysqlMetricsPassword)
 
 		Expect(err).NotTo(HaveOccurred())
 
@@ -140,7 +143,7 @@ var _ = Describe("mysql events", func() {
 	})
 
 	It("inserts the current bosh job id on the leader node", func() {
-		conn, err := getMysqlConnection(leaderInstance.IPs[0])
+		conn, err := getMysqlConnection(leaderInstance.IPs[0], mysqlMetricsUsername, mysqlMetricsPassword)
 
 		rows, err := conn.Query("select server_id from replication_monitoring.heartbeat")
 		Expect(err).NotTo(HaveOccurred())
@@ -166,7 +169,7 @@ var _ = Describe("mysql events", func() {
 	})
 
 	It("only runs the event on the leader node (and replicates to the follower)", func() {
-		conn, err := getMysqlConnection(followerInstance.IPs[0])
+		conn, err := getMysqlConnection(followerInstance.IPs[0], mysqlMetricsUsername, mysqlMetricsPassword)
 
 		rows, err := conn.Query("select server_id from replication_monitoring.heartbeat")
 		Expect(err).NotTo(HaveOccurred())

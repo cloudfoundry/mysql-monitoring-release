@@ -38,6 +38,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/cppforlife/go-patch"
+  packages = ["patch"]
+  revision = "d9e51bef8eda190cdbac94dddd3c304080774726"
+
+[[projects]]
+  branch = "master"
   name = "github.com/cppforlife/go-semi-semantic"
   packages = ["version"]
   revision = "576b6af77ae4f3ccef356902fb3b9a9ae22e0b11"
@@ -86,7 +92,7 @@
 
 [[projects]]
   name = "github.com/onsi/gomega"
-  packages = [".","format","internal/assertion","internal/asyncassertion","internal/oraclematcher","internal/testingtsupport","matchers","matchers/support/goraph/bipartitegraph","matchers/support/goraph/edge","matchers/support/goraph/node","matchers/support/goraph/util","types"]
+  packages = [".","format","gbytes","gexec","internal/assertion","internal/asyncassertion","internal/oraclematcher","internal/testingtsupport","matchers","matchers/support/goraph/bipartitegraph","matchers/support/goraph/edge","matchers/support/goraph/node","matchers/support/goraph/util","types"]
   revision = "c893efa28eb45626cdaa76c9f653b62488858837"
   version = "v1.2.0"
 
@@ -135,6 +141,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3310f3ff02df97a929087c24d7b61298599b32fc8dedbb77de322b14808af359"
+  inputs-digest = "f036aff7135a1b69fbecb1cfe950470b8586ffe34c383179f28502ef764f5345"
   solver-name = "gps-cdcl"
   solver-version = 1
