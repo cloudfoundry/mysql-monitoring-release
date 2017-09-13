@@ -9,6 +9,9 @@ leader_follower_metrics:
   seconds_behind_master:
     key: /<%= p("mysql-metrics.origin") %>/follower/seconds_behind_master
     unit: integer
+  seconds_since_leader_heartbeat:
+    key: /<%= p("mysql-metrics.origin") %>/follower/seconds_since_leader_heartbeat
+    unit: integer
   relay_log_space:
     key: /<%= p("mysql-metrics.origin") %>/follower/relay_log_space
     unit: bytes
