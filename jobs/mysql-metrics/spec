@@ -30,3 +30,9 @@ properties:
   mysql-metrics.leader_follower_enabled:
     description: "enable leader follower releated metrics"
     default: false
+  mysql-metrics.heartbeat_database:
+    description: "schema where heartbeat table exists"
+    default: "replication_monitoring"
+  mysql-metrics.heartbeat_table:
+    description: "table where heartbeat data is stored"
+    default: "heartbeat"

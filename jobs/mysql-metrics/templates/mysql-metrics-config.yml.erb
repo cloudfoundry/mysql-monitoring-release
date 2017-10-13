@@ -7,7 +7,9 @@ config = {
   pidfile: '/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid',
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
   origin: p('mysql-metrics.origin'),
-  emit_leader_follower_metrics: p('mysql-metrics.leader_follower_enabled')
+  emit_leader_follower_metrics: p('mysql-metrics.leader_follower_enabled'),
+  heartbeat_database: p('mysql-metrics.heartbeat_database'),
+  heartbeat_table: p('mysql-metrics.heartbeat_table')
 }
 if config[:metrics_frequency] < p('mysql-metrics.minimum_metrics_frequency')
   raise 'metrics_frequency < minimum_metrics_frequency: collecting metrics at this rate is not advised'
