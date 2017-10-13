@@ -27,3 +27,6 @@ ${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag-agent/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/notifications-client/bin/test "$@"
+
+echo -e "\nTesting Metrics..."
+${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/mysql-metrics/bin/test "$@"
