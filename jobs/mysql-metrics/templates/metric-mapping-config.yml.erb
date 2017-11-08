@@ -2,6 +2,31 @@
 internal_metrics:
   available:
     key: /<%= p("mysql-metrics.origin") %>/available
+disk_metrics:
+  persistent_disk_used:
+    key: /<%= p("mysql-metrics.origin") %>/system/persistent_disk_used
+    unit: kb
+  persistent_disk_free:
+    key: /<%= p("mysql-metrics.origin") %>/system/persistent_disk_free
+    unit: kb
+  persistent_disk_inodes_used:
+    key: /<%= p("mysql-metrics.origin") %>/system/persistent_disk_inodes_used
+    unit: kb
+  persistent_disk_inodes_free:
+    key: /<%= p("mysql-metrics.origin") %>/system/persistent_disk_inodes_free
+    unit: kb
+  ephemeral_disk_used:
+    key: /<%= p("mysql-metrics.origin") %>/system/ephemeral_disk_used
+    unit: kb
+  ephemeral_disk_free:
+    key: /<%= p("mysql-metrics.origin") %>/system/ephemeral_disk_free
+    unit: kb
+  ephemeral_disk_inodes_used:
+    key: /<%= p("mysql-metrics.origin") %>/system/ephemeral_disk_inodes_used
+    unit: kb
+  ephemeral_disk_inodes_free:
+    key: /<%= p("mysql-metrics.origin") %>/system/ephemeral_disk_inodes_free
+    unit: kb
 leader_follower_metrics:
   is_follower:
     key: /<%= p("mysql-metrics.origin") %>/follower/is_follower
