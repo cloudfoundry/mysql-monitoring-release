@@ -1,7 +1,4 @@
 ---
-internal_metrics:
-  available:
-    key: /<%= p("mysql-metrics.origin") %>/available
 disk_metrics:
   persistent_disk_used:
     key: /<%= p("mysql-metrics.origin") %>/system/persistent_disk_used
@@ -30,7 +27,6 @@ disk_metrics:
 leader_follower_metrics:
   is_follower:
     key: /<%= p("mysql-metrics.origin") %>/follower/is_follower
-    unit: integer
   seconds_behind_master:
     key: /<%= p("mysql-metrics.origin") %>/follower/seconds_behind_master
     unit: integer
@@ -47,6 +43,8 @@ leader_follower_metrics:
     key: /<%= p("mysql-metrics.origin") %>/follower/slave_sql_running
     unit: boolean
 mysql_metrics:
+  available:
+    key: /<%= p("mysql-metrics.origin") %>/available
   max_connections:
     key: /<%= p("mysql-metrics.origin") %>/variables/max_connections
     unit: integer
@@ -167,7 +165,7 @@ mysql_metrics:
   busy_time:
     key: /<%= p("mysql-metrics.origin") %>/performance/busy_time
     unit: second
-<% if p("mysql-metrics.galera_metrics_enabled") %>
+galera_metrics:
   wsrep_cluster_size:
     key: /<%= p("mysql-metrics.origin") %>/galera/wsrep_cluster_size
     unit: node
@@ -189,4 +187,3 @@ mysql_metrics:
   wsrep_cluster_status:
     key: /<%= p("mysql-metrics.origin") %>/galera/wsrep_cluster_status
     unit: number
-<% end %>

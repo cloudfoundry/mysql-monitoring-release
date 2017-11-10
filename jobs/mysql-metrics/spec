@@ -15,9 +15,6 @@ properties:
     default: mysql-metrics
   mysql-metrics.password:
     description: "database password for mysql metrics"
-  mysql-metrics.galera_metrics_enabled:
-    description: "Boolean on whether to record galera-related metrics"
-    default: true
   mysql-metrics.metrics_frequency:
     description: "interval to poll metrics in seconds"
     default: 30
@@ -27,12 +24,21 @@ properties:
   mysql-metrics.origin:
     description: "origin tag when metrics are emitted"
     default: p-mysql
-  mysql-metrics.leader_follower_enabled:
-    description: "enable leader follower releated metrics"
-    default: false
   mysql-metrics.heartbeat_database:
     description: "schema where heartbeat table exists"
     default: "replication_monitoring"
   mysql-metrics.heartbeat_table:
     description: "table where heartbeat data is stored"
     default: "heartbeat"
+  mysql-metrics.leader_follower_enabled:
+    description: "enable leader follower metrics"
+    default: false
+  mysql-metrics.galera_metrics_enabled:
+    description: "enabled galera metrics"
+    default: true
+  mysql-metrics.mysql_metrics_enabled:
+    description: "enable mysql metrics"
+    default: true
+  mysql-metrics.disk_metrics_enabled:
+    description: "enable disk metrics"
+    default: true
