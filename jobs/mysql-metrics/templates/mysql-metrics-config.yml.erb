@@ -1,12 +1,41 @@
 <%=
 
+db_host = nil
+if_p('mysql-metrics.host') do |host| # this property should be present when running on mysql node but not on broker
+  db_host = host
+end.else do # when running on the broker
+  if_link('proxy') do |proxy| # when there is a proxy
+    if proxy.instances.any?
+      db_host = proxy.instances.first.address
+    end
+  end
+  if db_host.nil? # if no proxy link exists, or proxy link exists but there are 0 instances of proxy
+    db_host = link('mysql').instances.first.address
+  end
+end
+
+db_password = nil
+if_p('mysql-metrics.password') do |password| # this property should be present when running on mysql node but not on broker
+  db_password = password
+end.else do
+  if_link('broker') do |broker_link|
+    db_password = broker_link.p('cf_mysql.broker.db_password')
+  end
+end
+
+if db_password.nil?
+  raise 'Password is required, either by directly setting the property or supplying the link'
+end
+
 config = {
   instance_id: spec.id,
+  host: db_host,
   username: p('mysql-metrics.username'),
-  password: p('mysql-metrics.password'),
+  password: db_password,
   pidfile: '/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid',
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
   origin: p('mysql-metrics.origin'),
+  emit_broker_metrics: p('mysql-metrics.broker_metrics_enabled'),
   emit_disk_metrics: p('mysql-metrics.disk_metrics_enabled'),
   emit_mysql_metrics: p('mysql-metrics.mysql_metrics_enabled'),
   emit_leader_follower_metrics: p('mysql-metrics.leader_follower_enabled'),

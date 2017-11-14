@@ -9,12 +9,24 @@ templates:
 packages:
 - mysql-metrics
 
+consumes:
+- name: broker
+  type: broker
+  optional: true
+- name: proxy
+  type: proxy
+  optional: true
+- name: mysql
+  type: mysql
+
 properties:
   mysql-metrics.username:
     description: "database username for mysql metrics"
     default: mysql-metrics
   mysql-metrics.password:
     description: "database password for mysql metrics"
+  mysql-metrics.host:
+    description: "hostname for accessing mysql"
   mysql-metrics.metrics_frequency:
     description: "interval to poll metrics in seconds"
     default: 30
@@ -42,3 +54,6 @@ properties:
   mysql-metrics.disk_metrics_enabled:
     description: "enable disk metrics"
     default: true
+  mysql-metrics.broker_metrics_enabled:
+    description: "enable broker metrics"
+    default: false

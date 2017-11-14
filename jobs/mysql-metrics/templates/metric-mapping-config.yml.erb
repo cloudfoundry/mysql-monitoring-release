@@ -27,6 +27,7 @@ disk_metrics:
 leader_follower_metrics:
   is_follower:
     key: /<%= p("mysql-metrics.origin") %>/follower/is_follower
+    unit: boolean
   seconds_behind_master:
     key: /<%= p("mysql-metrics.origin") %>/follower/seconds_behind_master
     unit: integer
@@ -45,6 +46,7 @@ leader_follower_metrics:
 mysql_metrics:
   available:
     key: /<%= p("mysql-metrics.origin") %>/available
+    unit: boolean
   max_connections:
     key: /<%= p("mysql-metrics.origin") %>/variables/max_connections
     unit: integer
@@ -187,3 +189,7 @@ galera_metrics:
   wsrep_cluster_status:
     key: /<%= p("mysql-metrics.origin") %>/galera/wsrep_cluster_status
     unit: number
+broker_metrics:
+  service_plans_disk_allocated:
+    key: /<%= p("mysql-metrics.origin") %>/broker/disk_allocated_service_plans
+    unit: megabyte
