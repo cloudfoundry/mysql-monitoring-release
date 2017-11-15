@@ -42,7 +42,7 @@ properties:
   mysql-metrics.heartbeat_table:
     description: "table where heartbeat data is stored"
     default: "heartbeat"
-  mysql-metrics.leader_follower_enabled:
+  mysql-metrics.leader_follower_metrics_enabled:
     description: "enable leader follower metrics"
     default: false
   mysql-metrics.galera_metrics_enabled:
