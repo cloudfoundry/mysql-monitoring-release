@@ -15,6 +15,10 @@ rm -rf ${RELEASE_DIR}/bin/fgt
 
 go get github.com/onsi/ginkgo/ginkgo
 go get github.com/GeertJohan/fgt
+gem install bosh-template
+
+echo -e "\nTesting Release-Level Specs..."
+${RELEASE_DIR}/src/spec/bin/test "$@"
 
 echo -e "\nTesting Replication Canary..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/replication-canary/bin/test "$@"

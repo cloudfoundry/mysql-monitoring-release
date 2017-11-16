@@ -1,0 +1,8 @@
+#!/bin/sh
+
+template_path=$1
+context_path=$2
+
+bosh-template $template_path --context "$(cat $context_path)" 2>&1
+
+exit 0
