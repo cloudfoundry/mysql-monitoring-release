@@ -10,7 +10,8 @@ package_dir=/var/vcap/packages/mysql-diag-agent
 pidfile="${run_dir}/mysql-diag-agent.pid"
 config_path="${job_dir}/config/mysql-diag-agent.yml"
 
-log_file="${log_dir}/mysql-diag-agent.combined.log"
+stdout_log_file="${log_dir}/mysql-diag-agent.stdout.log"
+stderr_log_file="${log_dir}/mysql-diag-agent.stderr.log"
 
 executable_name=mysql-diag-agent
 
@@ -29,14 +30,11 @@ case $1 in
     chown -R vcap:vcap "${run_dir}"
     chown -R vcap:vcap "${log_dir}"
 
-    # Start syslog forwarding
-    #/var/vcap/packages/syslog_aggregator/setup_syslog_forwarder.sh ${job_dir}/config
-
     su - vcap -c -o pipefail \
         "$executable \
-        -c="${config_path}" \
-        1> >(tee -a >(logger -p local1.info -t mysql-diag-agent) "${log_file}") \
-        2> >(tee -a >(logger -p local1.error -t mysql-diag-agent) "${log_file}") &"
+        -c=\"${config_path}\" \
+        1> \"${stdout_log_file}\" \
+        2> \"${stderr_log_file}\" &"
 
     log "Starting mysql-diag-agent... done"
     ;;

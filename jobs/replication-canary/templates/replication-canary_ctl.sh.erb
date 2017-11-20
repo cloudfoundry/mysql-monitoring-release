@@ -10,7 +10,8 @@ package_dir=/var/vcap/packages/replication-canary
 pidfile="${run_dir}/replication-canary.pid"
 config_path="${job_dir}/config/replication-canary.yml"
 
-log_file="${log_dir}/replication-canary.combined.log"
+stdout_log_file="${log_dir}/replication-canary.stdout.log"
+stderr_log_file="${log_dir}/replication-canary.stderr.log"
 
 executable_name=replication-canary
 
@@ -27,21 +28,11 @@ case $1 in
     mkdir -p "${run_dir}"
     mkdir -p "${log_dir}"
 
-    <% if_p("syslog_aggregator.address", "syslog_aggregator.port", "syslog_aggregator.transport") do %>
-    # Start syslog forwarding
-    /var/vcap/packages/syslog_aggregator/setup_syslog_forwarder.sh ${job_dir}/config
-    <% end.else do %>
-    if [[ -e /etc/rsyslog.d/00-syslog_forwarder.conf ]]; then
-      rm -f /etc/rsyslog.d/00-syslog_forwarder.conf
-      /usr/sbin/service rsyslog restart
-    fi
-    <% end %>
-
     $executable \
         -configPath="${config_path}" \
         -logLevel="debug" \
-        1> >(tee -a >(logger -p local1.info -t replication-canary) "${log_file}") \
-        2> >(tee -a >(logger -p local1.error -t replication-canary) "${log_file}") &
+        1> "${stdout_log_file}" \
+        2> "${stderr_log_file}" &
 
     log "Starting replication-canary... done"
     ;;

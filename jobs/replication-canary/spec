@@ -6,12 +6,10 @@ templates:
   manual-read: bin/manual-read
   replication-canary_ctl.sh.erb: bin/replication-canary_ctl
   replication-canary.yml.erb: config/replication-canary.yml
-  syslog_forwarder.conf.erb: config/syslog_forwarder.conf
 
 packages:
 - cf-mysql-common
 - replication-canary
-- syslog_aggregator
 
 consumes:
 - name: mysql
@@ -91,15 +89,3 @@ properties:
 
   mysql-monitoring.cluster_identifier:
     description: 'The cluster identifier will be included in the subject of replication notification e-mails. It should be a unique identifier.'
-
-  syslog_aggregator.address:
-    description: "IP address for syslog aggregator"
-  syslog_aggregator.port:
-    description: "TCP port of syslog aggregator"
-  syslog_aggregator.all:
-    description: "Define whether forwarders should also send non-mysql syslog activity to the aggregator."
-    default: false
-  syslog_aggregator.transport:
-    description: "Transport to be used when forwarding logs (tcp|udp|relp)."
-    default: "tcp"
-
