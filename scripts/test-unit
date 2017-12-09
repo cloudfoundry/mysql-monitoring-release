@@ -21,7 +21,7 @@ echo -e "\nTesting Release-Level Specs..."
 ${RELEASE_DIR}/src/spec/bin/test "$@"
 
 echo -e "\nTesting Replication Canary..."
-${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/replication-canary/bin/test "$@"
+USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/replication-canary/bin/test "$@"
 
 echo -e "\nTesting Mysql-Diag..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag/bin/test "$@"
@@ -30,7 +30,7 @@ echo -e "\nTesting Mysql-Diag-Agent..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag-agent/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
-${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/notifications-client/bin/test "$@"
+USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/notifications-client/bin/test "$@"
 
 echo -e "\nTesting Metrics..."
-${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/mysql-metrics/bin/test "$@"
+USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/mysql-metrics/bin/test "$@"
