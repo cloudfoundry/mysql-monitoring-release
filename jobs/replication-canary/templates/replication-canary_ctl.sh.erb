@@ -31,8 +31,8 @@ case $1 in
     $executable \
         -configPath="${config_path}" \
         -logLevel="debug" \
-        1> "${stdout_log_file}" \
-        2> "${stderr_log_file}" &
+        1>> "${stdout_log_file}" \
+        2>> "${stderr_log_file}" &
 
     log "Starting replication-canary... done"
     ;;
