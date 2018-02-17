@@ -56,3 +56,6 @@ properties:
   mysql-metrics.broker_metrics_enabled:
     description: "enable broker metrics"
     default: false
+  mysql-metrics.cpu_metrics_enabled:
+    description: "enable cpu metrics"
+    default: true
