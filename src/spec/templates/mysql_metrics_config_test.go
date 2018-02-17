@@ -2,12 +2,13 @@ package templates_test
 
 import (
 	"encoding/json"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"io/ioutil"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 type TemplateContext struct {
@@ -26,7 +27,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 		templateOutput string
 
-		renderTemplate func(context *TemplateContext)
+		renderTemplate              func(context *TemplateContext)
 		buildDefaultTemplateContext func()
 	)
 
@@ -60,6 +61,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 			Expect(templateOutput).To(ContainSubstring(`"origin": "origin"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_broker_metrics": "false"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_disk_metrics": "false"`))
+			Expect(templateOutput).To(ContainSubstring(`"emit_cpu_metrics": "false"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_mysql_metrics": "true"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_leader_follower_metrics": "false"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_galera_metrics": "true"`))
@@ -75,6 +77,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 					"origin":                          "origin2",
 					"broker_metrics_enabled":          "true",
 					"disk_metrics_enabled":            "true",
+					"cpu_metrics_enabled":             "true",
 					"mysql_metrics_enabled":           "false",
 					"leader_follower_metrics_enabled": "true",
 					"galera_metrics_enabled":          "false",
@@ -217,6 +220,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 				"origin":                          "origin",
 				"broker_metrics_enabled":          "false",
 				"disk_metrics_enabled":            "false",
+				"cpu_metrics_enabled":             "false",
 				"mysql_metrics_enabled":           "true",
 				"leader_follower_metrics_enabled": "false",
 				"galera_metrics_enabled":          "true",
