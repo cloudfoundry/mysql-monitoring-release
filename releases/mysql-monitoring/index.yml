@@ -43,6 +43,8 @@ builds:
     version: 8.5.0
   ea10e40a-d8be-4b71-893d-d802066e9036:
     version: "4"
+  f386deda-b520-450d-70e8-5d72de750246:
+    version: 8.17.0
   f8e640a4-a2f6-4810-a2ea-b366e1e288ea:
     version: "5"
 format-version: "2"
