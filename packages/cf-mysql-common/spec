@@ -1,4 +1,0 @@
----
-name: cf-mysql-common
-files:
-- cf-mysql-common/pid_utils.sh

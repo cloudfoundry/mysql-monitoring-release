@@ -1,0 +1,4 @@
+---
+name: mysql-monitoring-common
+files:
+- mysql-monitoring-common/pid_utils.sh

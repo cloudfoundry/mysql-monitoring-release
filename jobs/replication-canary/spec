@@ -8,7 +8,7 @@ templates:
   replication-canary.yml.erb: config/replication-canary.yml
 
 packages:
-- cf-mysql-common
+- mysql-monitoring-common
 - replication-canary
 
 consumes:
