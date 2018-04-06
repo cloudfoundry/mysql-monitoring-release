@@ -1,0 +1,76 @@
+---
+- type: replace
+  path: /releases/name=mysql-monitoring?
+  value:
+    name: mysql-monitoring
+    version: latest
+
+- type: replace
+  path: /releases/name=loggregator?
+  value:
+    name: loggregator
+    version: latest
+
+- type: replace
+  path: /releases/name=consul?
+  value:
+    name: consul
+    version: latest
+
+- type: replace
+  path: /instance_groups/name=mysql/jobs/-
+  value:
+    name: mysql-metrics
+    release: mysql-monitoring
+    properties:
+      mysql-metrics:
+        host: localhost
+        password: ((mysql_metrics_password))
+
+- type: replace
+  path: /instance_groups/name=mysql/jobs/name=mysql-clustered/properties/seeded_databases?/-
+  value:
+    name: metrics_db
+    username: mysql-metrics
+    password: ((mysql_metrics_password))
+
+- type: replace
+  path: /instance_groups/name=mysql/jobs/name=mysql-clustered/properties/server_audit_excluded_users?/-
+  value: mysql-metrics
+
+- type: replace
+  path: /instance_groups/name=mysql/jobs/-
+  value:
+    name: metron_agent
+    release: loggregator
+    properties:
+      loggregator:
+        tls:
+          ca_cert: ((loggregator_tls_ca_cert))
+          metron:
+            cert: ((loggregator_tls_metron_cert))
+            key: ((loggregator_tls_metron_key))
+      metron_agent:
+        deployment: ((metron_agent_deployment))
+
+- type: replace
+  path: /instance_groups/name=mysql/jobs/-
+  value:
+    name: consul_agent
+    release: consul
+    consumes:
+      consul_client:
+        from: consul_client_link
+        deployment: cf
+      consul_common:
+        from: consul_common_link
+        deployment: cf
+      consul_server:
+        from: consul_server_link
+        deployment: cf
+
+- type: replace
+  path: /variables/-
+  value:
+    name: mysql_metrics_password
+    type: password
