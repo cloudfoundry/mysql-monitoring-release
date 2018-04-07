@@ -25,7 +25,7 @@ properties:
   mysql-metrics.password:
     description: "database password for mysql metrics"
   mysql-metrics.host:
-    description: "hostname for accessing mysql"
+    description: "hostname or unix domain socket file path for accessing mysql"
   mysql-metrics.metrics_frequency:
     description: "interval to poll metrics in seconds"
     default: 30
