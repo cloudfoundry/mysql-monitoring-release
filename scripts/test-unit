@@ -20,6 +20,9 @@ gem install bosh-template
 echo -e "\nTesting Release-Level Specs..."
 ${RELEASE_DIR}/src/spec/bin/test "$@"
 
+echo -e "\nTesting Metrics..."
+USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/mysql-metrics/bin/test "$@"
+
 echo -e "\nTesting Replication Canary..."
 USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/replication-canary/bin/test "$@"
 
@@ -31,6 +34,3 @@ ${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag-agent/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
 USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/notifications-client/bin/test "$@"
-
-echo -e "\nTesting Metrics..."
-USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/mysql-metrics/bin/test "$@"
