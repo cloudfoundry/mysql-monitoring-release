@@ -7,9 +7,6 @@
 [submodule "src/github.com/pivotal-cf-experimental/notifications-client"]
 	path = src/github.com/pivotal-cf-experimental/notifications-client
 	url = git@github.com:pivotal-cf-experimental/notifications-client.git
-[submodule "src/golang.org/x/tools"]
-	path = src/golang.org/x/tools
-	url = https://go.googlesource.com/tools
 [submodule "src/github.com/pivotal-cf/mysql-diag"]
 	path = src/github.com/pivotal-cf/mysql-diag
 	url = git@github.com:pivotal-cf/mysql-diag
