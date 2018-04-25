@@ -132,14 +132,6 @@
 			"notests": true
 		},
 		{
-			"importpath": "github.com/pivotal-cf-experimental/notifications-client",
-			"repository": "https://github.com/pivotal-cf-experimental/notifications-client",
-			"vcs": "git",
-			"revision": "2b54b09ffeefdf5660d25d9f7ddbf038bd79f72b",
-			"branch": "master",
-			"notests": true
-		},
-		{
 			"importpath": "github.com/pivotal-cf-experimental/service-config",
 			"repository": "https://github.com/pivotal-cf-experimental/service-config",
 			"vcs": "git",

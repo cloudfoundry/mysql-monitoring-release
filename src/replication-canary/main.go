@@ -14,7 +14,7 @@ import (
 	"code.cloudfoundry.org/lager"
 	"code.cloudfoundry.org/uaa-go-client"
 	uaa_config "code.cloudfoundry.org/uaa-go-client/config"
-	"github.com/pivotal-cf-experimental/notifications-client/notificationemailer"
+	"notifications-client/notificationemailer"
 	"replication-canary/alert"
 	"replication-canary/canary"
 	"replication-canary/clientcreator"
