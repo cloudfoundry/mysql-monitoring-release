@@ -1,0 +1,29 @@
+#!/bin/bash
+set -ex
+
+my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+project_dir="$( cd "${my_dir}/.." && pwd )"
+
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/GeertJohan/fgt
+go get github.com/maxbrunsfeld/counterfeiter
+go get golang.org/x/tools/cmd/stringer
+
+pushd "${project_dir}" > /dev/null
+  package_list=$(go list ./... | grep -v /vendor/)
+
+  if [[ -z "$USE_FGT" ]]; then
+    go fmt ${package_list}
+  else
+    fgt go fmt ${package_list}
+  fi
+  go vet ${package_list}
+
+  echo "Verifying it builds..."
+  ./bin/build
+
+  ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites \
+    -skipPackage="integration" \
+    "$@"
+popd > /dev/null
