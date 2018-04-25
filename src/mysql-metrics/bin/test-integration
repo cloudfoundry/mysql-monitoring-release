@@ -1,0 +1,6 @@
+#!/bin/bash
+set -eux
+
+my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+INTEGRATION=true ${my_dir}/test "$@"

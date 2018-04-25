@@ -1,0 +1,42 @@
+#!/bin/bash
+set -ex
+
+my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+project_dir="$( cd "${my_dir}/.." && pwd )"
+
+# Needed for disk metrics; may need to create manually if permission denied
+mkdir -p /var/vcap/store
+
+if [ "$(uname)" == "Darwin" ]; then
+  mkdir -p /proc
+  echo "cpu 0 0 0 1000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" > /proc/stat
+fi
+
+go get github.com/maxbrunsfeld/counterfeiter
+
+pushd "${project_dir}" > /dev/null
+  if [[ -z "$USE_FGT" ]]; then
+    go fmt $(go list ./... | grep -v /vendor/)
+  else
+    fgt go fmt $(go list ./... | grep -v /vendor/)
+  fi
+
+  go vet -x $(go list ./... | grep -v /vendor/)
+  bin/regenerate-fakes
+
+  if [[ -n $UNIT ]]; then
+    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites -skipPackage="serial_integration_test,integration_test" \
+      "$@"
+  elif [[ -n $INTEGRATION ]]; then
+    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites integration_test \
+     "$@"
+    ginkgo -r -race -failOnPending -randomizeAllSpecs -randomizeSuites serial_integration_test \
+     "$@"
+  else
+    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites -skipPackage="serial_integration_test" \
+     "$@"
+    ginkgo -r -race -failOnPending -randomizeAllSpecs -randomizeSuites serial_integration_test \
+     "$@"
+  fi
+popd > /dev/null

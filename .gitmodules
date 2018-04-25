@@ -1,6 +1,3 @@
 [submodule "src/github.com/onsi/ginkgo"]
 	path = src/github.com/onsi/ginkgo
 	url = git@github.com:onsi/ginkgo
-[submodule "src/github.com/pivotal-cf-experimental/mysql-metrics"]
-	path = src/github.com/pivotal-cf-experimental/mysql-metrics
-	url = git@github.com:pivotal-cf-experimental/mysql-metrics.git
