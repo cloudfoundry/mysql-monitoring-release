@@ -1,0 +1,2 @@
+notificationemailer/integration/mailinator_test\.go.*clientSecret.*
+config/config_test\.go.*adminsome-secret.*
