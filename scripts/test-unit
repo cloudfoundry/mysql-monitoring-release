@@ -27,10 +27,10 @@ echo -e "\nTesting Replication Canary..."
 USE_FGT=true ${RELEASE_DIR}/src/replication-canary/bin/test "$@"
 
 echo -e "\nTesting Mysql-Diag..."
-${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag/bin/test "$@"
+${RELEASE_DIR}/src/mysql-diag/bin/test "$@"
 
 echo -e "\nTesting Mysql-Diag-Agent..."
-${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag-agent/bin/test "$@"
+${RELEASE_DIR}/src/mysql-diag-agent/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
 USE_FGT=true ${RELEASE_DIR}/src/notifications-client/bin/test "$@"
