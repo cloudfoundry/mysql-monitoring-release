@@ -1,0 +1,16 @@
+#!/bin/bash
+set -eux
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+PROJECT_DIR="$( cd $MY_DIR/.. && pwd )"
+
+pushd "${PROJECT_DIR}"
+  fgt go fmt $(go list ./... | grep -v /vendor/)
+  go vet -x $(go list ./... | grep -v /vendor/)
+
+  ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites \
+    "$@" \
+    notificationemailer/integration \
+    integration
+popd

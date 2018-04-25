@@ -1,9 +1,6 @@
 [submodule "src/github.com/onsi/ginkgo"]
 	path = src/github.com/onsi/ginkgo
 	url = git@github.com:onsi/ginkgo
-[submodule "src/github.com/pivotal-cf-experimental/notifications-client"]
-	path = src/github.com/pivotal-cf-experimental/notifications-client
-	url = git@github.com:pivotal-cf-experimental/notifications-client.git
 [submodule "src/github.com/pivotal-cf/mysql-diag"]
 	path = src/github.com/pivotal-cf/mysql-diag
 	url = git@github.com:pivotal-cf/mysql-diag

@@ -33,4 +33,4 @@ echo -e "\nTesting Mysql-Diag-Agent..."
 ${RELEASE_DIR}/src/github.com/pivotal-cf/mysql-diag-agent/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
-USE_FGT=true ${RELEASE_DIR}/src/github.com/pivotal-cf-experimental/notifications-client/bin/test "$@"
+USE_FGT=true ${RELEASE_DIR}/src/notifications-client/bin/test "$@"
