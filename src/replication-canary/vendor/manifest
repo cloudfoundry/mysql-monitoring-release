@@ -164,14 +164,6 @@
 			"notests": true
 		},
 		{
-			"importpath": "gopkg.in/yaml.v1",
-			"repository": "https://gopkg.in/yaml.v1",
-			"vcs": "git",
-			"revision": "9f9df34309c04878acc86042b16630b0f696e1de",
-			"branch": "v1",
-			"notests": true
-		},
-		{
 			"importpath": "gopkg.in/yaml.v2",
 			"repository": "https://gopkg.in/yaml.v2",
 			"vcs": "git",
