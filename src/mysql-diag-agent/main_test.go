@@ -7,11 +7,10 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 	"mysql-diag-agent/config"
 	"mysql-diag-agent/hattery"
@@ -86,7 +85,6 @@ var _ = Describe("mysql diag agent", func() {
 
 		BeforeEach(func() {
 			session = runMainWithArgs()
-			Eventually(session, executableTimeout).Should(gbytes.Say("Listening on:"))
 		})
 
 		AfterEach(func() {
@@ -102,8 +100,9 @@ var _ = Describe("mysql diag agent", func() {
 			)
 
 			var info diagagentclient.InfoResponse
-			err := hattery.Url(url).BasicAuth(username, password).Fetch(&info)
-			Expect(err).NotTo(HaveOccurred())
+			Eventually(func() error {
+				return hattery.Url(url).BasicAuth(username, password).Fetch(&info)
+			}).ShouldNot(HaveOccurred())
 
 			Expect(info.Persistent.BytesTotal).ToNot(BeZero())
 			Expect(info.Persistent.BytesFree).ToNot(BeZero())
