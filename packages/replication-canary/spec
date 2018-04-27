@@ -6,3 +6,4 @@ dependencies:
 
 files:
 - replication-canary/**/*
+- notifications-client/**/*
