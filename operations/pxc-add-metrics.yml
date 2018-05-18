@@ -12,12 +12,6 @@
     version: latest
 
 - type: replace
-  path: /releases/name=consul?
-  value:
-    name: consul
-    version: latest
-
-- type: replace
   path: /instance_groups/name=mysql/jobs/-
   value:
     name: mysql-metrics
@@ -51,23 +45,8 @@
             cert: ((loggregator_tls_metron_cert))
             key: ((loggregator_tls_metron_key))
       metron_agent:
+        bosh_dns: true
         deployment: ((metron_agent_deployment))
-
-- type: replace
-  path: /instance_groups/name=mysql/jobs/-
-  value:
-    name: consul_agent
-    release: consul
-    consumes:
-      consul_client:
-        from: consul_client_link
-        deployment: cf
-      consul_common:
-        from: consul_common_link
-        deployment: cf
-      consul_server:
-        from: consul_server_link
-        deployment: cf
 
 - type: replace
   path: /variables/-
