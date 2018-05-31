@@ -231,6 +231,18 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 				Key:  "galera/wsrep_cluster_status",
 				Unit: "number",
 			},
+			"wsrep_flow_control_paused": {
+				Key: "galera/wsrep_flow_control_paused",
+				Unit: "float",
+			},
+			"wsrep_flow_control_sent": {
+				Key: "galera/wsrep_flow_control_sent",
+				Unit: "number",
+			},
+			"wsrep_flow_control_received": {
+				Key: "galera/wsrep_flow_control_received",
+				Unit: "number",
+			},
 		},
 		LeaderFollowerMetricMappings: map[string]MetricDefinition{
 			"is_follower": {

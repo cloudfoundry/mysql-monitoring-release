@@ -26,7 +26,7 @@ var _ = Describe("DefaultMetricsMappingConfig()", func() {
 		Expect(cpuMetricMappings).ToNot(BeNil())
 
 		Expect(len(mysqlMetricMappings)).To(Equal(46))
-		Expect(len(galeraMetricMappings)).To(Equal(7))
+		Expect(len(galeraMetricMappings)).To(Equal(10))
 		Expect(len(leaderFollowerMetricMappings)).To(Equal(6))
 		Expect(len(diskMetricMappings)).To(Equal(12))
 		Expect(len(brokerMetricMappings)).To(Equal(1))
