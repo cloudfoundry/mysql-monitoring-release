@@ -22,14 +22,14 @@
         password: ((mysql_metrics_password))
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/name=mysql-clustered/properties/seeded_databases?/-
+  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/-
   value:
     name: metrics_db
     username: mysql-metrics
     password: ((mysql_metrics_password))
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/name=mysql-clustered/properties/server_audit_excluded_users?/-
+  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/server_audit_excluded_users?/-
   value: mysql-metrics
 
 - type: replace
