@@ -88,11 +88,5 @@ var _ = Describe("DefaultMetricsMappingConfig()", func() {
 				Expect(metricsDocString).To(ContainSubstring(emittedMetric.Key))
 			}
 		})
-
-		XIt("has no TODOs", func(){
-			Expect(metricsDocString).NotTo(ContainSubstring("TODO"))
-
-		})
-
 	})
 })
