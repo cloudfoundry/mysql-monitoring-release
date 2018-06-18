@@ -239,8 +239,8 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 				Key:  "galera/wsrep_flow_control_sent",
 				Unit: "number",
 			},
-			"wsrep_flow_control_received": {
-				Key:  "galera/wsrep_flow_control_received",
+			"wsrep_flow_control_recv": {
+				Key:  "galera/wsrep_flow_control_recv",
 				Unit: "number",
 			},
 		},
