@@ -37,6 +37,8 @@
   value:
     name: metron_agent
     release: loggregator
+    consumes:
+      doppler: { deployment: cf }
     properties:
       loggregator:
         tls:
