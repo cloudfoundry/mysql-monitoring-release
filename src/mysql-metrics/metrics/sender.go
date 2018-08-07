@@ -1,14 +1,30 @@
 package metrics
 
-import "github.com/cloudfoundry/dropsonde/metrics"
+import (
+	"code.cloudfoundry.org/go-loggregator"
+)
 
 //go:generate counterfeiter . Sender
 type Sender interface {
 	SendValue(name string, value float64, unit string) error
 }
 
-type DropsondeSender struct{}
+type LoggregatorSender struct {
+	client   *loggregator.IngressClient
+	sourceID string
+}
 
-func (sender *DropsondeSender) SendValue(name string, value float64, unit string) error {
-	return metrics.SendValue(name, value, unit)
+func NewLoggregatorSender(client *loggregator.IngressClient, sourceID string) *LoggregatorSender {
+	return &LoggregatorSender{
+		client:   client,
+		sourceID: sourceID,
+	}
+}
+
+func (sender *LoggregatorSender) SendValue(name string, value float64, unit string) error {
+	sender.client.EmitGauge(
+		loggregator.WithGaugeSourceInfo(sender.sourceID, ""),
+		loggregator.WithGaugeValue(name, value, unit),
+	)
+	return nil
 }

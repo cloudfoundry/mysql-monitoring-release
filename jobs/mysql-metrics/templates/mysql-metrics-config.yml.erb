@@ -35,6 +35,7 @@ config = {
   pidfile: '/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid',
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
   origin: p('mysql-metrics.origin'),
+  source_id: p('mysql-metrics.source_id'),
   emit_broker_metrics: p('mysql-metrics.broker_metrics_enabled'),
   emit_disk_metrics: p('mysql-metrics.disk_metrics_enabled'),
   emit_cpu_metrics: p('mysql-metrics.cpu_metrics_enabled'),
@@ -42,7 +43,10 @@ config = {
   emit_leader_follower_metrics: p('mysql-metrics.leader_follower_metrics_enabled'),
   emit_galera_metrics: p('mysql-metrics.galera_metrics_enabled'),
   heartbeat_database: p('mysql-metrics.heartbeat_database'),
-  heartbeat_table: p('mysql-metrics.heartbeat_table')
+  heartbeat_table: p('mysql-metrics.heartbeat_table'),
+  loggregator_ca_path: '/var/vcap/jobs/mysql-metrics/certs/loggregator-ca.pem',
+  loggregator_client_cert_path: '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-cert.pem',
+  loggregator_client_key_path: '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem'
 }
 if config[:metrics_frequency] < p('mysql-metrics.minimum_metrics_frequency')
   raise 'metrics_frequency < minimum_metrics_frequency: collecting metrics at this rate is not advised'

@@ -27,6 +27,9 @@ type MetricsConfig struct {
 	EmitGaleraMetrics         bool   `json:"emit_galera_metrics"`
 	EmitDiskMetrics           bool   `json:"emit_disk_metrics"`
 	EmitCPUMetrics            bool   `json:"emit_cpu_metrics"`
+	LoggregatorCAPath         string `json:"loggregator_ca_path"`
+	LoggregatorClientCertPath string `json:"loggregator_client_cert_path"`
+	LoggregatorClientKeyPath  string `json:"loggregator_client_key_path"`
 }
 
 var _ = Describe("mysql-metrics", func() {
@@ -80,6 +83,9 @@ var _ = Describe("mysql-metrics", func() {
 			EmitGaleraMetrics:         true,
 			EmitDiskMetrics:           true,
 			EmitCPUMetrics:            true,
+			LoggregatorCAPath:         "../fixtures/certs/loggregator.crt",
+			LoggregatorClientCertPath: "../fixtures/certs/loggregator-agent.crt",
+			LoggregatorClientKeyPath:  "../fixtures/certs/loggregator-agent.key",
 		}
 
 	})

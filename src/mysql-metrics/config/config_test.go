@@ -87,7 +87,7 @@ var _ = Describe("Config", func() {
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(config).NotTo(BeNil())
-			Expect(config.InstanceId).To(Equal(instanceId))
+			Expect(config.InstanceID).To(Equal(instanceId))
 			Expect(config.Host).To(Equal(host))
 			Expect(config.Username).To(Equal(username))
 			Expect(config.Password).To(Equal(password))

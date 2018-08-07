@@ -11,8 +11,6 @@ import (
 
 	"path/filepath"
 
-	"code.cloudfoundry.org/lager"
-	"github.com/cloudfoundry/dropsonde"
 	"mysql-metrics/config"
 	"mysql-metrics/cpu"
 	"mysql-metrics/database_client"
@@ -21,6 +19,9 @@ import (
 	"mysql-metrics/gather"
 	"mysql-metrics/metrics"
 	"mysql-metrics/metrics_computer"
+
+	loggregator "code.cloudfoundry.org/go-loggregator"
+	"code.cloudfoundry.org/lager"
 )
 
 const (
@@ -81,10 +82,26 @@ func main() {
 
 	metricMappingConfig := metrics.DefaultMetricMappingConfig()
 
-	if err := dropsonde.Initialize("localhost:3457", mysqlMetricsConfig.Origin); err != nil {
-		metricsLogger.Error("dropsonde failed to initialize", err)
+	tlsConfig, err := loggregator.NewIngressTLSConfig(
+		mysqlMetricsConfig.LoggregatorCAPath,
+		mysqlMetricsConfig.LoggregatorClientCertPath,
+		mysqlMetricsConfig.LoggregatorClientKeyPath,
+	)
+	if err != nil {
+		metricsLogger.Error("loggregator tls config failed to initialize", err)
 		panic(err)
 	}
+
+	ingressClient, err := loggregator.NewIngressClient(
+		tlsConfig,
+		loggregator.WithAddr("localhost:3458"),
+		loggregator.WithTag("origin", mysqlMetricsConfig.Origin),
+	)
+	if err != nil {
+		metricsLogger.Error("loggregator client failed to initialize", err)
+		panic(err)
+	}
+	sender := metrics.NewLoggregatorSender(ingressClient, mysqlMetricsConfig.SourceID)
 
 	conn := Connection(mysqlMetricsConfig)
 	dbClient := database_client.NewDatabaseClient(conn, mysqlMetricsConfig)
@@ -99,7 +116,7 @@ func main() {
 
 	loggerWrapper := lagerLoggerWrapper{metricsLogger}
 	metricsComputer := metrics_computer.NewMetricsComputer(*metricMappingConfig)
-	metricsWriter := metrics.NewMetricWriter(new(metrics.DropsondeSender), loggerWrapper, mysqlMetricsConfig.Origin)
+	metricsWriter := metrics.NewMetricWriter(sender, loggerWrapper, mysqlMetricsConfig.Origin)
 	processor := metrics.NewProcessor(gatherer, metricsComputer, metricsWriter, mysqlMetricsConfig)
 	metricsInterval := time.Duration(mysqlMetricsConfig.MetricsFrequency) * time.Second
 	emitter := emit.NewEmitter(processor, metricsInterval, time.Sleep, loggerWrapper)

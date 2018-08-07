@@ -4,6 +4,9 @@ name: mysql-metrics
 templates:
   mysql-metrics-config.yml.erb: config/mysql-metrics-config.yml
   mysql-metrics_ctl.sh.erb: bin/mysql-metrics_ctl
+  loggregator-ca.erb: certs/loggregator-ca.pem
+  loggregator-client-cert.erb: certs/loggregator-client-cert.pem
+  loggregator-client-key.erb: certs/loggregator-client-key.pem
 
 packages:
 - mysql-metrics
@@ -35,6 +38,9 @@ properties:
   mysql-metrics.origin:
     description: "origin tag when metrics are emitted"
     default: p-mysql
+  mysql-metrics.source_id:
+    description: "the source_id when metrics are emitted"
+    default: p-mysql
   mysql-metrics.log_metrics_to_disk:
     description: "when enabled, metrics will be emitted through the firehose and also logged onto disk"
     default: true
@@ -62,3 +68,5 @@ properties:
   mysql-metrics.cpu_metrics_enabled:
     description: "enable cpu metrics"
     default: true
+  mysql-metrics.tls:
+    description: "TLS configuration for loggregator client"
