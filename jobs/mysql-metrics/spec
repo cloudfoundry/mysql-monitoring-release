@@ -35,11 +35,8 @@ properties:
   mysql-metrics.minimum_metrics_frequency:
     description: "internal property: enforce minimum bound for metrics"
     default: 10
-  mysql-metrics.origin:
-    description: "origin tag when metrics are emitted"
-    default: p-mysql
   mysql-metrics.source_id:
-    description: "the source_id when metrics are emitted"
+    description: "the source_id when metrics are emitted, this is identical to origin for v1"
     default: p-mysql
   mysql-metrics.log_metrics_to_disk:
     description: "when enabled, metrics will be emitted through the firehose and also logged onto disk"

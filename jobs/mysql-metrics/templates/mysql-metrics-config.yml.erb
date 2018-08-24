@@ -34,7 +34,7 @@ config = {
   password: db_password,
   pidfile: '/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid',
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
-  origin: p('mysql-metrics.origin'),
+  origin: p('mysql-metrics.source_id'),
   source_id: p('mysql-metrics.source_id'),
   emit_broker_metrics: p('mysql-metrics.broker_metrics_enabled'),
   emit_disk_metrics: p('mysql-metrics.disk_metrics_enabled'),
