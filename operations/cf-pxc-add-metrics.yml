@@ -1,0 +1,43 @@
+---
+- type: replace
+  path: /releases/name=mysql-monitoring?
+  value:
+    name: mysql-monitoring
+    version: latest
+
+- type: replace
+  path: /releases/name=loggregator?
+  value:
+    name: loggregator
+    version: latest
+
+- type: replace
+  path: /instance_groups/name=database/jobs/-
+  value:
+    name: mysql-metrics
+    release: mysql-monitoring
+    properties:
+      mysql-metrics:
+        host: localhost
+        password: ((mysql_metrics_password))
+        tls:
+          ca: ((loggregator_tls_agent.ca))
+          cert: ((loggregator_tls_agent.certificate))
+          key: ((loggregator_tls_agent.private_key))
+
+- type: replace
+  path: /instance_groups/name=database/jobs/name=pxc-mysql/properties/seeded_databases?/-
+  value:
+    name: metrics_db
+    username: mysql-metrics
+    password: ((mysql_metrics_password))
+
+- type: replace
+  path: /instance_groups/name=database/jobs/name=pxc-mysql/properties/server_audit_excluded_users?/-
+  value: mysql-metrics
+
+- type: replace
+  path: /variables/-
+  value:
+    name: mysql_metrics_password
+    type: password
