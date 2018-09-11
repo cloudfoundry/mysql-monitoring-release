@@ -58,7 +58,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 			Expect(templateOutput).To(ContainSubstring(`"username": "username"`))
 			Expect(templateOutput).To(ContainSubstring(`"password": "password"`))
 			Expect(templateOutput).To(ContainSubstring(`"metrics_frequency": 30`))
-			Expect(templateOutput).To(ContainSubstring(`"origin": "origin"`))
+			Expect(templateOutput).To(ContainSubstring(`"source_id": "source1"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_broker_metrics": "false"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_disk_metrics": "false"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_cpu_metrics": "false"`))
@@ -74,7 +74,6 @@ var _ = Describe("MysqlMetricsConfig", func() {
 					"password":                        "password2",
 					"username":                        "username2",
 					"metrics_frequency":               31,
-					"origin":                          "origin2",
 					"broker_metrics_enabled":          "true",
 					"disk_metrics_enabled":            "true",
 					"cpu_metrics_enabled":             "true",
@@ -84,6 +83,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 					"heartbeat_database":              "heartbeat2",
 					"heartbeat_table":                 "table2",
 					"minimum_metrics_frequency":       11,
+					"source_id":                       "source1",
 				},
 			}
 
@@ -98,7 +98,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 			Expect(templateOutput).To(ContainSubstring(`"username": "username2"`))
 			Expect(templateOutput).To(ContainSubstring(`"password": "password2"`))
 			Expect(templateOutput).To(ContainSubstring(`"metrics_frequency": 31`))
-			Expect(templateOutput).To(ContainSubstring(`"origin": "origin2"`))
+			Expect(templateOutput).To(ContainSubstring(`"source_id": "source1"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_broker_metrics": "true"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_disk_metrics": "true"`))
 			Expect(templateOutput).To(ContainSubstring(`"emit_mysql_metrics": "false"`))
@@ -217,7 +217,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 				"password":                        "password",
 				"username":                        "username",
 				"metrics_frequency":               30,
-				"origin":                          "origin",
+				"source_id":                       "source1",
 				"broker_metrics_enabled":          "false",
 				"disk_metrics_enabled":            "false",
 				"cpu_metrics_enabled":             "false",
