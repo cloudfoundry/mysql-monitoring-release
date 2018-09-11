@@ -12,7 +12,8 @@ type Config struct {
 	Host                      string `yaml:"host"`
 	Password                  string `yaml:"password"`
 	Username                  string `yaml:"username"`
-	InstanceId                string `yaml:"instance_id"`
+	InstanceID                string `yaml:"instance_id"`
+	SourceID                  string `yaml:"source_id"`
 	EmitCPUMetrics            bool   `yaml:"emit_cpu_metrics"`
 	EmitMysqlMetrics          bool   `yaml:"emit_mysql_metrics"`
 	EmitLeaderFollowerMetrics bool   `yaml:"emit_leader_follower_metrics"`
@@ -21,6 +22,9 @@ type Config struct {
 	EmitBrokerMetrics         bool   `yaml:"emit_broker_metrics"`
 	HeartbeatDatabase         string `yaml:"heartbeat_database"`
 	HeartbeatTable            string `yaml:"heartbeat_table"`
+	LoggregatorCAPath         string `yaml:"loggregator_ca_path"`
+	LoggregatorClientCertPath string `yaml:"loggregator_client_cert_path"`
+	LoggregatorClientKeyPath  string `yaml:"loggregator_client_key_path"`
 }
 
 func LoadFromFile(filepath string, object interface{}) error {
@@ -29,7 +33,7 @@ func LoadFromFile(filepath string, object interface{}) error {
 		return err
 	}
 
-	if err := yaml.Unmarshal(contents, object); err != nil {
+	if err = yaml.Unmarshal(contents, object); err != nil {
 		return err
 	}
 

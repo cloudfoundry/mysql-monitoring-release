@@ -20,6 +20,11 @@
       mysql-metrics:
         host: localhost
         password: ((mysql_metrics_password))
+        tls:
+          ca: ((loggregator_tls_ca_cert))
+          cert: ((loggregator_tls_metron_cert))
+          key: ((loggregator_tls_metron_key))
+
 
 - type: replace
   path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/-
