@@ -1,6 +1,6 @@
 # mysql-monitoring-release Metrics
 
-The metrics name will be pre-fixed by the value configured in the `mysql-metrics.origin` property on the `mysql-metrics` bosh job.
+The metrics name will be pre-fixed by the value configured in the `mysql-metrics.source_id` property on the `mysql-metrics` bosh job.
 
 <a name='mysql-metrics'>
 

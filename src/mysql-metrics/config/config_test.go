@@ -22,7 +22,7 @@ var _ = Describe("Config", func() {
 		username                  string
 		instanceId                string
 		metricFrequency           int
-		origin                    string
+		sourceId                  string
 		emitBrokerMetrics         bool
 		emitMysqlMetrics          bool
 		emitLeaderFollowerMetrics bool
@@ -41,7 +41,7 @@ var _ = Describe("Config", func() {
 			host = "localhost"
 			username = "user"
 			password = "secret"
-			origin = "p-mysql"
+			sourceId = "p-mysql"
 			instanceId = "vm-123456"
 			metricFrequency = 1
 			emitBrokerMetrics = true
@@ -62,7 +62,7 @@ var _ = Describe("Config", func() {
 				"username":"%s",
 				"password":"%s",
 				"metrics_frequency":%d,
-				"origin":"%s",
+				"source_id":"%s",
 				"emit_broker_metrics":%t,
 				"emit_mysql_metrics":%t,
 				"emit_leader_follower_metrics":%t,
@@ -70,7 +70,7 @@ var _ = Describe("Config", func() {
 				"emit_disk_metrics":%t,
 				"heartbeat_database":"%s",
 				"heartbeat_table":"%s"
-			}`, instanceId, host, username, password, metricFrequency, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, heartbeatDatabase, heartbeatTable)
+			}`, instanceId, host, username, password, metricFrequency, sourceId, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, heartbeatDatabase, heartbeatTable)
 
 			err = ioutil.WriteFile(configFilepath, []byte(configString), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
@@ -92,7 +92,7 @@ var _ = Describe("Config", func() {
 			Expect(config.Username).To(Equal(username))
 			Expect(config.Password).To(Equal(password))
 			Expect(config.MetricsFrequency).To(Equal(metricFrequency))
-			Expect(config.Origin).To(Equal(origin))
+			Expect(config.SourceID).To(Equal(sourceId))
 			Expect(config.EmitBrokerMetrics).To(Equal(emitBrokerMetrics))
 			Expect(config.EmitMysqlMetrics).To(Equal(emitMysqlMetrics))
 			Expect(config.EmitLeaderFollowerMetrics).To(Equal(emitLeaderFollowerMetrics))

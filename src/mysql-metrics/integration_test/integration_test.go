@@ -21,7 +21,7 @@ type MetricsConfig struct {
 	Username                  string `json:"username"`
 	Password                  string `json:"password"`
 	MetricsFrequency          int    `json:"metrics_frequency"`
-	Origin                    string `json:"origin"`
+	SourceID                  string `json:"source_id"`
 	EmitLeaderFollowerMetrics bool   `json:"emit_leader_follower_metrics"`
 	EmitMySQLMetrics          bool   `json:"emit_mysql_metrics"`
 	EmitGaleraMetrics         bool   `json:"emit_galera_metrics"`
@@ -77,7 +77,7 @@ var _ = Describe("mysql-metrics", func() {
 			Username:         username,
 			Password:         password,
 			MetricsFrequency: metricFrequency,
-			Origin:           "my_custom_origin",
+			SourceID:           "my_custom_sourceid",
 			EmitLeaderFollowerMetrics: true,
 			EmitMySQLMetrics:          true,
 			EmitGaleraMetrics:         true,

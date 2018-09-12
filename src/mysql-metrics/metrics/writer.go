@@ -16,11 +16,11 @@ type Writer interface {
 type MetricWriter struct {
 	sender Sender
 	logger Logger
-	origin string
+	sourceId string
 }
 
-func NewMetricWriter(sender Sender, logger Logger, origin string) *MetricWriter {
-	return &MetricWriter{sender, logger, origin}
+func NewMetricWriter(sender Sender, logger Logger, sourceId string) *MetricWriter {
+	return &MetricWriter{sender, logger, sourceId}
 }
 
 func (writer *MetricWriter) Write(metrics []*Metric) error {
@@ -31,7 +31,7 @@ func (writer *MetricWriter) Write(metrics []*Metric) error {
 			writer.logger.Debug("Metric had error", map[string]interface{}{"metric": metric})
 		} else {
 			writer.logger.Debug("Emitted metric", map[string]interface{}{"metric": metric})
-			keyWithOrigin := fmt.Sprintf("/%s/%s", writer.origin, metric.Key)
+			keyWithOrigin := fmt.Sprintf("/%s/%s", writer.sourceId, metric.Key)
 			err := writer.sender.SendValue(keyWithOrigin, metric.Value, metric.Unit)
 			if err != nil {
 				writer.logger.Error("Error calling metrics sender", err)

@@ -13,14 +13,14 @@ import (
 var _ = Describe("MetricWriter", func() {
 	var (
 		metricWriter *metrics.MetricWriter
-		origin       = "somewhere-nice"
+		sourceId       = "somewhere-nice"
 	)
 
 	Describe("when the metric has an error", func() {
 		It("logs an error", func() {
 			fakeSender := new(metricsfakes.FakeSender)
 			fakeLogger := new(metricsfakes.FakeLogger)
-			metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, origin)
+			metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, sourceId)
 
 			key := "metrics-key"
 			value := 0.0
@@ -52,7 +52,7 @@ var _ = Describe("MetricWriter", func() {
 		It("sends a metric ", func() {
 			fakeSender := new(metricsfakes.FakeSender)
 			fakeLogger := new(metricsfakes.FakeLogger)
-			metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, origin)
+			metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, sourceId)
 
 			key1 := "metrics-key1"
 			value1 := 123.5
@@ -70,12 +70,12 @@ var _ = Describe("MetricWriter", func() {
 			Expect(fakeSender.SendValueCallCount()).To(Equal(2))
 
 			keyArg, valueArg, unitArg := fakeSender.SendValueArgsForCall(0)
-			Expect(keyArg).To(Equal(fmt.Sprintf("/%s/%s", origin, key1)))
+			Expect(keyArg).To(Equal(fmt.Sprintf("/%s/%s", sourceId, key1)))
 			Expect(valueArg).To(Equal(value1))
 			Expect(unitArg).To(Equal(unit1))
 
 			keyArg, valueArg, unitArg = fakeSender.SendValueArgsForCall(1)
-			Expect(keyArg).To(Equal(fmt.Sprintf("/%s/%s", origin, key2)))
+			Expect(keyArg).To(Equal(fmt.Sprintf("/%s/%s", sourceId, key2)))
 			Expect(valueArg).To(Equal(value2))
 			Expect(unitArg).To(Equal(unit2))
 
@@ -98,7 +98,7 @@ var _ = Describe("MetricWriter", func() {
 			It("log.debug's the metric, but logs an error", func() {
 				fakeSender := new(metricsfakes.FakeSender)
 				fakeLogger := new(metricsfakes.FakeLogger)
-				metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, origin)
+				metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, sourceId)
 
 				key := "metrics-key"
 				value := 123.5

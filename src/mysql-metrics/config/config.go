@@ -8,7 +8,6 @@ import (
 
 type Config struct {
 	MetricsFrequency          int    `yaml:"metrics_frequency"`
-	Origin                    string `yaml:"origin"`
 	Host                      string `yaml:"host"`
 	Password                  string `yaml:"password"`
 	Username                  string `yaml:"username"`
