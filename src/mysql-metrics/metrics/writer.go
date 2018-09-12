@@ -14,8 +14,8 @@ type Writer interface {
 }
 
 type MetricWriter struct {
-	sender Sender
-	logger Logger
+	sender   Sender
+	logger   Logger
 	sourceId string
 }
 

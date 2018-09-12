@@ -13,7 +13,7 @@ import (
 var _ = Describe("MetricWriter", func() {
 	var (
 		metricWriter *metrics.MetricWriter
-		sourceId       = "somewhere-nice"
+		sourceId     = "somewhere-nice"
 	)
 
 	Describe("when the metric has an error", func() {

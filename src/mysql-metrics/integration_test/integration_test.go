@@ -73,11 +73,11 @@ var _ = Describe("mysql-metrics", func() {
 		configFilepath = filepath.Join(tempDir, "metric-config.yml")
 
 		config = &MetricsConfig{
-			Host:             "localhost",
-			Username:         username,
-			Password:         password,
-			MetricsFrequency: metricFrequency,
-			SourceID:           "my_custom_sourceid",
+			Host:                      "localhost",
+			Username:                  username,
+			Password:                  password,
+			MetricsFrequency:          metricFrequency,
+			SourceID:                  "my_custom_sourceid",
 			EmitLeaderFollowerMetrics: true,
 			EmitMySQLMetrics:          true,
 			EmitGaleraMetrics:         true,
