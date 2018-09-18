@@ -27,7 +27,7 @@ $ uaac client add mysql-monitoring \
 ```
 
 ## Setup
-
+### Deploying with the replication canary
 In your bosh deployment manifest make sure you:
 
 1. Add the value of `mysql-monitoring.replication-canary.canary_username` to `cf_mysql.mysql.server_audit_excluded_users`
@@ -40,6 +40,11 @@ In your bosh deployment manifest make sure you:
 ```
 1. Replace the client username (`mysql-monitoring.replication-canary.notifications_client_username`) with the one created above
 1. Replace the client secret (`mysql-monitoring.replication-canary.notifications_client_secret`)  with the one created above
+
+### Deploying with MySQL Metrics and a PXC release mysql deployment
+1. Add the operations/pxc-add-metrics.yml ops file to your [pxc deployment](https://github.com/cloudfoundry-incubator/pxc-release).
+2. Change the operations/loggregator_vars_template.yml to have the correct name of your director and cf deployment, so that the metron agent gets the cert from the loggregator deployment in cf, and add this as a vars file.
+3. Provide the `metron_agent_deployment` variable to tag your metrics with this deployment.
 
 ## Deploying as the backing store for Cloud Foundry
 
