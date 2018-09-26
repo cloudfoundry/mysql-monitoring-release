@@ -12,6 +12,7 @@ type Config struct {
 	Password                  string `yaml:"password"`
 	Username                  string `yaml:"username"`
 	InstanceID                string `yaml:"instance_id"`
+	Origin                    string `yaml:"origin"`
 	SourceID                  string `yaml:"source_id"`
 	EmitCPUMetrics            bool   `yaml:"emit_cpu_metrics"`
 	EmitMysqlMetrics          bool   `yaml:"emit_mysql_metrics"`

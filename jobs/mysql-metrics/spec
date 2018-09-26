@@ -35,6 +35,9 @@ properties:
   mysql-metrics.minimum_metrics_frequency:
     description: "internal property: enforce minimum bound for metrics"
     default: 10
+  mysql-metrics.origin:
+    description: "metric prefix when metrics are emitted"
+    default: p-mysql
   mysql-metrics.source_id:
     description: "the source_id when metrics are emitted"
     default: p-mysql

@@ -116,7 +116,7 @@ func main() {
 
 	loggerWrapper := lagerLoggerWrapper{metricsLogger}
 	metricsComputer := metrics_computer.NewMetricsComputer(*metricMappingConfig)
-	metricsWriter := metrics.NewMetricWriter(sender, loggerWrapper, mysqlMetricsConfig.SourceID)
+	metricsWriter := metrics.NewMetricWriter(sender, loggerWrapper, mysqlMetricsConfig.Origin)
 	processor := metrics.NewProcessor(gatherer, metricsComputer, metricsWriter, mysqlMetricsConfig)
 	metricsInterval := time.Duration(mysqlMetricsConfig.MetricsFrequency) * time.Second
 	emitter := emit.NewEmitter(processor, metricsInterval, time.Sleep, loggerWrapper)

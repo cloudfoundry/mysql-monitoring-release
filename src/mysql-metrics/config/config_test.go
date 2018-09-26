@@ -23,6 +23,7 @@ var _ = Describe("Config", func() {
 		instanceId                string
 		metricFrequency           int
 		sourceId                  string
+		origin                    string
 		emitBrokerMetrics         bool
 		emitMysqlMetrics          bool
 		emitLeaderFollowerMetrics bool
@@ -42,6 +43,7 @@ var _ = Describe("Config", func() {
 			username = "user"
 			password = "secret"
 			sourceId = "p-mysql"
+			origin = "origin"
 			instanceId = "vm-123456"
 			metricFrequency = 1
 			emitBrokerMetrics = true
@@ -63,6 +65,7 @@ var _ = Describe("Config", func() {
 				"password":"%s",
 				"metrics_frequency":%d,
 				"source_id":"%s",
+				"origin": "%s",
 				"emit_broker_metrics":%t,
 				"emit_mysql_metrics":%t,
 				"emit_leader_follower_metrics":%t,
@@ -70,7 +73,7 @@ var _ = Describe("Config", func() {
 				"emit_disk_metrics":%t,
 				"heartbeat_database":"%s",
 				"heartbeat_table":"%s"
-			}`, instanceId, host, username, password, metricFrequency, sourceId, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, heartbeatDatabase, heartbeatTable)
+			}`, instanceId, host, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, heartbeatDatabase, heartbeatTable)
 
 			err = ioutil.WriteFile(configFilepath, []byte(configString), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
@@ -93,6 +96,7 @@ var _ = Describe("Config", func() {
 			Expect(config.Password).To(Equal(password))
 			Expect(config.MetricsFrequency).To(Equal(metricFrequency))
 			Expect(config.SourceID).To(Equal(sourceId))
+			Expect(config.Origin).To(Equal(origin))
 			Expect(config.EmitBrokerMetrics).To(Equal(emitBrokerMetrics))
 			Expect(config.EmitMysqlMetrics).To(Equal(emitMysqlMetrics))
 			Expect(config.EmitLeaderFollowerMetrics).To(Equal(emitLeaderFollowerMetrics))
