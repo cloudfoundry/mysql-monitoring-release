@@ -53,6 +53,8 @@ builds:
     version: "4"
   f386deda-b520-450d-70e8-5d72de750246:
     version: 8.17.0
+  f8093295-0f1c-48a1-61ea-90810d55f130:
+    version: 9.1.0
   f8e640a4-a2f6-4810-a2ea-b366e1e288ea:
     version: "5"
 format-version: "2"
