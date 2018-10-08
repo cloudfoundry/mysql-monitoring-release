@@ -1,4 +1,4 @@
 loggregator_tls_ca_cert: ((/your-bosh-name-here/cf/loggregator_tls_agent.ca))
-loggregator_tls_metron_cert: ((/your-bosh-name-here/cf/loggregator_tls_agent.certificate))
-loggregator_tls_metron_key: ((/your-bosh-name-here/cf/loggregator_tls_agent.private_key))
-metron_agent_deployment: ((metron_agent_deployment))
+loggregator_tls_agent_cert: ((/your-bosh-name-here/cf/loggregator_tls_agent.certificate))
+loggregator_tls_agent_key: ((/your-bosh-name-here/cf/loggregator_tls_agent.private_key))
+loggretator_agent_deployment: ((metron_agent_deployment))

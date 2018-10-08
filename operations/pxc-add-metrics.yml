@@ -6,9 +6,9 @@
     version: latest
 
 - type: replace
-  path: /releases/name=loggregator?
+  path: /releases/name=loggregator-agent?
   value:
-    name: loggregator
+    name: loggregator-agent
     version: latest
 
 - type: replace
@@ -22,8 +22,8 @@
         password: ((mysql_metrics_password))
         tls:
           ca: ((loggregator_tls_ca_cert))
-          cert: ((loggregator_tls_metron_cert))
-          key: ((loggregator_tls_metron_key))
+          cert: ((loggregator_tls_agent_cert))
+          key: ((loggregator_tls_agent_key))
 
 
 - type: replace
@@ -40,20 +40,18 @@
 - type: replace
   path: /instance_groups/name=mysql/jobs/-
   value:
-    name: metron_agent
-    release: loggregator
+    name: loggregator_agent
+    release: loggregator-agent
     consumes:
       doppler: { deployment: cf }
     properties:
       loggregator:
         tls:
           ca_cert: ((loggregator_tls_ca_cert))
-          metron:
-            cert: ((loggregator_tls_metron_cert))
-            key: ((loggregator_tls_metron_key))
-      metron_agent:
-        bosh_dns: true
-        deployment: ((metron_agent_deployment))
+          agent:
+            cert: ((loggregator_tls_agent_cert))
+            key: ((loggregator_tls_agent_key))
+      deployment: ((loggregator_agent_deployment))
 
 - type: replace
   path: /variables/-
