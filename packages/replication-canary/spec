@@ -2,7 +2,7 @@
 name: replication-canary
 
 dependencies:
-- golang
+- golang-1.11-linux
 
 files:
 - replication-canary/**/*
