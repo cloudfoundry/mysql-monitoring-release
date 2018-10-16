@@ -2,7 +2,7 @@
 name: notifications-client
 
 dependencies:
-- golang
+- golang-1.11-linux
 
 files:
 - notifications-client/**/*
