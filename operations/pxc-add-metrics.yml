@@ -51,6 +51,7 @@
           agent:
             cert: ((loggregator_tls_agent_cert))
             key: ((loggregator_tls_agent_key))
+      bosh_dns: true
       deployment: ((loggregator_agent_deployment))
 
 - type: replace
