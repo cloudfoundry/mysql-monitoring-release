@@ -77,9 +77,14 @@ func (c *Client) Email(clientToken, to, subject, html, kindID string) error {
 		},
 	}
 
-	c.logger.Debug("Making request to notifications", map[string]interface{}{
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(req.Body)
+	requestBody := buf.String() // Does a complete copy of the bytes in the buffer.
+
+	c.logger.Debug("*Making request to notifications", map[string]interface{}{
 		"method": req.Method,
 		"url":    req.URL,
+		"body":   requestBody,
 	})
 
 	res, err := client.Do(req)
@@ -91,6 +96,15 @@ func (c *Client) Email(clientToken, to, subject, html, kindID string) error {
 		return err
 	}
 	defer res.Body.Close()
+
+	buf = new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	responseBody := buf.String() // Does a complete copy of the bytes in the buffer.
+
+	c.logger.Debug("*Status Code from notifications", map[string]interface{}{
+		"statusCode": res.StatusCode,
+		"body": responseBody,
+	})
 
 	if res.StatusCode >= http.StatusBadRequest {
 		c.logger.Debug("received bad status code from notifications", map[string]interface{}{
