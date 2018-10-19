@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -87,6 +88,7 @@ func (c *Client) Email(clientToken, to, subject, html, kindID string) error {
 		"body":   requestBody,
 	})
 
+	req.Body = ioutil.NopCloser(strings.NewReader(requestBody))
 	res, err := client.Do(req)
 	if err != nil {
 		c.logger.Debug("Error making request to notifications", map[string]interface{}{
@@ -103,9 +105,10 @@ func (c *Client) Email(clientToken, to, subject, html, kindID string) error {
 
 	c.logger.Debug("*Status Code from notifications", map[string]interface{}{
 		"statusCode": res.StatusCode,
-		"body": responseBody,
+		"body":       responseBody,
 	})
 
+	res.Body = ioutil.NopCloser(strings.NewReader(responseBody))
 	if res.StatusCode >= http.StatusBadRequest {
 		c.logger.Debug("received bad status code from notifications", map[string]interface{}{
 			"statusCode": res.StatusCode,
