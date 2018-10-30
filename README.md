@@ -43,8 +43,8 @@ In your bosh deployment manifest make sure you:
 
 ### Deploying with MySQL Metrics and a PXC release mysql deployment
 1. Add the [operations/pxc-add-metrics.yml](https://github.com/cloudfoundry-incubator/mysql-monitoring-release/blob/master/operations/pxc-add-metrics.yml) ops file to your [pxc deployment](https://github.com/cloudfoundry-incubator/pxc-release).
-2. Change the [operations/loggregator_vars_template.yml](https://github.com/cloudfoundry-incubator/mysql-monitoring-release/blob/master/operations/loggregator_vars_template.yml) to have the correct name of your director and cf deployment, so that the metron agent gets the cert from the loggregator deployment in cf, and add this as a vars file.
-3. Provide the `metron_agent_deployment` variable to tag your metrics with this deployment.
+2. Change the [operations/loggregator_vars_template.yml](https://github.com/cloudfoundry-incubator/mysql-monitoring-release/blob/master/operations/loggregator_vars_template.yml) to have the correct name of your director and cf deployment, so that the loggregator agent gets the cert from the loggregator deployment in cf, and add this as a vars file.
+3. Set the `loggregator_agent_deployment` variable for the loggregator agent job to tag your metrics with the deployment name.
 
 ## Deploying as the backing store for Cloud Foundry
 
