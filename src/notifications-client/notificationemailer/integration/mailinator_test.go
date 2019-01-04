@@ -63,7 +63,7 @@ var _ = Describe("CF Notifications Mailinator Integration Test", func() {
 
 		recipientEmail, ok = os.LookupEnv("NOTIFICATIONS_RECIPIENT_EMAIL")
 		if !ok {
-			recipientEmail = "notifications-integration-test@coreservicesboshlite.mailinator.com"
+			recipientEmail = "notifications-integration-test@mailinator.com"
 		}
 
 		testTimeoutStr, ok := os.LookupEnv("NOTIFICATIONS_INTEGRATION_TEST_TIMEOUT")

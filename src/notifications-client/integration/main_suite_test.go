@@ -81,7 +81,7 @@ var _ = BeforeSuite(func() {
 
 	recipientEmail, ok = os.LookupEnv("NOTIFICATIONS_RECIPIENT_EMAIL")
 	if !ok {
-		recipientEmail = "notifications-integration-test@coreservicesboshlite.mailinator.com"
+		recipientEmail = "notifications-integration-test@mailinator.com"
 	}
 
 	skipSSLCertVerifyValue, ok := os.LookupEnv("NOTIFICATIONS_SKIP_SSL_CERT_VERIFY")
