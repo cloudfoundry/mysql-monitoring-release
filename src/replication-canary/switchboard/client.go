@@ -13,11 +13,11 @@ import (
 )
 
 type Client struct {
-	rootURL           string
-	username          string
-	password          string
-	skipSSLCertVerify bool
-	logger            lager.Logger
+	client   *http.Client
+	rootURL  string
+	username string
+	password string
+	logger   lager.Logger
 }
 
 func NewClient(
@@ -28,11 +28,18 @@ func NewClient(
 	logger lager.Logger,
 ) *Client {
 	return &Client{
-		rootURL:           rootURL,
-		username:          username,
-		password:          password,
-		skipSSLCertVerify: skipSSLCertVerify,
-		logger:            logger,
+		client: &http.Client{
+			Timeout: time.Second * 5,
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: skipSSLCertVerify,
+				},
+			},
+		},
+		rootURL:  rootURL,
+		username: username,
+		password: password,
+		logger:   logger,
 	}
 }
 
@@ -76,7 +83,7 @@ func (c *Client) sendClusterTrafficRequest(enabled enable, message string) error
 		"trafficEnabled": enabled,
 		"message":        message,
 	})
-	res, err := c.client().Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		c.logger.Debug("error making request to proxy", lager.Data{
 			"errorMessage": err.Error(),
@@ -106,17 +113,6 @@ func (c *Client) sendClusterTrafficRequest(enabled enable, message string) error
 
 type enable bool
 
-func (c *Client) client() *http.Client {
-	return &http.Client{
-		Timeout: time.Second * 5,
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: c.skipSSLCertVerify,
-			},
-		},
-	}
-}
-
 func (c *Client) ActiveBackendHost() (string, error) {
 	u := c.rootURL + "/v0/backends"
 
@@ -136,7 +132,7 @@ func (c *Client) ActiveBackendHost() (string, error) {
 		"method": "GET",
 		"url":    req.URL,
 	})
-	res, err := c.client().Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
 		c.logger.Debug("error making request to proxy", lager.Data{
 			"errorMessage": err.Error(),
