@@ -10,7 +10,7 @@ config = {
   mysql: {
     username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
     password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
-    port: p('cf_mysql.mysql.port'),
+    port: link('mysql').p(['port','cf_mysql.mysql.port']),
     agent: {
       username: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.username'),
       password: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.password'),

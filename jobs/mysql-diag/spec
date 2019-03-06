@@ -16,7 +16,4 @@ consumes:
 - name: mysql-diag-agent
   type: agent
 
-properties:
-  cf_mysql.mysql.port:
-    description: 'Mysql port'
-    default: 3306
+properties: {}
