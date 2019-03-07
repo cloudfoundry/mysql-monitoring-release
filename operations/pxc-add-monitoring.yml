@@ -20,6 +20,8 @@
         cf:
           skip_ssl_validation: ((cf_skip_ssl_validation))
         cf_mysql:
+          # proxy_route_suffix should be set to <unique-prefix>.<cf_domain>
+          # This assumes the ops-file pxc-release/operations/register-proxy-route.yml was used
           external_host: ((proxy_route_suffix))
         mysql-monitoring:
           recipient_email: ((mysql_monitoring_recipient_email))
