@@ -5,7 +5,7 @@
     version: latest
 
 - type: replace
-  path: /instance_groups/-
+  path: /instance_groups/name=mysql-monitor?
   value:
     name: mysql-monitor
     instances: 1
@@ -37,7 +37,7 @@
     stemcell: default
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/-
+  path: /instance_groups/name=mysql/jobs/name=mysql-diag-agent?
   value:
     name: mysql-diag-agent
     release: mysql-monitoring
@@ -47,7 +47,7 @@
           password: ((mysql_monitoring_mysql_diag_agent_password))
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/-
+  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/name=canary_db?
   value:
     name: canary_db
     username: repcanary
@@ -58,19 +58,19 @@
   value: repcanary
 
 - type: replace
-  path: /variables/-
+  path: /variables/name=mysql_monitoring_replication_canary_canary_password?
   value:
     name: mysql_monitoring_replication_canary_canary_password
     type: password
 
 - type: replace
-  path: /variables/-
+  path: /variables/name=mysql_monitoring_replication_canary_notifications_client_secret?
   value:
     name: mysql_monitoring_replication_canary_notifications_client_secret
     type: password
 
 - type: replace
-  path: /variables/-
+  path: /variables/name=mysql_monitoring_mysql_diag_agent_password?
   value:
     name: mysql_monitoring_mysql_diag_agent_password
     type: password

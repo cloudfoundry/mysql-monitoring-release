@@ -12,7 +12,7 @@
     version: latest
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/-
+  path: /instance_groups/name=mysql/jobs/name=mysql-metrics?
   value:
     name: mysql-metrics
     release: mysql-monitoring
@@ -27,7 +27,7 @@
 
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/-
+  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/name=metrics_db?
   value:
     name: metrics_db
     username: mysql-metrics
@@ -38,7 +38,7 @@
   value: mysql-metrics
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/-
+  path: /instance_groups/name=mysql/jobs/name=loggregator_agent?
   value:
     name: loggregator_agent
     release: loggregator-agent
@@ -55,7 +55,7 @@
       deployment: ((loggregator_agent_deployment))
 
 - type: replace
-  path: /variables/-
+  path: /variables/name=mysql_metrics_password?
   value:
     name: mysql_metrics_password
     type: password
