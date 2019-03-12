@@ -96,6 +96,7 @@ func main() {
 		tlsConfig,
 		loggregator.WithAddr("localhost:3458"),
 		loggregator.WithTag("source_id", mysqlMetricsConfig.SourceID),
+		loggregator.WithTag("origin", mysqlMetricsConfig.Origin),
 	)
 	if err != nil {
 		metricsLogger.Error("loggregator client failed to initialize", err)
