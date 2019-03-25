@@ -18,10 +18,10 @@ type basicAuth struct {
 }
 
 type Request struct {
-	url string
+	url     string
 	timeout time.Duration
 	headers map[string]string
-	auth *basicAuth
+	auth    *basicAuth
 }
 
 func Url(url string) Request {
@@ -38,29 +38,29 @@ func Header(key string, value string) Request {
 
 func (r Request) Url(url string) Request {
 	return Request{
-		url: url,
+		url:     url,
 		timeout: r.timeout,
 		headers: r.headers,
-		auth: r.auth,
+		auth:    r.auth,
 	}
 }
 
 func (r Request) Path(path string) Request {
 	// TODO: if path doesn't start with leading /, add it
 	return Request{
-		url: r.url + path,
+		url:     r.url + path,
 		timeout: r.timeout,
 		headers: r.headers,
-		auth: r.auth,
+		auth:    r.auth,
 	}
 }
 
 func (r Request) Timeout(timeout time.Duration) Request {
 	return Request{
-		url: r.url,
+		url:     r.url,
 		timeout: timeout,
 		headers: r.headers,
-		auth: r.auth,
+		auth:    r.auth,
 	}
 }
 
@@ -77,19 +77,19 @@ func copyMapAndAdd(original map[string]string, key string, value string) map[str
 
 func (r Request) Header(key string, value string) Request {
 	return Request{
-		url: r.url,
+		url:     r.url,
 		timeout: r.timeout,
 		headers: copyMapAndAdd(r.headers, key, value),
-		auth: r.auth,
+		auth:    r.auth,
 	}
 }
 
 func (r Request) BasicAuth(username string, password string) Request {
 	return Request{
-		url: r.url,
+		url:     r.url,
 		timeout: r.timeout,
 		headers: r.headers,
-		auth: &basicAuth{username: username, password: password},
+		auth:    &basicAuth{username: username, password: password},
 	}
 }
 

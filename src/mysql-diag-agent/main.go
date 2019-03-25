@@ -7,10 +7,10 @@ import (
 	"net/http"
 
 	"encoding/json"
+	"io/ioutil"
 	"mysql-diag-agent/config"
 	"mysql-diag-agent/disk"
 	"mysql-diag-agent/middleware"
-	"io/ioutil"
 	"os"
 	"strconv"
 )
