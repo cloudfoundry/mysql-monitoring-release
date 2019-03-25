@@ -2,27 +2,25 @@
 set -ex
 
 my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-project_dir="$( cd "${my_dir}/.." && pwd )"
+base_dir="$( cd "${my_dir}/.." && pwd )"
+test_helpers_dir="$( cd "${base_dir}/../test-helpers" && pwd )"
+source ${test_helpers_dir}/linter.sh
 
 # Needed for disk metrics; may need to create manually if permission denied
 mkdir -p /var/vcap/store
 
 if [ "$(uname)" == "Darwin" ]; then
-  mkdir -p /proc
+  if [[ ! -d /proc ]]; then
+    echo -e "\033[31mPlease create '/proc' directory, writable without root, before running ${BASH_SOURCE[0]}\033[m"
+    exit 1
+  fi
   echo "cpu 0 0 0 1000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" > /proc/stat
 fi
 
 go get github.com/maxbrunsfeld/counterfeiter
 
-pushd "${project_dir}" > /dev/null
-  if [[ -z "$USE_FGT" ]]; then
-    go fmt $(go list ./... | grep -v /vendor/)
-  else
-    fgt go fmt $(go list ./... | grep -v /vendor/)
-  fi
-
-  go vet -x $(go list ./... | grep -v /vendor/)
+pushd "${base_dir}" > /dev/null
+  lint_golang
   bin/regenerate-fakes
 
   if [[ -n $UNIT ]]; then

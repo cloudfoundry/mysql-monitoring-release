@@ -5,10 +5,14 @@ set -eu
 # In seconds
 SLOW_SPEC_THRESHOLD="${SLOW_SPEC_THRESHOLD:-10}"
 
-my_dir="$( cd "$( dirname "${0}" )" && pwd )"
+my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 base_dir="$( cd "${my_dir}/.." && pwd )"
+test_helpers_dir="$( cd "${base_dir}/../test-helpers" && pwd )"
+source ${test_helpers_dir}/linter.sh
 
 pushd "${base_dir}" > /dev/null
+  lint_golang
+
   CGO_ENABLED=1 ginkgo \
     -r \
     -race \
