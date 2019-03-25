@@ -46,7 +46,7 @@ func ValidateCapacity(nodeDiskInfos []NodeDiskInfo, threshold *config.ThresholdC
 	return issues
 }
 
-func PercentUsed(total uint64, free uint64) uint{
+func PercentUsed(total uint64, free uint64) uint {
 	used := total - free
 	if total == 0 {
 		return 100

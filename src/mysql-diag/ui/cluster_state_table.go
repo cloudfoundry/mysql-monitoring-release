@@ -3,8 +3,8 @@ package ui
 import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
-	"mysql-diag/database"
 	"io"
+	"mysql-diag/database"
 	"strconv"
 	"sync"
 )

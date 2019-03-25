@@ -8,8 +8,8 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-	"mysql-diag/msg"
 	yaml "gopkg.in/yaml.v2"
+	"mysql-diag/msg"
 )
 
 type Config struct {

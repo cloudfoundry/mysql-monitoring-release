@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/cloudfoundry/bytefmt"
 	"github.com/olekukonko/tablewriter"
-	"mysql-diag/diagagentclient"
 	"io"
+	"mysql-diag/diagagentclient"
 	"sync"
 )
 

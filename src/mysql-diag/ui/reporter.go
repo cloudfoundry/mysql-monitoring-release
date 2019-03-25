@@ -25,7 +25,7 @@ func Report(params ReporterParams, config *Config) []string {
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap {
-		messages = append(messages, msg.Alert("\n[CRITICAL] Run the download-logs command:") + `
+		messages = append(messages, msg.Alert("\n[CRITICAL] Run the download-logs command:")+`
 $ download-logs -o /tmp/output
 For full information about how to download and use the download-logs command see https://discuss.pivotal.io/hc/en-us/articles/221504408`)
 	}
