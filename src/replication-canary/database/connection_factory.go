@@ -47,8 +47,8 @@ func NewConnectionFactoryFromConfig(
 		switchboardClients: switchboardClients,
 		logger:             logger,
 
-		clusterIPs: c.MySQL.ClusterIPs,
-		port:       c.MySQL.Port,
+		clusterIPs:            c.MySQL.ClusterIPs,
+		port:                  c.MySQL.Port,
 		galeraHealthcheckPort: c.MySQL.GaleraHealthcheckPort,
 
 		canaryDatabase: c.Canary.Database,
