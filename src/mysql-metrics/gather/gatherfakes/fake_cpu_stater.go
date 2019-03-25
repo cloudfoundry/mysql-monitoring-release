@@ -9,8 +9,9 @@ import (
 type FakeCpuStater struct {
 	GetPercentageStub        func() (int, error)
 	getPercentageMutex       sync.RWMutex
-	getPercentageArgsForCall []struct{}
-	getPercentageReturns     struct {
+	getPercentageArgsForCall []struct {
+	}
+	getPercentageReturns struct {
 		result1 int
 		result2 error
 	}
@@ -25,7 +26,8 @@ type FakeCpuStater struct {
 func (fake *FakeCpuStater) GetPercentage() (int, error) {
 	fake.getPercentageMutex.Lock()
 	ret, specificReturn := fake.getPercentageReturnsOnCall[len(fake.getPercentageArgsForCall)]
-	fake.getPercentageArgsForCall = append(fake.getPercentageArgsForCall, struct{}{})
+	fake.getPercentageArgsForCall = append(fake.getPercentageArgsForCall, struct {
+	}{})
 	fake.recordInvocation("GetPercentage", []interface{}{})
 	fake.getPercentageMutex.Unlock()
 	if fake.GetPercentageStub != nil {
@@ -34,7 +36,8 @@ func (fake *FakeCpuStater) GetPercentage() (int, error) {
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.getPercentageReturns.result1, fake.getPercentageReturns.result2
+	fakeReturns := fake.getPercentageReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeCpuStater) GetPercentageCallCount() int {
@@ -43,7 +46,15 @@ func (fake *FakeCpuStater) GetPercentageCallCount() int {
 	return len(fake.getPercentageArgsForCall)
 }
 
+func (fake *FakeCpuStater) GetPercentageCalls(stub func() (int, error)) {
+	fake.getPercentageMutex.Lock()
+	defer fake.getPercentageMutex.Unlock()
+	fake.GetPercentageStub = stub
+}
+
 func (fake *FakeCpuStater) GetPercentageReturns(result1 int, result2 error) {
+	fake.getPercentageMutex.Lock()
+	defer fake.getPercentageMutex.Unlock()
 	fake.GetPercentageStub = nil
 	fake.getPercentageReturns = struct {
 		result1 int
@@ -52,6 +63,8 @@ func (fake *FakeCpuStater) GetPercentageReturns(result1 int, result2 error) {
 }
 
 func (fake *FakeCpuStater) GetPercentageReturnsOnCall(i int, result1 int, result2 error) {
+	fake.getPercentageMutex.Lock()
+	defer fake.getPercentageMutex.Unlock()
 	fake.GetPercentageStub = nil
 	if fake.getPercentageReturnsOnCall == nil {
 		fake.getPercentageReturnsOnCall = make(map[int]struct {

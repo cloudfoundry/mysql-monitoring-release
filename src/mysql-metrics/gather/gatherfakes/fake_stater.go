@@ -7,10 +7,10 @@ import (
 )
 
 type FakeStater struct {
-	StatsStub        func(path string) (bytesFree, bytesTotal, inodesFree, inodesTotal uint64, err error)
+	StatsStub        func(string) (uint64, uint64, uint64, uint64, error)
 	statsMutex       sync.RWMutex
 	statsArgsForCall []struct {
-		path string
+		arg1 string
 	}
 	statsReturns struct {
 		result1 uint64
@@ -30,21 +30,22 @@ type FakeStater struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeStater) Stats(path string) (bytesFree, bytesTotal, inodesFree, inodesTotal uint64, err error) {
+func (fake *FakeStater) Stats(arg1 string) (uint64, uint64, uint64, uint64, error) {
 	fake.statsMutex.Lock()
 	ret, specificReturn := fake.statsReturnsOnCall[len(fake.statsArgsForCall)]
 	fake.statsArgsForCall = append(fake.statsArgsForCall, struct {
-		path string
-	}{path})
-	fake.recordInvocation("Stats", []interface{}{path})
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("Stats", []interface{}{arg1})
 	fake.statsMutex.Unlock()
 	if fake.StatsStub != nil {
-		return fake.StatsStub(path)
+		return fake.StatsStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3, ret.result4, ret.result5
 	}
-	return fake.statsReturns.result1, fake.statsReturns.result2, fake.statsReturns.result3, fake.statsReturns.result4, fake.statsReturns.result5
+	fakeReturns := fake.statsReturns
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3, fakeReturns.result4, fakeReturns.result5
 }
 
 func (fake *FakeStater) StatsCallCount() int {
@@ -53,13 +54,22 @@ func (fake *FakeStater) StatsCallCount() int {
 	return len(fake.statsArgsForCall)
 }
 
+func (fake *FakeStater) StatsCalls(stub func(string) (uint64, uint64, uint64, uint64, error)) {
+	fake.statsMutex.Lock()
+	defer fake.statsMutex.Unlock()
+	fake.StatsStub = stub
+}
+
 func (fake *FakeStater) StatsArgsForCall(i int) string {
 	fake.statsMutex.RLock()
 	defer fake.statsMutex.RUnlock()
-	return fake.statsArgsForCall[i].path
+	argsForCall := fake.statsArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeStater) StatsReturns(result1 uint64, result2 uint64, result3 uint64, result4 uint64, result5 error) {
+	fake.statsMutex.Lock()
+	defer fake.statsMutex.Unlock()
 	fake.StatsStub = nil
 	fake.statsReturns = struct {
 		result1 uint64
@@ -71,6 +81,8 @@ func (fake *FakeStater) StatsReturns(result1 uint64, result2 uint64, result3 uin
 }
 
 func (fake *FakeStater) StatsReturnsOnCall(i int, result1 uint64, result2 uint64, result3 uint64, result4 uint64, result5 error) {
+	fake.statsMutex.Lock()
+	defer fake.statsMutex.Unlock()
 	fake.StatsStub = nil
 	if fake.statsReturnsOnCall == nil {
 		fake.statsReturnsOnCall = make(map[int]struct {

@@ -36,10 +36,17 @@ func (fake *FakeLogger) ErrorCallCount() int {
 	return len(fake.errorArgsForCall)
 }
 
+func (fake *FakeLogger) ErrorCalls(stub func(string, error)) {
+	fake.errorMutex.Lock()
+	defer fake.errorMutex.Unlock()
+	fake.ErrorStub = stub
+}
+
 func (fake *FakeLogger) ErrorArgsForCall(i int) (string, error) {
 	fake.errorMutex.RLock()
 	defer fake.errorMutex.RUnlock()
-	return fake.errorArgsForCall[i].arg1, fake.errorArgsForCall[i].arg2
+	argsForCall := fake.errorArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeLogger) Invocations() map[string][][]interface{} {

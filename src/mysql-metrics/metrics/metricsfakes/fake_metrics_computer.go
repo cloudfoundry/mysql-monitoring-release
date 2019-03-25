@@ -18,37 +18,26 @@ type FakeMetricsComputer struct {
 	computeAvailabilityMetricReturnsOnCall map[int]struct {
 		result1 *metrics.Metric
 	}
-	ComputeIsFollowerMetricStub        func(bool) *metrics.Metric
-	computeIsFollowerMetricMutex       sync.RWMutex
-	computeIsFollowerMetricArgsForCall []struct {
-		arg1 bool
-	}
-	computeIsFollowerMetricReturns struct {
-		result1 *metrics.Metric
-	}
-	computeIsFollowerMetricReturnsOnCall map[int]struct {
-		result1 *metrics.Metric
-	}
-	ComputeGlobalMetricsStub        func(map[string]string) []*metrics.Metric
-	computeGlobalMetricsMutex       sync.RWMutex
-	computeGlobalMetricsArgsForCall []struct {
+	ComputeBrokerMetricsStub        func(map[string]string) []*metrics.Metric
+	computeBrokerMetricsMutex       sync.RWMutex
+	computeBrokerMetricsArgsForCall []struct {
 		arg1 map[string]string
 	}
-	computeGlobalMetricsReturns struct {
+	computeBrokerMetricsReturns struct {
 		result1 []*metrics.Metric
 	}
-	computeGlobalMetricsReturnsOnCall map[int]struct {
+	computeBrokerMetricsReturnsOnCall map[int]struct {
 		result1 []*metrics.Metric
 	}
-	ComputeLeaderFollowerMetricsStub        func(map[string]string) []*metrics.Metric
-	computeLeaderFollowerMetricsMutex       sync.RWMutex
-	computeLeaderFollowerMetricsArgsForCall []struct {
+	ComputeCPUMetricsStub        func(map[string]string) []*metrics.Metric
+	computeCPUMetricsMutex       sync.RWMutex
+	computeCPUMetricsArgsForCall []struct {
 		arg1 map[string]string
 	}
-	computeLeaderFollowerMetricsReturns struct {
+	computeCPUMetricsReturns struct {
 		result1 []*metrics.Metric
 	}
-	computeLeaderFollowerMetricsReturnsOnCall map[int]struct {
+	computeCPUMetricsReturnsOnCall map[int]struct {
 		result1 []*metrics.Metric
 	}
 	ComputeDiskMetricsStub        func(map[string]string) []*metrics.Metric
@@ -62,17 +51,6 @@ type FakeMetricsComputer struct {
 	computeDiskMetricsReturnsOnCall map[int]struct {
 		result1 []*metrics.Metric
 	}
-	ComputeBrokerMetricsStub        func(map[string]string) []*metrics.Metric
-	computeBrokerMetricsMutex       sync.RWMutex
-	computeBrokerMetricsArgsForCall []struct {
-		arg1 map[string]string
-	}
-	computeBrokerMetricsReturns struct {
-		result1 []*metrics.Metric
-	}
-	computeBrokerMetricsReturnsOnCall map[int]struct {
-		result1 []*metrics.Metric
-	}
 	ComputeGaleraMetricsStub        func(map[string]string) []*metrics.Metric
 	computeGaleraMetricsMutex       sync.RWMutex
 	computeGaleraMetricsArgsForCall []struct {
@@ -84,15 +62,37 @@ type FakeMetricsComputer struct {
 	computeGaleraMetricsReturnsOnCall map[int]struct {
 		result1 []*metrics.Metric
 	}
-	ComputeCPUMetricsStub        func(map[string]string) []*metrics.Metric
-	computeCPUMetricsMutex       sync.RWMutex
-	computeCPUMetricsArgsForCall []struct {
+	ComputeGlobalMetricsStub        func(map[string]string) []*metrics.Metric
+	computeGlobalMetricsMutex       sync.RWMutex
+	computeGlobalMetricsArgsForCall []struct {
 		arg1 map[string]string
 	}
-	computeCPUMetricsReturns struct {
+	computeGlobalMetricsReturns struct {
 		result1 []*metrics.Metric
 	}
-	computeCPUMetricsReturnsOnCall map[int]struct {
+	computeGlobalMetricsReturnsOnCall map[int]struct {
+		result1 []*metrics.Metric
+	}
+	ComputeIsFollowerMetricStub        func(bool) *metrics.Metric
+	computeIsFollowerMetricMutex       sync.RWMutex
+	computeIsFollowerMetricArgsForCall []struct {
+		arg1 bool
+	}
+	computeIsFollowerMetricReturns struct {
+		result1 *metrics.Metric
+	}
+	computeIsFollowerMetricReturnsOnCall map[int]struct {
+		result1 *metrics.Metric
+	}
+	ComputeLeaderFollowerMetricsStub        func(map[string]string) []*metrics.Metric
+	computeLeaderFollowerMetricsMutex       sync.RWMutex
+	computeLeaderFollowerMetricsArgsForCall []struct {
+		arg1 map[string]string
+	}
+	computeLeaderFollowerMetricsReturns struct {
+		result1 []*metrics.Metric
+	}
+	computeLeaderFollowerMetricsReturnsOnCall map[int]struct {
 		result1 []*metrics.Metric
 	}
 	invocations      map[string][][]interface{}
@@ -113,7 +113,8 @@ func (fake *FakeMetricsComputer) ComputeAvailabilityMetric(arg1 bool) *metrics.M
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.computeAvailabilityMetricReturns.result1
+	fakeReturns := fake.computeAvailabilityMetricReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeMetricsComputer) ComputeAvailabilityMetricCallCount() int {
@@ -122,13 +123,22 @@ func (fake *FakeMetricsComputer) ComputeAvailabilityMetricCallCount() int {
 	return len(fake.computeAvailabilityMetricArgsForCall)
 }
 
+func (fake *FakeMetricsComputer) ComputeAvailabilityMetricCalls(stub func(bool) *metrics.Metric) {
+	fake.computeAvailabilityMetricMutex.Lock()
+	defer fake.computeAvailabilityMetricMutex.Unlock()
+	fake.ComputeAvailabilityMetricStub = stub
+}
+
 func (fake *FakeMetricsComputer) ComputeAvailabilityMetricArgsForCall(i int) bool {
 	fake.computeAvailabilityMetricMutex.RLock()
 	defer fake.computeAvailabilityMetricMutex.RUnlock()
-	return fake.computeAvailabilityMetricArgsForCall[i].arg1
+	argsForCall := fake.computeAvailabilityMetricArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeMetricsComputer) ComputeAvailabilityMetricReturns(result1 *metrics.Metric) {
+	fake.computeAvailabilityMetricMutex.Lock()
+	defer fake.computeAvailabilityMetricMutex.Unlock()
 	fake.ComputeAvailabilityMetricStub = nil
 	fake.computeAvailabilityMetricReturns = struct {
 		result1 *metrics.Metric
@@ -136,6 +146,8 @@ func (fake *FakeMetricsComputer) ComputeAvailabilityMetricReturns(result1 *metri
 }
 
 func (fake *FakeMetricsComputer) ComputeAvailabilityMetricReturnsOnCall(i int, result1 *metrics.Metric) {
+	fake.computeAvailabilityMetricMutex.Lock()
+	defer fake.computeAvailabilityMetricMutex.Unlock()
 	fake.ComputeAvailabilityMetricStub = nil
 	if fake.computeAvailabilityMetricReturnsOnCall == nil {
 		fake.computeAvailabilityMetricReturnsOnCall = make(map[int]struct {
@@ -144,198 +156,6 @@ func (fake *FakeMetricsComputer) ComputeAvailabilityMetricReturnsOnCall(i int, r
 	}
 	fake.computeAvailabilityMetricReturnsOnCall[i] = struct {
 		result1 *metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeIsFollowerMetric(arg1 bool) *metrics.Metric {
-	fake.computeIsFollowerMetricMutex.Lock()
-	ret, specificReturn := fake.computeIsFollowerMetricReturnsOnCall[len(fake.computeIsFollowerMetricArgsForCall)]
-	fake.computeIsFollowerMetricArgsForCall = append(fake.computeIsFollowerMetricArgsForCall, struct {
-		arg1 bool
-	}{arg1})
-	fake.recordInvocation("ComputeIsFollowerMetric", []interface{}{arg1})
-	fake.computeIsFollowerMetricMutex.Unlock()
-	if fake.ComputeIsFollowerMetricStub != nil {
-		return fake.ComputeIsFollowerMetricStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.computeIsFollowerMetricReturns.result1
-}
-
-func (fake *FakeMetricsComputer) ComputeIsFollowerMetricCallCount() int {
-	fake.computeIsFollowerMetricMutex.RLock()
-	defer fake.computeIsFollowerMetricMutex.RUnlock()
-	return len(fake.computeIsFollowerMetricArgsForCall)
-}
-
-func (fake *FakeMetricsComputer) ComputeIsFollowerMetricArgsForCall(i int) bool {
-	fake.computeIsFollowerMetricMutex.RLock()
-	defer fake.computeIsFollowerMetricMutex.RUnlock()
-	return fake.computeIsFollowerMetricArgsForCall[i].arg1
-}
-
-func (fake *FakeMetricsComputer) ComputeIsFollowerMetricReturns(result1 *metrics.Metric) {
-	fake.ComputeIsFollowerMetricStub = nil
-	fake.computeIsFollowerMetricReturns = struct {
-		result1 *metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeIsFollowerMetricReturnsOnCall(i int, result1 *metrics.Metric) {
-	fake.ComputeIsFollowerMetricStub = nil
-	if fake.computeIsFollowerMetricReturnsOnCall == nil {
-		fake.computeIsFollowerMetricReturnsOnCall = make(map[int]struct {
-			result1 *metrics.Metric
-		})
-	}
-	fake.computeIsFollowerMetricReturnsOnCall[i] = struct {
-		result1 *metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeGlobalMetrics(arg1 map[string]string) []*metrics.Metric {
-	fake.computeGlobalMetricsMutex.Lock()
-	ret, specificReturn := fake.computeGlobalMetricsReturnsOnCall[len(fake.computeGlobalMetricsArgsForCall)]
-	fake.computeGlobalMetricsArgsForCall = append(fake.computeGlobalMetricsArgsForCall, struct {
-		arg1 map[string]string
-	}{arg1})
-	fake.recordInvocation("ComputeGlobalMetrics", []interface{}{arg1})
-	fake.computeGlobalMetricsMutex.Unlock()
-	if fake.ComputeGlobalMetricsStub != nil {
-		return fake.ComputeGlobalMetricsStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.computeGlobalMetricsReturns.result1
-}
-
-func (fake *FakeMetricsComputer) ComputeGlobalMetricsCallCount() int {
-	fake.computeGlobalMetricsMutex.RLock()
-	defer fake.computeGlobalMetricsMutex.RUnlock()
-	return len(fake.computeGlobalMetricsArgsForCall)
-}
-
-func (fake *FakeMetricsComputer) ComputeGlobalMetricsArgsForCall(i int) map[string]string {
-	fake.computeGlobalMetricsMutex.RLock()
-	defer fake.computeGlobalMetricsMutex.RUnlock()
-	return fake.computeGlobalMetricsArgsForCall[i].arg1
-}
-
-func (fake *FakeMetricsComputer) ComputeGlobalMetricsReturns(result1 []*metrics.Metric) {
-	fake.ComputeGlobalMetricsStub = nil
-	fake.computeGlobalMetricsReturns = struct {
-		result1 []*metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeGlobalMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
-	fake.ComputeGlobalMetricsStub = nil
-	if fake.computeGlobalMetricsReturnsOnCall == nil {
-		fake.computeGlobalMetricsReturnsOnCall = make(map[int]struct {
-			result1 []*metrics.Metric
-		})
-	}
-	fake.computeGlobalMetricsReturnsOnCall[i] = struct {
-		result1 []*metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetrics(arg1 map[string]string) []*metrics.Metric {
-	fake.computeLeaderFollowerMetricsMutex.Lock()
-	ret, specificReturn := fake.computeLeaderFollowerMetricsReturnsOnCall[len(fake.computeLeaderFollowerMetricsArgsForCall)]
-	fake.computeLeaderFollowerMetricsArgsForCall = append(fake.computeLeaderFollowerMetricsArgsForCall, struct {
-		arg1 map[string]string
-	}{arg1})
-	fake.recordInvocation("ComputeLeaderFollowerMetrics", []interface{}{arg1})
-	fake.computeLeaderFollowerMetricsMutex.Unlock()
-	if fake.ComputeLeaderFollowerMetricsStub != nil {
-		return fake.ComputeLeaderFollowerMetricsStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.computeLeaderFollowerMetricsReturns.result1
-}
-
-func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsCallCount() int {
-	fake.computeLeaderFollowerMetricsMutex.RLock()
-	defer fake.computeLeaderFollowerMetricsMutex.RUnlock()
-	return len(fake.computeLeaderFollowerMetricsArgsForCall)
-}
-
-func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsArgsForCall(i int) map[string]string {
-	fake.computeLeaderFollowerMetricsMutex.RLock()
-	defer fake.computeLeaderFollowerMetricsMutex.RUnlock()
-	return fake.computeLeaderFollowerMetricsArgsForCall[i].arg1
-}
-
-func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsReturns(result1 []*metrics.Metric) {
-	fake.ComputeLeaderFollowerMetricsStub = nil
-	fake.computeLeaderFollowerMetricsReturns = struct {
-		result1 []*metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
-	fake.ComputeLeaderFollowerMetricsStub = nil
-	if fake.computeLeaderFollowerMetricsReturnsOnCall == nil {
-		fake.computeLeaderFollowerMetricsReturnsOnCall = make(map[int]struct {
-			result1 []*metrics.Metric
-		})
-	}
-	fake.computeLeaderFollowerMetricsReturnsOnCall[i] = struct {
-		result1 []*metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeDiskMetrics(arg1 map[string]string) []*metrics.Metric {
-	fake.computeDiskMetricsMutex.Lock()
-	ret, specificReturn := fake.computeDiskMetricsReturnsOnCall[len(fake.computeDiskMetricsArgsForCall)]
-	fake.computeDiskMetricsArgsForCall = append(fake.computeDiskMetricsArgsForCall, struct {
-		arg1 map[string]string
-	}{arg1})
-	fake.recordInvocation("ComputeDiskMetrics", []interface{}{arg1})
-	fake.computeDiskMetricsMutex.Unlock()
-	if fake.ComputeDiskMetricsStub != nil {
-		return fake.ComputeDiskMetricsStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.computeDiskMetricsReturns.result1
-}
-
-func (fake *FakeMetricsComputer) ComputeDiskMetricsCallCount() int {
-	fake.computeDiskMetricsMutex.RLock()
-	defer fake.computeDiskMetricsMutex.RUnlock()
-	return len(fake.computeDiskMetricsArgsForCall)
-}
-
-func (fake *FakeMetricsComputer) ComputeDiskMetricsArgsForCall(i int) map[string]string {
-	fake.computeDiskMetricsMutex.RLock()
-	defer fake.computeDiskMetricsMutex.RUnlock()
-	return fake.computeDiskMetricsArgsForCall[i].arg1
-}
-
-func (fake *FakeMetricsComputer) ComputeDiskMetricsReturns(result1 []*metrics.Metric) {
-	fake.ComputeDiskMetricsStub = nil
-	fake.computeDiskMetricsReturns = struct {
-		result1 []*metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeDiskMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
-	fake.ComputeDiskMetricsStub = nil
-	if fake.computeDiskMetricsReturnsOnCall == nil {
-		fake.computeDiskMetricsReturnsOnCall = make(map[int]struct {
-			result1 []*metrics.Metric
-		})
-	}
-	fake.computeDiskMetricsReturnsOnCall[i] = struct {
-		result1 []*metrics.Metric
 	}{result1}
 }
 
@@ -353,7 +173,8 @@ func (fake *FakeMetricsComputer) ComputeBrokerMetrics(arg1 map[string]string) []
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.computeBrokerMetricsReturns.result1
+	fakeReturns := fake.computeBrokerMetricsReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeMetricsComputer) ComputeBrokerMetricsCallCount() int {
@@ -362,13 +183,22 @@ func (fake *FakeMetricsComputer) ComputeBrokerMetricsCallCount() int {
 	return len(fake.computeBrokerMetricsArgsForCall)
 }
 
+func (fake *FakeMetricsComputer) ComputeBrokerMetricsCalls(stub func(map[string]string) []*metrics.Metric) {
+	fake.computeBrokerMetricsMutex.Lock()
+	defer fake.computeBrokerMetricsMutex.Unlock()
+	fake.ComputeBrokerMetricsStub = stub
+}
+
 func (fake *FakeMetricsComputer) ComputeBrokerMetricsArgsForCall(i int) map[string]string {
 	fake.computeBrokerMetricsMutex.RLock()
 	defer fake.computeBrokerMetricsMutex.RUnlock()
-	return fake.computeBrokerMetricsArgsForCall[i].arg1
+	argsForCall := fake.computeBrokerMetricsArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeMetricsComputer) ComputeBrokerMetricsReturns(result1 []*metrics.Metric) {
+	fake.computeBrokerMetricsMutex.Lock()
+	defer fake.computeBrokerMetricsMutex.Unlock()
 	fake.ComputeBrokerMetricsStub = nil
 	fake.computeBrokerMetricsReturns = struct {
 		result1 []*metrics.Metric
@@ -376,6 +206,8 @@ func (fake *FakeMetricsComputer) ComputeBrokerMetricsReturns(result1 []*metrics.
 }
 
 func (fake *FakeMetricsComputer) ComputeBrokerMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
+	fake.computeBrokerMetricsMutex.Lock()
+	defer fake.computeBrokerMetricsMutex.Unlock()
 	fake.ComputeBrokerMetricsStub = nil
 	if fake.computeBrokerMetricsReturnsOnCall == nil {
 		fake.computeBrokerMetricsReturnsOnCall = make(map[int]struct {
@@ -383,54 +215,6 @@ func (fake *FakeMetricsComputer) ComputeBrokerMetricsReturnsOnCall(i int, result
 		})
 	}
 	fake.computeBrokerMetricsReturnsOnCall[i] = struct {
-		result1 []*metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeGaleraMetrics(arg1 map[string]string) []*metrics.Metric {
-	fake.computeGaleraMetricsMutex.Lock()
-	ret, specificReturn := fake.computeGaleraMetricsReturnsOnCall[len(fake.computeGaleraMetricsArgsForCall)]
-	fake.computeGaleraMetricsArgsForCall = append(fake.computeGaleraMetricsArgsForCall, struct {
-		arg1 map[string]string
-	}{arg1})
-	fake.recordInvocation("ComputeGaleraMetrics", []interface{}{arg1})
-	fake.computeGaleraMetricsMutex.Unlock()
-	if fake.ComputeGaleraMetricsStub != nil {
-		return fake.ComputeGaleraMetricsStub(arg1)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.computeGaleraMetricsReturns.result1
-}
-
-func (fake *FakeMetricsComputer) ComputeGaleraMetricsCallCount() int {
-	fake.computeGaleraMetricsMutex.RLock()
-	defer fake.computeGaleraMetricsMutex.RUnlock()
-	return len(fake.computeGaleraMetricsArgsForCall)
-}
-
-func (fake *FakeMetricsComputer) ComputeGaleraMetricsArgsForCall(i int) map[string]string {
-	fake.computeGaleraMetricsMutex.RLock()
-	defer fake.computeGaleraMetricsMutex.RUnlock()
-	return fake.computeGaleraMetricsArgsForCall[i].arg1
-}
-
-func (fake *FakeMetricsComputer) ComputeGaleraMetricsReturns(result1 []*metrics.Metric) {
-	fake.ComputeGaleraMetricsStub = nil
-	fake.computeGaleraMetricsReturns = struct {
-		result1 []*metrics.Metric
-	}{result1}
-}
-
-func (fake *FakeMetricsComputer) ComputeGaleraMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
-	fake.ComputeGaleraMetricsStub = nil
-	if fake.computeGaleraMetricsReturnsOnCall == nil {
-		fake.computeGaleraMetricsReturnsOnCall = make(map[int]struct {
-			result1 []*metrics.Metric
-		})
-	}
-	fake.computeGaleraMetricsReturnsOnCall[i] = struct {
 		result1 []*metrics.Metric
 	}{result1}
 }
@@ -449,7 +233,8 @@ func (fake *FakeMetricsComputer) ComputeCPUMetrics(arg1 map[string]string) []*me
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.computeCPUMetricsReturns.result1
+	fakeReturns := fake.computeCPUMetricsReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeMetricsComputer) ComputeCPUMetricsCallCount() int {
@@ -458,13 +243,22 @@ func (fake *FakeMetricsComputer) ComputeCPUMetricsCallCount() int {
 	return len(fake.computeCPUMetricsArgsForCall)
 }
 
+func (fake *FakeMetricsComputer) ComputeCPUMetricsCalls(stub func(map[string]string) []*metrics.Metric) {
+	fake.computeCPUMetricsMutex.Lock()
+	defer fake.computeCPUMetricsMutex.Unlock()
+	fake.ComputeCPUMetricsStub = stub
+}
+
 func (fake *FakeMetricsComputer) ComputeCPUMetricsArgsForCall(i int) map[string]string {
 	fake.computeCPUMetricsMutex.RLock()
 	defer fake.computeCPUMetricsMutex.RUnlock()
-	return fake.computeCPUMetricsArgsForCall[i].arg1
+	argsForCall := fake.computeCPUMetricsArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeMetricsComputer) ComputeCPUMetricsReturns(result1 []*metrics.Metric) {
+	fake.computeCPUMetricsMutex.Lock()
+	defer fake.computeCPUMetricsMutex.Unlock()
 	fake.ComputeCPUMetricsStub = nil
 	fake.computeCPUMetricsReturns = struct {
 		result1 []*metrics.Metric
@@ -472,6 +266,8 @@ func (fake *FakeMetricsComputer) ComputeCPUMetricsReturns(result1 []*metrics.Met
 }
 
 func (fake *FakeMetricsComputer) ComputeCPUMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
+	fake.computeCPUMetricsMutex.Lock()
+	defer fake.computeCPUMetricsMutex.Unlock()
 	fake.ComputeCPUMetricsStub = nil
 	if fake.computeCPUMetricsReturnsOnCall == nil {
 		fake.computeCPUMetricsReturnsOnCall = make(map[int]struct {
@@ -483,25 +279,325 @@ func (fake *FakeMetricsComputer) ComputeCPUMetricsReturnsOnCall(i int, result1 [
 	}{result1}
 }
 
+func (fake *FakeMetricsComputer) ComputeDiskMetrics(arg1 map[string]string) []*metrics.Metric {
+	fake.computeDiskMetricsMutex.Lock()
+	ret, specificReturn := fake.computeDiskMetricsReturnsOnCall[len(fake.computeDiskMetricsArgsForCall)]
+	fake.computeDiskMetricsArgsForCall = append(fake.computeDiskMetricsArgsForCall, struct {
+		arg1 map[string]string
+	}{arg1})
+	fake.recordInvocation("ComputeDiskMetrics", []interface{}{arg1})
+	fake.computeDiskMetricsMutex.Unlock()
+	if fake.ComputeDiskMetricsStub != nil {
+		return fake.ComputeDiskMetricsStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.computeDiskMetricsReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskMetricsCallCount() int {
+	fake.computeDiskMetricsMutex.RLock()
+	defer fake.computeDiskMetricsMutex.RUnlock()
+	return len(fake.computeDiskMetricsArgsForCall)
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskMetricsCalls(stub func(map[string]string) []*metrics.Metric) {
+	fake.computeDiskMetricsMutex.Lock()
+	defer fake.computeDiskMetricsMutex.Unlock()
+	fake.ComputeDiskMetricsStub = stub
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskMetricsArgsForCall(i int) map[string]string {
+	fake.computeDiskMetricsMutex.RLock()
+	defer fake.computeDiskMetricsMutex.RUnlock()
+	argsForCall := fake.computeDiskMetricsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskMetricsReturns(result1 []*metrics.Metric) {
+	fake.computeDiskMetricsMutex.Lock()
+	defer fake.computeDiskMetricsMutex.Unlock()
+	fake.ComputeDiskMetricsStub = nil
+	fake.computeDiskMetricsReturns = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
+	fake.computeDiskMetricsMutex.Lock()
+	defer fake.computeDiskMetricsMutex.Unlock()
+	fake.ComputeDiskMetricsStub = nil
+	if fake.computeDiskMetricsReturnsOnCall == nil {
+		fake.computeDiskMetricsReturnsOnCall = make(map[int]struct {
+			result1 []*metrics.Metric
+		})
+	}
+	fake.computeDiskMetricsReturnsOnCall[i] = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeGaleraMetrics(arg1 map[string]string) []*metrics.Metric {
+	fake.computeGaleraMetricsMutex.Lock()
+	ret, specificReturn := fake.computeGaleraMetricsReturnsOnCall[len(fake.computeGaleraMetricsArgsForCall)]
+	fake.computeGaleraMetricsArgsForCall = append(fake.computeGaleraMetricsArgsForCall, struct {
+		arg1 map[string]string
+	}{arg1})
+	fake.recordInvocation("ComputeGaleraMetrics", []interface{}{arg1})
+	fake.computeGaleraMetricsMutex.Unlock()
+	if fake.ComputeGaleraMetricsStub != nil {
+		return fake.ComputeGaleraMetricsStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.computeGaleraMetricsReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeMetricsComputer) ComputeGaleraMetricsCallCount() int {
+	fake.computeGaleraMetricsMutex.RLock()
+	defer fake.computeGaleraMetricsMutex.RUnlock()
+	return len(fake.computeGaleraMetricsArgsForCall)
+}
+
+func (fake *FakeMetricsComputer) ComputeGaleraMetricsCalls(stub func(map[string]string) []*metrics.Metric) {
+	fake.computeGaleraMetricsMutex.Lock()
+	defer fake.computeGaleraMetricsMutex.Unlock()
+	fake.ComputeGaleraMetricsStub = stub
+}
+
+func (fake *FakeMetricsComputer) ComputeGaleraMetricsArgsForCall(i int) map[string]string {
+	fake.computeGaleraMetricsMutex.RLock()
+	defer fake.computeGaleraMetricsMutex.RUnlock()
+	argsForCall := fake.computeGaleraMetricsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeMetricsComputer) ComputeGaleraMetricsReturns(result1 []*metrics.Metric) {
+	fake.computeGaleraMetricsMutex.Lock()
+	defer fake.computeGaleraMetricsMutex.Unlock()
+	fake.ComputeGaleraMetricsStub = nil
+	fake.computeGaleraMetricsReturns = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeGaleraMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
+	fake.computeGaleraMetricsMutex.Lock()
+	defer fake.computeGaleraMetricsMutex.Unlock()
+	fake.ComputeGaleraMetricsStub = nil
+	if fake.computeGaleraMetricsReturnsOnCall == nil {
+		fake.computeGaleraMetricsReturnsOnCall = make(map[int]struct {
+			result1 []*metrics.Metric
+		})
+	}
+	fake.computeGaleraMetricsReturnsOnCall[i] = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeGlobalMetrics(arg1 map[string]string) []*metrics.Metric {
+	fake.computeGlobalMetricsMutex.Lock()
+	ret, specificReturn := fake.computeGlobalMetricsReturnsOnCall[len(fake.computeGlobalMetricsArgsForCall)]
+	fake.computeGlobalMetricsArgsForCall = append(fake.computeGlobalMetricsArgsForCall, struct {
+		arg1 map[string]string
+	}{arg1})
+	fake.recordInvocation("ComputeGlobalMetrics", []interface{}{arg1})
+	fake.computeGlobalMetricsMutex.Unlock()
+	if fake.ComputeGlobalMetricsStub != nil {
+		return fake.ComputeGlobalMetricsStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.computeGlobalMetricsReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeMetricsComputer) ComputeGlobalMetricsCallCount() int {
+	fake.computeGlobalMetricsMutex.RLock()
+	defer fake.computeGlobalMetricsMutex.RUnlock()
+	return len(fake.computeGlobalMetricsArgsForCall)
+}
+
+func (fake *FakeMetricsComputer) ComputeGlobalMetricsCalls(stub func(map[string]string) []*metrics.Metric) {
+	fake.computeGlobalMetricsMutex.Lock()
+	defer fake.computeGlobalMetricsMutex.Unlock()
+	fake.ComputeGlobalMetricsStub = stub
+}
+
+func (fake *FakeMetricsComputer) ComputeGlobalMetricsArgsForCall(i int) map[string]string {
+	fake.computeGlobalMetricsMutex.RLock()
+	defer fake.computeGlobalMetricsMutex.RUnlock()
+	argsForCall := fake.computeGlobalMetricsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeMetricsComputer) ComputeGlobalMetricsReturns(result1 []*metrics.Metric) {
+	fake.computeGlobalMetricsMutex.Lock()
+	defer fake.computeGlobalMetricsMutex.Unlock()
+	fake.ComputeGlobalMetricsStub = nil
+	fake.computeGlobalMetricsReturns = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeGlobalMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
+	fake.computeGlobalMetricsMutex.Lock()
+	defer fake.computeGlobalMetricsMutex.Unlock()
+	fake.ComputeGlobalMetricsStub = nil
+	if fake.computeGlobalMetricsReturnsOnCall == nil {
+		fake.computeGlobalMetricsReturnsOnCall = make(map[int]struct {
+			result1 []*metrics.Metric
+		})
+	}
+	fake.computeGlobalMetricsReturnsOnCall[i] = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeIsFollowerMetric(arg1 bool) *metrics.Metric {
+	fake.computeIsFollowerMetricMutex.Lock()
+	ret, specificReturn := fake.computeIsFollowerMetricReturnsOnCall[len(fake.computeIsFollowerMetricArgsForCall)]
+	fake.computeIsFollowerMetricArgsForCall = append(fake.computeIsFollowerMetricArgsForCall, struct {
+		arg1 bool
+	}{arg1})
+	fake.recordInvocation("ComputeIsFollowerMetric", []interface{}{arg1})
+	fake.computeIsFollowerMetricMutex.Unlock()
+	if fake.ComputeIsFollowerMetricStub != nil {
+		return fake.ComputeIsFollowerMetricStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.computeIsFollowerMetricReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeMetricsComputer) ComputeIsFollowerMetricCallCount() int {
+	fake.computeIsFollowerMetricMutex.RLock()
+	defer fake.computeIsFollowerMetricMutex.RUnlock()
+	return len(fake.computeIsFollowerMetricArgsForCall)
+}
+
+func (fake *FakeMetricsComputer) ComputeIsFollowerMetricCalls(stub func(bool) *metrics.Metric) {
+	fake.computeIsFollowerMetricMutex.Lock()
+	defer fake.computeIsFollowerMetricMutex.Unlock()
+	fake.ComputeIsFollowerMetricStub = stub
+}
+
+func (fake *FakeMetricsComputer) ComputeIsFollowerMetricArgsForCall(i int) bool {
+	fake.computeIsFollowerMetricMutex.RLock()
+	defer fake.computeIsFollowerMetricMutex.RUnlock()
+	argsForCall := fake.computeIsFollowerMetricArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeMetricsComputer) ComputeIsFollowerMetricReturns(result1 *metrics.Metric) {
+	fake.computeIsFollowerMetricMutex.Lock()
+	defer fake.computeIsFollowerMetricMutex.Unlock()
+	fake.ComputeIsFollowerMetricStub = nil
+	fake.computeIsFollowerMetricReturns = struct {
+		result1 *metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeIsFollowerMetricReturnsOnCall(i int, result1 *metrics.Metric) {
+	fake.computeIsFollowerMetricMutex.Lock()
+	defer fake.computeIsFollowerMetricMutex.Unlock()
+	fake.ComputeIsFollowerMetricStub = nil
+	if fake.computeIsFollowerMetricReturnsOnCall == nil {
+		fake.computeIsFollowerMetricReturnsOnCall = make(map[int]struct {
+			result1 *metrics.Metric
+		})
+	}
+	fake.computeIsFollowerMetricReturnsOnCall[i] = struct {
+		result1 *metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetrics(arg1 map[string]string) []*metrics.Metric {
+	fake.computeLeaderFollowerMetricsMutex.Lock()
+	ret, specificReturn := fake.computeLeaderFollowerMetricsReturnsOnCall[len(fake.computeLeaderFollowerMetricsArgsForCall)]
+	fake.computeLeaderFollowerMetricsArgsForCall = append(fake.computeLeaderFollowerMetricsArgsForCall, struct {
+		arg1 map[string]string
+	}{arg1})
+	fake.recordInvocation("ComputeLeaderFollowerMetrics", []interface{}{arg1})
+	fake.computeLeaderFollowerMetricsMutex.Unlock()
+	if fake.ComputeLeaderFollowerMetricsStub != nil {
+		return fake.ComputeLeaderFollowerMetricsStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.computeLeaderFollowerMetricsReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsCallCount() int {
+	fake.computeLeaderFollowerMetricsMutex.RLock()
+	defer fake.computeLeaderFollowerMetricsMutex.RUnlock()
+	return len(fake.computeLeaderFollowerMetricsArgsForCall)
+}
+
+func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsCalls(stub func(map[string]string) []*metrics.Metric) {
+	fake.computeLeaderFollowerMetricsMutex.Lock()
+	defer fake.computeLeaderFollowerMetricsMutex.Unlock()
+	fake.ComputeLeaderFollowerMetricsStub = stub
+}
+
+func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsArgsForCall(i int) map[string]string {
+	fake.computeLeaderFollowerMetricsMutex.RLock()
+	defer fake.computeLeaderFollowerMetricsMutex.RUnlock()
+	argsForCall := fake.computeLeaderFollowerMetricsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsReturns(result1 []*metrics.Metric) {
+	fake.computeLeaderFollowerMetricsMutex.Lock()
+	defer fake.computeLeaderFollowerMetricsMutex.Unlock()
+	fake.ComputeLeaderFollowerMetricsStub = nil
+	fake.computeLeaderFollowerMetricsReturns = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
+	fake.computeLeaderFollowerMetricsMutex.Lock()
+	defer fake.computeLeaderFollowerMetricsMutex.Unlock()
+	fake.ComputeLeaderFollowerMetricsStub = nil
+	if fake.computeLeaderFollowerMetricsReturnsOnCall == nil {
+		fake.computeLeaderFollowerMetricsReturnsOnCall = make(map[int]struct {
+			result1 []*metrics.Metric
+		})
+	}
+	fake.computeLeaderFollowerMetricsReturnsOnCall[i] = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
 func (fake *FakeMetricsComputer) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.computeAvailabilityMetricMutex.RLock()
 	defer fake.computeAvailabilityMetricMutex.RUnlock()
-	fake.computeIsFollowerMetricMutex.RLock()
-	defer fake.computeIsFollowerMetricMutex.RUnlock()
-	fake.computeGlobalMetricsMutex.RLock()
-	defer fake.computeGlobalMetricsMutex.RUnlock()
-	fake.computeLeaderFollowerMetricsMutex.RLock()
-	defer fake.computeLeaderFollowerMetricsMutex.RUnlock()
-	fake.computeDiskMetricsMutex.RLock()
-	defer fake.computeDiskMetricsMutex.RUnlock()
 	fake.computeBrokerMetricsMutex.RLock()
 	defer fake.computeBrokerMetricsMutex.RUnlock()
-	fake.computeGaleraMetricsMutex.RLock()
-	defer fake.computeGaleraMetricsMutex.RUnlock()
 	fake.computeCPUMetricsMutex.RLock()
 	defer fake.computeCPUMetricsMutex.RUnlock()
+	fake.computeDiskMetricsMutex.RLock()
+	defer fake.computeDiskMetricsMutex.RUnlock()
+	fake.computeGaleraMetricsMutex.RLock()
+	defer fake.computeGaleraMetricsMutex.RUnlock()
+	fake.computeGlobalMetricsMutex.RLock()
+	defer fake.computeGlobalMetricsMutex.RUnlock()
+	fake.computeIsFollowerMetricMutex.RLock()
+	defer fake.computeIsFollowerMetricMutex.RUnlock()
+	fake.computeLeaderFollowerMetricsMutex.RLock()
+	defer fake.computeLeaderFollowerMetricsMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

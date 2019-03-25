@@ -7,67 +7,11 @@ import (
 )
 
 type FakeGatherer struct {
-	DatabaseMetadataStub        func() (globalStatus map[string]string, globalVariables map[string]string, err error)
-	databaseMetadataMutex       sync.RWMutex
-	databaseMetadataArgsForCall []struct{}
-	databaseMetadataReturns     struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}
-	databaseMetadataReturnsOnCall map[int]struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}
-	FollowerMetadataStub        func() (slaveStatus map[string]string, heartbeatStatus map[string]string, err error)
-	followerMetadataMutex       sync.RWMutex
-	followerMetadataArgsForCall []struct{}
-	followerMetadataReturns     struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}
-	followerMetadataReturnsOnCall map[int]struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}
-	IsDatabaseFollowerStub        func() (bool, error)
-	isDatabaseFollowerMutex       sync.RWMutex
-	isDatabaseFollowerArgsForCall []struct{}
-	isDatabaseFollowerReturns     struct {
-		result1 bool
-		result2 error
-	}
-	isDatabaseFollowerReturnsOnCall map[int]struct {
-		result1 bool
-		result2 error
-	}
-	IsDatabaseAvailableStub        func() bool
-	isDatabaseAvailableMutex       sync.RWMutex
-	isDatabaseAvailableArgsForCall []struct{}
-	isDatabaseAvailableReturns     struct {
-		result1 bool
-	}
-	isDatabaseAvailableReturnsOnCall map[int]struct {
-		result1 bool
-	}
-	DiskStatsStub        func() (map[string]string, error)
-	diskStatsMutex       sync.RWMutex
-	diskStatsArgsForCall []struct{}
-	diskStatsReturns     struct {
-		result1 map[string]string
-		result2 error
-	}
-	diskStatsReturnsOnCall map[int]struct {
-		result1 map[string]string
-		result2 error
-	}
 	BrokerStatsStub        func() (map[string]string, error)
 	brokerStatsMutex       sync.RWMutex
-	brokerStatsArgsForCall []struct{}
-	brokerStatsReturns     struct {
+	brokerStatsArgsForCall []struct {
+	}
+	brokerStatsReturns struct {
 		result1 map[string]string
 		result2 error
 	}
@@ -77,8 +21,9 @@ type FakeGatherer struct {
 	}
 	CPUStatsStub        func() (map[string]string, error)
 	cPUStatsMutex       sync.RWMutex
-	cPUStatsArgsForCall []struct{}
-	cPUStatsReturns     struct {
+	cPUStatsArgsForCall []struct {
+	}
+	cPUStatsReturns struct {
 		result1 map[string]string
 		result2 error
 	}
@@ -86,232 +31,77 @@ type FakeGatherer struct {
 		result1 map[string]string
 		result2 error
 	}
+	DatabaseMetadataStub        func() (map[string]string, map[string]string, error)
+	databaseMetadataMutex       sync.RWMutex
+	databaseMetadataArgsForCall []struct {
+	}
+	databaseMetadataReturns struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}
+	databaseMetadataReturnsOnCall map[int]struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}
+	DiskStatsStub        func() (map[string]string, error)
+	diskStatsMutex       sync.RWMutex
+	diskStatsArgsForCall []struct {
+	}
+	diskStatsReturns struct {
+		result1 map[string]string
+		result2 error
+	}
+	diskStatsReturnsOnCall map[int]struct {
+		result1 map[string]string
+		result2 error
+	}
+	FollowerMetadataStub        func() (map[string]string, map[string]string, error)
+	followerMetadataMutex       sync.RWMutex
+	followerMetadataArgsForCall []struct {
+	}
+	followerMetadataReturns struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}
+	followerMetadataReturnsOnCall map[int]struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}
+	IsDatabaseAvailableStub        func() bool
+	isDatabaseAvailableMutex       sync.RWMutex
+	isDatabaseAvailableArgsForCall []struct {
+	}
+	isDatabaseAvailableReturns struct {
+		result1 bool
+	}
+	isDatabaseAvailableReturnsOnCall map[int]struct {
+		result1 bool
+	}
+	IsDatabaseFollowerStub        func() (bool, error)
+	isDatabaseFollowerMutex       sync.RWMutex
+	isDatabaseFollowerArgsForCall []struct {
+	}
+	isDatabaseFollowerReturns struct {
+		result1 bool
+		result2 error
+	}
+	isDatabaseFollowerReturnsOnCall map[int]struct {
+		result1 bool
+		result2 error
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
-}
-
-func (fake *FakeGatherer) DatabaseMetadata() (globalStatus map[string]string, globalVariables map[string]string, err error) {
-	fake.databaseMetadataMutex.Lock()
-	ret, specificReturn := fake.databaseMetadataReturnsOnCall[len(fake.databaseMetadataArgsForCall)]
-	fake.databaseMetadataArgsForCall = append(fake.databaseMetadataArgsForCall, struct{}{})
-	fake.recordInvocation("DatabaseMetadata", []interface{}{})
-	fake.databaseMetadataMutex.Unlock()
-	if fake.DatabaseMetadataStub != nil {
-		return fake.DatabaseMetadataStub()
-	}
-	if specificReturn {
-		return ret.result1, ret.result2, ret.result3
-	}
-	return fake.databaseMetadataReturns.result1, fake.databaseMetadataReturns.result2, fake.databaseMetadataReturns.result3
-}
-
-func (fake *FakeGatherer) DatabaseMetadataCallCount() int {
-	fake.databaseMetadataMutex.RLock()
-	defer fake.databaseMetadataMutex.RUnlock()
-	return len(fake.databaseMetadataArgsForCall)
-}
-
-func (fake *FakeGatherer) DatabaseMetadataReturns(result1 map[string]string, result2 map[string]string, result3 error) {
-	fake.DatabaseMetadataStub = nil
-	fake.databaseMetadataReturns = struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}{result1, result2, result3}
-}
-
-func (fake *FakeGatherer) DatabaseMetadataReturnsOnCall(i int, result1 map[string]string, result2 map[string]string, result3 error) {
-	fake.DatabaseMetadataStub = nil
-	if fake.databaseMetadataReturnsOnCall == nil {
-		fake.databaseMetadataReturnsOnCall = make(map[int]struct {
-			result1 map[string]string
-			result2 map[string]string
-			result3 error
-		})
-	}
-	fake.databaseMetadataReturnsOnCall[i] = struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}{result1, result2, result3}
-}
-
-func (fake *FakeGatherer) FollowerMetadata() (slaveStatus map[string]string, heartbeatStatus map[string]string, err error) {
-	fake.followerMetadataMutex.Lock()
-	ret, specificReturn := fake.followerMetadataReturnsOnCall[len(fake.followerMetadataArgsForCall)]
-	fake.followerMetadataArgsForCall = append(fake.followerMetadataArgsForCall, struct{}{})
-	fake.recordInvocation("FollowerMetadata", []interface{}{})
-	fake.followerMetadataMutex.Unlock()
-	if fake.FollowerMetadataStub != nil {
-		return fake.FollowerMetadataStub()
-	}
-	if specificReturn {
-		return ret.result1, ret.result2, ret.result3
-	}
-	return fake.followerMetadataReturns.result1, fake.followerMetadataReturns.result2, fake.followerMetadataReturns.result3
-}
-
-func (fake *FakeGatherer) FollowerMetadataCallCount() int {
-	fake.followerMetadataMutex.RLock()
-	defer fake.followerMetadataMutex.RUnlock()
-	return len(fake.followerMetadataArgsForCall)
-}
-
-func (fake *FakeGatherer) FollowerMetadataReturns(result1 map[string]string, result2 map[string]string, result3 error) {
-	fake.FollowerMetadataStub = nil
-	fake.followerMetadataReturns = struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}{result1, result2, result3}
-}
-
-func (fake *FakeGatherer) FollowerMetadataReturnsOnCall(i int, result1 map[string]string, result2 map[string]string, result3 error) {
-	fake.FollowerMetadataStub = nil
-	if fake.followerMetadataReturnsOnCall == nil {
-		fake.followerMetadataReturnsOnCall = make(map[int]struct {
-			result1 map[string]string
-			result2 map[string]string
-			result3 error
-		})
-	}
-	fake.followerMetadataReturnsOnCall[i] = struct {
-		result1 map[string]string
-		result2 map[string]string
-		result3 error
-	}{result1, result2, result3}
-}
-
-func (fake *FakeGatherer) IsDatabaseFollower() (bool, error) {
-	fake.isDatabaseFollowerMutex.Lock()
-	ret, specificReturn := fake.isDatabaseFollowerReturnsOnCall[len(fake.isDatabaseFollowerArgsForCall)]
-	fake.isDatabaseFollowerArgsForCall = append(fake.isDatabaseFollowerArgsForCall, struct{}{})
-	fake.recordInvocation("IsDatabaseFollower", []interface{}{})
-	fake.isDatabaseFollowerMutex.Unlock()
-	if fake.IsDatabaseFollowerStub != nil {
-		return fake.IsDatabaseFollowerStub()
-	}
-	if specificReturn {
-		return ret.result1, ret.result2
-	}
-	return fake.isDatabaseFollowerReturns.result1, fake.isDatabaseFollowerReturns.result2
-}
-
-func (fake *FakeGatherer) IsDatabaseFollowerCallCount() int {
-	fake.isDatabaseFollowerMutex.RLock()
-	defer fake.isDatabaseFollowerMutex.RUnlock()
-	return len(fake.isDatabaseFollowerArgsForCall)
-}
-
-func (fake *FakeGatherer) IsDatabaseFollowerReturns(result1 bool, result2 error) {
-	fake.IsDatabaseFollowerStub = nil
-	fake.isDatabaseFollowerReturns = struct {
-		result1 bool
-		result2 error
-	}{result1, result2}
-}
-
-func (fake *FakeGatherer) IsDatabaseFollowerReturnsOnCall(i int, result1 bool, result2 error) {
-	fake.IsDatabaseFollowerStub = nil
-	if fake.isDatabaseFollowerReturnsOnCall == nil {
-		fake.isDatabaseFollowerReturnsOnCall = make(map[int]struct {
-			result1 bool
-			result2 error
-		})
-	}
-	fake.isDatabaseFollowerReturnsOnCall[i] = struct {
-		result1 bool
-		result2 error
-	}{result1, result2}
-}
-
-func (fake *FakeGatherer) IsDatabaseAvailable() bool {
-	fake.isDatabaseAvailableMutex.Lock()
-	ret, specificReturn := fake.isDatabaseAvailableReturnsOnCall[len(fake.isDatabaseAvailableArgsForCall)]
-	fake.isDatabaseAvailableArgsForCall = append(fake.isDatabaseAvailableArgsForCall, struct{}{})
-	fake.recordInvocation("IsDatabaseAvailable", []interface{}{})
-	fake.isDatabaseAvailableMutex.Unlock()
-	if fake.IsDatabaseAvailableStub != nil {
-		return fake.IsDatabaseAvailableStub()
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.isDatabaseAvailableReturns.result1
-}
-
-func (fake *FakeGatherer) IsDatabaseAvailableCallCount() int {
-	fake.isDatabaseAvailableMutex.RLock()
-	defer fake.isDatabaseAvailableMutex.RUnlock()
-	return len(fake.isDatabaseAvailableArgsForCall)
-}
-
-func (fake *FakeGatherer) IsDatabaseAvailableReturns(result1 bool) {
-	fake.IsDatabaseAvailableStub = nil
-	fake.isDatabaseAvailableReturns = struct {
-		result1 bool
-	}{result1}
-}
-
-func (fake *FakeGatherer) IsDatabaseAvailableReturnsOnCall(i int, result1 bool) {
-	fake.IsDatabaseAvailableStub = nil
-	if fake.isDatabaseAvailableReturnsOnCall == nil {
-		fake.isDatabaseAvailableReturnsOnCall = make(map[int]struct {
-			result1 bool
-		})
-	}
-	fake.isDatabaseAvailableReturnsOnCall[i] = struct {
-		result1 bool
-	}{result1}
-}
-
-func (fake *FakeGatherer) DiskStats() (map[string]string, error) {
-	fake.diskStatsMutex.Lock()
-	ret, specificReturn := fake.diskStatsReturnsOnCall[len(fake.diskStatsArgsForCall)]
-	fake.diskStatsArgsForCall = append(fake.diskStatsArgsForCall, struct{}{})
-	fake.recordInvocation("DiskStats", []interface{}{})
-	fake.diskStatsMutex.Unlock()
-	if fake.DiskStatsStub != nil {
-		return fake.DiskStatsStub()
-	}
-	if specificReturn {
-		return ret.result1, ret.result2
-	}
-	return fake.diskStatsReturns.result1, fake.diskStatsReturns.result2
-}
-
-func (fake *FakeGatherer) DiskStatsCallCount() int {
-	fake.diskStatsMutex.RLock()
-	defer fake.diskStatsMutex.RUnlock()
-	return len(fake.diskStatsArgsForCall)
-}
-
-func (fake *FakeGatherer) DiskStatsReturns(result1 map[string]string, result2 error) {
-	fake.DiskStatsStub = nil
-	fake.diskStatsReturns = struct {
-		result1 map[string]string
-		result2 error
-	}{result1, result2}
-}
-
-func (fake *FakeGatherer) DiskStatsReturnsOnCall(i int, result1 map[string]string, result2 error) {
-	fake.DiskStatsStub = nil
-	if fake.diskStatsReturnsOnCall == nil {
-		fake.diskStatsReturnsOnCall = make(map[int]struct {
-			result1 map[string]string
-			result2 error
-		})
-	}
-	fake.diskStatsReturnsOnCall[i] = struct {
-		result1 map[string]string
-		result2 error
-	}{result1, result2}
 }
 
 func (fake *FakeGatherer) BrokerStats() (map[string]string, error) {
 	fake.brokerStatsMutex.Lock()
 	ret, specificReturn := fake.brokerStatsReturnsOnCall[len(fake.brokerStatsArgsForCall)]
-	fake.brokerStatsArgsForCall = append(fake.brokerStatsArgsForCall, struct{}{})
+	fake.brokerStatsArgsForCall = append(fake.brokerStatsArgsForCall, struct {
+	}{})
 	fake.recordInvocation("BrokerStats", []interface{}{})
 	fake.brokerStatsMutex.Unlock()
 	if fake.BrokerStatsStub != nil {
@@ -320,7 +110,8 @@ func (fake *FakeGatherer) BrokerStats() (map[string]string, error) {
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.brokerStatsReturns.result1, fake.brokerStatsReturns.result2
+	fakeReturns := fake.brokerStatsReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeGatherer) BrokerStatsCallCount() int {
@@ -329,7 +120,15 @@ func (fake *FakeGatherer) BrokerStatsCallCount() int {
 	return len(fake.brokerStatsArgsForCall)
 }
 
+func (fake *FakeGatherer) BrokerStatsCalls(stub func() (map[string]string, error)) {
+	fake.brokerStatsMutex.Lock()
+	defer fake.brokerStatsMutex.Unlock()
+	fake.BrokerStatsStub = stub
+}
+
 func (fake *FakeGatherer) BrokerStatsReturns(result1 map[string]string, result2 error) {
+	fake.brokerStatsMutex.Lock()
+	defer fake.brokerStatsMutex.Unlock()
 	fake.BrokerStatsStub = nil
 	fake.brokerStatsReturns = struct {
 		result1 map[string]string
@@ -338,6 +137,8 @@ func (fake *FakeGatherer) BrokerStatsReturns(result1 map[string]string, result2 
 }
 
 func (fake *FakeGatherer) BrokerStatsReturnsOnCall(i int, result1 map[string]string, result2 error) {
+	fake.brokerStatsMutex.Lock()
+	defer fake.brokerStatsMutex.Unlock()
 	fake.BrokerStatsStub = nil
 	if fake.brokerStatsReturnsOnCall == nil {
 		fake.brokerStatsReturnsOnCall = make(map[int]struct {
@@ -354,7 +155,8 @@ func (fake *FakeGatherer) BrokerStatsReturnsOnCall(i int, result1 map[string]str
 func (fake *FakeGatherer) CPUStats() (map[string]string, error) {
 	fake.cPUStatsMutex.Lock()
 	ret, specificReturn := fake.cPUStatsReturnsOnCall[len(fake.cPUStatsArgsForCall)]
-	fake.cPUStatsArgsForCall = append(fake.cPUStatsArgsForCall, struct{}{})
+	fake.cPUStatsArgsForCall = append(fake.cPUStatsArgsForCall, struct {
+	}{})
 	fake.recordInvocation("CPUStats", []interface{}{})
 	fake.cPUStatsMutex.Unlock()
 	if fake.CPUStatsStub != nil {
@@ -363,7 +165,8 @@ func (fake *FakeGatherer) CPUStats() (map[string]string, error) {
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.cPUStatsReturns.result1, fake.cPUStatsReturns.result2
+	fakeReturns := fake.cPUStatsReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeGatherer) CPUStatsCallCount() int {
@@ -372,7 +175,15 @@ func (fake *FakeGatherer) CPUStatsCallCount() int {
 	return len(fake.cPUStatsArgsForCall)
 }
 
+func (fake *FakeGatherer) CPUStatsCalls(stub func() (map[string]string, error)) {
+	fake.cPUStatsMutex.Lock()
+	defer fake.cPUStatsMutex.Unlock()
+	fake.CPUStatsStub = stub
+}
+
 func (fake *FakeGatherer) CPUStatsReturns(result1 map[string]string, result2 error) {
+	fake.cPUStatsMutex.Lock()
+	defer fake.cPUStatsMutex.Unlock()
 	fake.CPUStatsStub = nil
 	fake.cPUStatsReturns = struct {
 		result1 map[string]string
@@ -381,6 +192,8 @@ func (fake *FakeGatherer) CPUStatsReturns(result1 map[string]string, result2 err
 }
 
 func (fake *FakeGatherer) CPUStatsReturnsOnCall(i int, result1 map[string]string, result2 error) {
+	fake.cPUStatsMutex.Lock()
+	defer fake.cPUStatsMutex.Unlock()
 	fake.CPUStatsStub = nil
 	if fake.cPUStatsReturnsOnCall == nil {
 		fake.cPUStatsReturnsOnCall = make(map[int]struct {
@@ -394,23 +207,301 @@ func (fake *FakeGatherer) CPUStatsReturnsOnCall(i int, result1 map[string]string
 	}{result1, result2}
 }
 
+func (fake *FakeGatherer) DatabaseMetadata() (map[string]string, map[string]string, error) {
+	fake.databaseMetadataMutex.Lock()
+	ret, specificReturn := fake.databaseMetadataReturnsOnCall[len(fake.databaseMetadataArgsForCall)]
+	fake.databaseMetadataArgsForCall = append(fake.databaseMetadataArgsForCall, struct {
+	}{})
+	fake.recordInvocation("DatabaseMetadata", []interface{}{})
+	fake.databaseMetadataMutex.Unlock()
+	if fake.DatabaseMetadataStub != nil {
+		return fake.DatabaseMetadataStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	fakeReturns := fake.databaseMetadataReturns
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeGatherer) DatabaseMetadataCallCount() int {
+	fake.databaseMetadataMutex.RLock()
+	defer fake.databaseMetadataMutex.RUnlock()
+	return len(fake.databaseMetadataArgsForCall)
+}
+
+func (fake *FakeGatherer) DatabaseMetadataCalls(stub func() (map[string]string, map[string]string, error)) {
+	fake.databaseMetadataMutex.Lock()
+	defer fake.databaseMetadataMutex.Unlock()
+	fake.DatabaseMetadataStub = stub
+}
+
+func (fake *FakeGatherer) DatabaseMetadataReturns(result1 map[string]string, result2 map[string]string, result3 error) {
+	fake.databaseMetadataMutex.Lock()
+	defer fake.databaseMetadataMutex.Unlock()
+	fake.DatabaseMetadataStub = nil
+	fake.databaseMetadataReturns = struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeGatherer) DatabaseMetadataReturnsOnCall(i int, result1 map[string]string, result2 map[string]string, result3 error) {
+	fake.databaseMetadataMutex.Lock()
+	defer fake.databaseMetadataMutex.Unlock()
+	fake.DatabaseMetadataStub = nil
+	if fake.databaseMetadataReturnsOnCall == nil {
+		fake.databaseMetadataReturnsOnCall = make(map[int]struct {
+			result1 map[string]string
+			result2 map[string]string
+			result3 error
+		})
+	}
+	fake.databaseMetadataReturnsOnCall[i] = struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeGatherer) DiskStats() (map[string]string, error) {
+	fake.diskStatsMutex.Lock()
+	ret, specificReturn := fake.diskStatsReturnsOnCall[len(fake.diskStatsArgsForCall)]
+	fake.diskStatsArgsForCall = append(fake.diskStatsArgsForCall, struct {
+	}{})
+	fake.recordInvocation("DiskStats", []interface{}{})
+	fake.diskStatsMutex.Unlock()
+	if fake.DiskStatsStub != nil {
+		return fake.DiskStatsStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.diskStatsReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeGatherer) DiskStatsCallCount() int {
+	fake.diskStatsMutex.RLock()
+	defer fake.diskStatsMutex.RUnlock()
+	return len(fake.diskStatsArgsForCall)
+}
+
+func (fake *FakeGatherer) DiskStatsCalls(stub func() (map[string]string, error)) {
+	fake.diskStatsMutex.Lock()
+	defer fake.diskStatsMutex.Unlock()
+	fake.DiskStatsStub = stub
+}
+
+func (fake *FakeGatherer) DiskStatsReturns(result1 map[string]string, result2 error) {
+	fake.diskStatsMutex.Lock()
+	defer fake.diskStatsMutex.Unlock()
+	fake.DiskStatsStub = nil
+	fake.diskStatsReturns = struct {
+		result1 map[string]string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeGatherer) DiskStatsReturnsOnCall(i int, result1 map[string]string, result2 error) {
+	fake.diskStatsMutex.Lock()
+	defer fake.diskStatsMutex.Unlock()
+	fake.DiskStatsStub = nil
+	if fake.diskStatsReturnsOnCall == nil {
+		fake.diskStatsReturnsOnCall = make(map[int]struct {
+			result1 map[string]string
+			result2 error
+		})
+	}
+	fake.diskStatsReturnsOnCall[i] = struct {
+		result1 map[string]string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeGatherer) FollowerMetadata() (map[string]string, map[string]string, error) {
+	fake.followerMetadataMutex.Lock()
+	ret, specificReturn := fake.followerMetadataReturnsOnCall[len(fake.followerMetadataArgsForCall)]
+	fake.followerMetadataArgsForCall = append(fake.followerMetadataArgsForCall, struct {
+	}{})
+	fake.recordInvocation("FollowerMetadata", []interface{}{})
+	fake.followerMetadataMutex.Unlock()
+	if fake.FollowerMetadataStub != nil {
+		return fake.FollowerMetadataStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	fakeReturns := fake.followerMetadataReturns
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeGatherer) FollowerMetadataCallCount() int {
+	fake.followerMetadataMutex.RLock()
+	defer fake.followerMetadataMutex.RUnlock()
+	return len(fake.followerMetadataArgsForCall)
+}
+
+func (fake *FakeGatherer) FollowerMetadataCalls(stub func() (map[string]string, map[string]string, error)) {
+	fake.followerMetadataMutex.Lock()
+	defer fake.followerMetadataMutex.Unlock()
+	fake.FollowerMetadataStub = stub
+}
+
+func (fake *FakeGatherer) FollowerMetadataReturns(result1 map[string]string, result2 map[string]string, result3 error) {
+	fake.followerMetadataMutex.Lock()
+	defer fake.followerMetadataMutex.Unlock()
+	fake.FollowerMetadataStub = nil
+	fake.followerMetadataReturns = struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeGatherer) FollowerMetadataReturnsOnCall(i int, result1 map[string]string, result2 map[string]string, result3 error) {
+	fake.followerMetadataMutex.Lock()
+	defer fake.followerMetadataMutex.Unlock()
+	fake.FollowerMetadataStub = nil
+	if fake.followerMetadataReturnsOnCall == nil {
+		fake.followerMetadataReturnsOnCall = make(map[int]struct {
+			result1 map[string]string
+			result2 map[string]string
+			result3 error
+		})
+	}
+	fake.followerMetadataReturnsOnCall[i] = struct {
+		result1 map[string]string
+		result2 map[string]string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeGatherer) IsDatabaseAvailable() bool {
+	fake.isDatabaseAvailableMutex.Lock()
+	ret, specificReturn := fake.isDatabaseAvailableReturnsOnCall[len(fake.isDatabaseAvailableArgsForCall)]
+	fake.isDatabaseAvailableArgsForCall = append(fake.isDatabaseAvailableArgsForCall, struct {
+	}{})
+	fake.recordInvocation("IsDatabaseAvailable", []interface{}{})
+	fake.isDatabaseAvailableMutex.Unlock()
+	if fake.IsDatabaseAvailableStub != nil {
+		return fake.IsDatabaseAvailableStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.isDatabaseAvailableReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeGatherer) IsDatabaseAvailableCallCount() int {
+	fake.isDatabaseAvailableMutex.RLock()
+	defer fake.isDatabaseAvailableMutex.RUnlock()
+	return len(fake.isDatabaseAvailableArgsForCall)
+}
+
+func (fake *FakeGatherer) IsDatabaseAvailableCalls(stub func() bool) {
+	fake.isDatabaseAvailableMutex.Lock()
+	defer fake.isDatabaseAvailableMutex.Unlock()
+	fake.IsDatabaseAvailableStub = stub
+}
+
+func (fake *FakeGatherer) IsDatabaseAvailableReturns(result1 bool) {
+	fake.isDatabaseAvailableMutex.Lock()
+	defer fake.isDatabaseAvailableMutex.Unlock()
+	fake.IsDatabaseAvailableStub = nil
+	fake.isDatabaseAvailableReturns = struct {
+		result1 bool
+	}{result1}
+}
+
+func (fake *FakeGatherer) IsDatabaseAvailableReturnsOnCall(i int, result1 bool) {
+	fake.isDatabaseAvailableMutex.Lock()
+	defer fake.isDatabaseAvailableMutex.Unlock()
+	fake.IsDatabaseAvailableStub = nil
+	if fake.isDatabaseAvailableReturnsOnCall == nil {
+		fake.isDatabaseAvailableReturnsOnCall = make(map[int]struct {
+			result1 bool
+		})
+	}
+	fake.isDatabaseAvailableReturnsOnCall[i] = struct {
+		result1 bool
+	}{result1}
+}
+
+func (fake *FakeGatherer) IsDatabaseFollower() (bool, error) {
+	fake.isDatabaseFollowerMutex.Lock()
+	ret, specificReturn := fake.isDatabaseFollowerReturnsOnCall[len(fake.isDatabaseFollowerArgsForCall)]
+	fake.isDatabaseFollowerArgsForCall = append(fake.isDatabaseFollowerArgsForCall, struct {
+	}{})
+	fake.recordInvocation("IsDatabaseFollower", []interface{}{})
+	fake.isDatabaseFollowerMutex.Unlock()
+	if fake.IsDatabaseFollowerStub != nil {
+		return fake.IsDatabaseFollowerStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.isDatabaseFollowerReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeGatherer) IsDatabaseFollowerCallCount() int {
+	fake.isDatabaseFollowerMutex.RLock()
+	defer fake.isDatabaseFollowerMutex.RUnlock()
+	return len(fake.isDatabaseFollowerArgsForCall)
+}
+
+func (fake *FakeGatherer) IsDatabaseFollowerCalls(stub func() (bool, error)) {
+	fake.isDatabaseFollowerMutex.Lock()
+	defer fake.isDatabaseFollowerMutex.Unlock()
+	fake.IsDatabaseFollowerStub = stub
+}
+
+func (fake *FakeGatherer) IsDatabaseFollowerReturns(result1 bool, result2 error) {
+	fake.isDatabaseFollowerMutex.Lock()
+	defer fake.isDatabaseFollowerMutex.Unlock()
+	fake.IsDatabaseFollowerStub = nil
+	fake.isDatabaseFollowerReturns = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeGatherer) IsDatabaseFollowerReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.isDatabaseFollowerMutex.Lock()
+	defer fake.isDatabaseFollowerMutex.Unlock()
+	fake.IsDatabaseFollowerStub = nil
+	if fake.isDatabaseFollowerReturnsOnCall == nil {
+		fake.isDatabaseFollowerReturnsOnCall = make(map[int]struct {
+			result1 bool
+			result2 error
+		})
+	}
+	fake.isDatabaseFollowerReturnsOnCall[i] = struct {
+		result1 bool
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeGatherer) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.databaseMetadataMutex.RLock()
-	defer fake.databaseMetadataMutex.RUnlock()
-	fake.followerMetadataMutex.RLock()
-	defer fake.followerMetadataMutex.RUnlock()
-	fake.isDatabaseFollowerMutex.RLock()
-	defer fake.isDatabaseFollowerMutex.RUnlock()
-	fake.isDatabaseAvailableMutex.RLock()
-	defer fake.isDatabaseAvailableMutex.RUnlock()
-	fake.diskStatsMutex.RLock()
-	defer fake.diskStatsMutex.RUnlock()
 	fake.brokerStatsMutex.RLock()
 	defer fake.brokerStatsMutex.RUnlock()
 	fake.cPUStatsMutex.RLock()
 	defer fake.cPUStatsMutex.RUnlock()
+	fake.databaseMetadataMutex.RLock()
+	defer fake.databaseMetadataMutex.RUnlock()
+	fake.diskStatsMutex.RLock()
+	defer fake.diskStatsMutex.RUnlock()
+	fake.followerMetadataMutex.RLock()
+	defer fake.followerMetadataMutex.RUnlock()
+	fake.isDatabaseAvailableMutex.RLock()
+	defer fake.isDatabaseAvailableMutex.RUnlock()
+	fake.isDatabaseFollowerMutex.RLock()
+	defer fake.isDatabaseFollowerMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

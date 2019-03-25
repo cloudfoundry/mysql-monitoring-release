@@ -7,12 +7,12 @@ import (
 )
 
 type FakeSender struct {
-	SendValueStub        func(name string, value float64, unit string) error
+	SendValueStub        func(string, float64, string) error
 	sendValueMutex       sync.RWMutex
 	sendValueArgsForCall []struct {
-		name  string
-		value float64
-		unit  string
+		arg1 string
+		arg2 float64
+		arg3 string
 	}
 	sendValueReturns struct {
 		result1 error
@@ -24,23 +24,24 @@ type FakeSender struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeSender) SendValue(name string, value float64, unit string) error {
+func (fake *FakeSender) SendValue(arg1 string, arg2 float64, arg3 string) error {
 	fake.sendValueMutex.Lock()
 	ret, specificReturn := fake.sendValueReturnsOnCall[len(fake.sendValueArgsForCall)]
 	fake.sendValueArgsForCall = append(fake.sendValueArgsForCall, struct {
-		name  string
-		value float64
-		unit  string
-	}{name, value, unit})
-	fake.recordInvocation("SendValue", []interface{}{name, value, unit})
+		arg1 string
+		arg2 float64
+		arg3 string
+	}{arg1, arg2, arg3})
+	fake.recordInvocation("SendValue", []interface{}{arg1, arg2, arg3})
 	fake.sendValueMutex.Unlock()
 	if fake.SendValueStub != nil {
-		return fake.SendValueStub(name, value, unit)
+		return fake.SendValueStub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.sendValueReturns.result1
+	fakeReturns := fake.sendValueReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeSender) SendValueCallCount() int {
@@ -49,13 +50,22 @@ func (fake *FakeSender) SendValueCallCount() int {
 	return len(fake.sendValueArgsForCall)
 }
 
+func (fake *FakeSender) SendValueCalls(stub func(string, float64, string) error) {
+	fake.sendValueMutex.Lock()
+	defer fake.sendValueMutex.Unlock()
+	fake.SendValueStub = stub
+}
+
 func (fake *FakeSender) SendValueArgsForCall(i int) (string, float64, string) {
 	fake.sendValueMutex.RLock()
 	defer fake.sendValueMutex.RUnlock()
-	return fake.sendValueArgsForCall[i].name, fake.sendValueArgsForCall[i].value, fake.sendValueArgsForCall[i].unit
+	argsForCall := fake.sendValueArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
 func (fake *FakeSender) SendValueReturns(result1 error) {
+	fake.sendValueMutex.Lock()
+	defer fake.sendValueMutex.Unlock()
 	fake.SendValueStub = nil
 	fake.sendValueReturns = struct {
 		result1 error
@@ -63,6 +73,8 @@ func (fake *FakeSender) SendValueReturns(result1 error) {
 }
 
 func (fake *FakeSender) SendValueReturnsOnCall(i int, result1 error) {
+	fake.sendValueMutex.Lock()
+	defer fake.sendValueMutex.Unlock()
 	fake.SendValueStub = nil
 	if fake.sendValueReturnsOnCall == nil {
 		fake.sendValueReturnsOnCall = make(map[int]struct {

@@ -42,10 +42,17 @@ func (fake *FakeLogger) DebugCallCount() int {
 	return len(fake.debugArgsForCall)
 }
 
+func (fake *FakeLogger) DebugCalls(stub func(string, map[string]interface{})) {
+	fake.debugMutex.Lock()
+	defer fake.debugMutex.Unlock()
+	fake.DebugStub = stub
+}
+
 func (fake *FakeLogger) DebugArgsForCall(i int) (string, map[string]interface{}) {
 	fake.debugMutex.RLock()
 	defer fake.debugMutex.RUnlock()
-	return fake.debugArgsForCall[i].arg1, fake.debugArgsForCall[i].arg2
+	argsForCall := fake.debugArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeLogger) Error(arg1 string, arg2 error) {
@@ -67,10 +74,17 @@ func (fake *FakeLogger) ErrorCallCount() int {
 	return len(fake.errorArgsForCall)
 }
 
+func (fake *FakeLogger) ErrorCalls(stub func(string, error)) {
+	fake.errorMutex.Lock()
+	defer fake.errorMutex.Unlock()
+	fake.ErrorStub = stub
+}
+
 func (fake *FakeLogger) ErrorArgsForCall(i int) (string, error) {
 	fake.errorMutex.RLock()
 	defer fake.errorMutex.RUnlock()
-	return fake.errorArgsForCall[i].arg1, fake.errorArgsForCall[i].arg2
+	argsForCall := fake.errorArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeLogger) Invocations() map[string][][]interface{} {

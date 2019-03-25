@@ -9,8 +9,9 @@ import (
 type FakeProcessor struct {
 	ProcessStub        func() error
 	processMutex       sync.RWMutex
-	processArgsForCall []struct{}
-	processReturns     struct {
+	processArgsForCall []struct {
+	}
+	processReturns struct {
 		result1 error
 	}
 	processReturnsOnCall map[int]struct {
@@ -23,7 +24,8 @@ type FakeProcessor struct {
 func (fake *FakeProcessor) Process() error {
 	fake.processMutex.Lock()
 	ret, specificReturn := fake.processReturnsOnCall[len(fake.processArgsForCall)]
-	fake.processArgsForCall = append(fake.processArgsForCall, struct{}{})
+	fake.processArgsForCall = append(fake.processArgsForCall, struct {
+	}{})
 	fake.recordInvocation("Process", []interface{}{})
 	fake.processMutex.Unlock()
 	if fake.ProcessStub != nil {
@@ -32,7 +34,8 @@ func (fake *FakeProcessor) Process() error {
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.processReturns.result1
+	fakeReturns := fake.processReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeProcessor) ProcessCallCount() int {
@@ -41,7 +44,15 @@ func (fake *FakeProcessor) ProcessCallCount() int {
 	return len(fake.processArgsForCall)
 }
 
+func (fake *FakeProcessor) ProcessCalls(stub func() error) {
+	fake.processMutex.Lock()
+	defer fake.processMutex.Unlock()
+	fake.ProcessStub = stub
+}
+
 func (fake *FakeProcessor) ProcessReturns(result1 error) {
+	fake.processMutex.Lock()
+	defer fake.processMutex.Unlock()
 	fake.ProcessStub = nil
 	fake.processReturns = struct {
 		result1 error
@@ -49,6 +60,8 @@ func (fake *FakeProcessor) ProcessReturns(result1 error) {
 }
 
 func (fake *FakeProcessor) ProcessReturnsOnCall(i int, result1 error) {
+	fake.processMutex.Lock()
+	defer fake.processMutex.Unlock()
 	fake.ProcessStub = nil
 	if fake.processReturnsOnCall == nil {
 		fake.processReturnsOnCall = make(map[int]struct {

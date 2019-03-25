@@ -7,10 +7,10 @@ import (
 )
 
 type FakeWriter struct {
-	WriteStub        func(metric []*metrics.Metric) error
+	WriteStub        func([]*metrics.Metric) error
 	writeMutex       sync.RWMutex
 	writeArgsForCall []struct {
-		metric []*metrics.Metric
+		arg1 []*metrics.Metric
 	}
 	writeReturns struct {
 		result1 error
@@ -22,26 +22,27 @@ type FakeWriter struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeWriter) Write(metric []*metrics.Metric) error {
-	var metricCopy []*metrics.Metric
-	if metric != nil {
-		metricCopy = make([]*metrics.Metric, len(metric))
-		copy(metricCopy, metric)
+func (fake *FakeWriter) Write(arg1 []*metrics.Metric) error {
+	var arg1Copy []*metrics.Metric
+	if arg1 != nil {
+		arg1Copy = make([]*metrics.Metric, len(arg1))
+		copy(arg1Copy, arg1)
 	}
 	fake.writeMutex.Lock()
 	ret, specificReturn := fake.writeReturnsOnCall[len(fake.writeArgsForCall)]
 	fake.writeArgsForCall = append(fake.writeArgsForCall, struct {
-		metric []*metrics.Metric
-	}{metricCopy})
-	fake.recordInvocation("Write", []interface{}{metricCopy})
+		arg1 []*metrics.Metric
+	}{arg1Copy})
+	fake.recordInvocation("Write", []interface{}{arg1Copy})
 	fake.writeMutex.Unlock()
 	if fake.WriteStub != nil {
-		return fake.WriteStub(metric)
+		return fake.WriteStub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.writeReturns.result1
+	fakeReturns := fake.writeReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeWriter) WriteCallCount() int {
@@ -50,13 +51,22 @@ func (fake *FakeWriter) WriteCallCount() int {
 	return len(fake.writeArgsForCall)
 }
 
+func (fake *FakeWriter) WriteCalls(stub func([]*metrics.Metric) error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
+	fake.WriteStub = stub
+}
+
 func (fake *FakeWriter) WriteArgsForCall(i int) []*metrics.Metric {
 	fake.writeMutex.RLock()
 	defer fake.writeMutex.RUnlock()
-	return fake.writeArgsForCall[i].metric
+	argsForCall := fake.writeArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeWriter) WriteReturns(result1 error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
 	fake.WriteStub = nil
 	fake.writeReturns = struct {
 		result1 error
@@ -64,6 +74,8 @@ func (fake *FakeWriter) WriteReturns(result1 error) {
 }
 
 func (fake *FakeWriter) WriteReturnsOnCall(i int, result1 error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
 	fake.WriteStub = nil
 	if fake.writeReturnsOnCall == nil {
 		fake.writeReturnsOnCall = make(map[int]struct {
