@@ -6,9 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"mysql-diag/config"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"mysql-diag/config"
 )
 
 var _ = Describe("config", func() {
@@ -33,6 +34,9 @@ var _ = Describe("config", func() {
 
 		diskUsedWarningPercent       uint
 		diskInodesUsedWarningPercent uint
+
+		node        config.MysqlNode
+		mysqlConfig config.MysqlConfig
 	)
 
 	BeforeEach(func() {
@@ -97,6 +101,20 @@ var _ = Describe("config", func() {
 
 		err = ioutil.WriteFile(configFilepath, []byte(formatted), os.ModePerm)
 		Expect(err).NotTo(HaveOccurred())
+
+		node = config.MysqlNode{
+			Host: "nowhere.example.com",
+			Name: "somename",
+			UUID: "uuid",
+		}
+
+		mysqlConfig = config.MysqlConfig{
+			Username: "someuser",
+			Password: "somepassword",
+			Port:     3306,
+			Nodes:    []config.MysqlNode{node},
+		}
+
 	})
 
 	AfterEach(func() {
@@ -150,41 +168,11 @@ var _ = Describe("config", func() {
 
 	Describe("ConnectionString", func() {
 		It("builds a mysql connection string", func() {
-			node := config.MysqlNode{
-				"nowhere.example.com",
-				"somename",
-				"uuid",
-			}
-
-			mysqlConfig := config.MysqlConfig{
-				"someuser",
-				"somepassword",
-				3306,
-				nil,
-				nil,
-				[]config.MysqlNode{node},
-			}
-
 			Expect(mysqlConfig.ConnectionString(node)).To(Equal("someuser:somepassword@tcp(nowhere.example.com:3306)/?timeout=10s"))
 		})
 	})
 
 	It("provides a database connection object", func() {
-		node := config.MysqlNode{
-			"nowhere.example.com",
-			"somename",
-			"uuid",
-		}
-
-		mysqlConfig := config.MysqlConfig{
-			"someuser",
-			"somepassword",
-			3306,
-			nil,
-			nil,
-			[]config.MysqlNode{node},
-		}
-
 		conn := mysqlConfig.Connection(node)
 
 		// It's not really connected to the database, it's lazy, so there's not much to assert
