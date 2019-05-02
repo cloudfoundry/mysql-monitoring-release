@@ -2,7 +2,7 @@
 
 lint_golang() {
   use_fgt=${USE_FGT:-""}
-  go get github.com/GeertJohan/fgt
+  go get github.com/GeertJohan/fgt || true
   package_list=$(go list ./... | grep -v /vendor/)
 
   echo "$package_list"
