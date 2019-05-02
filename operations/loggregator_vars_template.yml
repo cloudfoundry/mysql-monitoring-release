@@ -1,3 +1,4 @@
-loggregator_tls_ca_cert: ((/your-bosh-name-here/cf/loggregator_tls_agent.ca))
-loggregator_tls_agent_cert: ((/your-bosh-name-here/cf/loggregator_tls_agent.certificate))
-loggregator_tls_agent_key: ((/your-bosh-name-here/cf/loggregator_tls_agent.private_key))
+loggregator_tls_ca_cert: ((/bosh-lite/cf/loggregator_tls_agent.ca))
+loggregator_tls_agent_cert: ((/bosh-lite/cf/loggregator_tls_agent.certificate))
+loggregator_tls_agent_key: ((/bosh-lite/cf/loggregator_tls_agent.private_key))
+loggregator_agent_deployment: pxc
