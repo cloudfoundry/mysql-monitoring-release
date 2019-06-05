@@ -19,3 +19,16 @@
 # [[override]]
 #  name = "github.com/x/y"
 #  version = "2.4.0"
+#
+[[override]]
+  revision = "3659db090cb23a57807b53e2f8580b2427dc2659"
+  name = "code.cloudfoundry.org/socks5-proxy"
+
+[[constraint]]
+  name = "github.com/cloudfoundry/bosh-cli"
+  version = "3.0.1"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/cloudfoundry/bosh-utils"
+

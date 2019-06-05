@@ -55,7 +55,7 @@ func (g Gatherer) DiskStats() (map[string]string, error) {
 		return nil, err
 	}
 
-	bytesFreeEphemeral, bytesTotalEphemeral, inodesFreeEphemeral, inodesTotalEphemeral, err := g.stater.Stats("/")
+	bytesFreeEphemeral, bytesTotalEphemeral, inodesFreeEphemeral, inodesTotalEphemeral, err := g.stater.Stats("/var/vcap/data")
 	if err != nil {
 		return nil, err
 	}
