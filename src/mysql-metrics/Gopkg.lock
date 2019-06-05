@@ -29,6 +29,14 @@
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:9291a57c23c52e994c7d0f64a4c62abc1b3b0acda910ff444c5c3b143afa408d"
+  name = "code.cloudfoundry.org/pxc-release"
+  packages = ["src/specs/test_helpers"]
+  pruneopts = ""
+  revision = "a1181aeaf25c60933e8cdf9fa97de8be0e81d363"
+  version = "v0.17.0"
+
+[[projects]]
   branch = "master"
   digest = "1:991216c84c6992eeda23d29f74b2eef6923c10c930d384d70f8709112ea43508"
   name = "code.cloudfoundry.org/rfc5424"
@@ -290,6 +298,7 @@
   input-imports = [
     "code.cloudfoundry.org/go-loggregator",
     "code.cloudfoundry.org/lager",
+    "code.cloudfoundry.org/pxc-release/src/specs/test_helpers",
     "github.com/DATA-DOG/go-sqlmock",
     "github.com/go-sql-driver/mysql",
     "github.com/hashicorp/go-multierror",

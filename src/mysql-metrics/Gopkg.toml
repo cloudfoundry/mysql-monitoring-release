@@ -19,3 +19,7 @@
 # [[override]]
 #  name = "github.com/x/y"
 #  version = "2.4.0"
+[[constraint]]
+  name = "github.com/cloudfoundry-incubator/pxc-release"
+  branch = "master"
+  source = "code.cloudfoundry.org/pxc-release/src/specs/test_helpers"
