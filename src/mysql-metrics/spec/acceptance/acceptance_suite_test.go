@@ -1,11 +1,13 @@
 package acceptance_test
 
 import (
-	helpers "code.cloudfoundry.org/pxc-release/src/specs/test_helpers"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"os"
 	"testing"
+
+	helpers "mysql-metrics/spec/test_helpers"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 func TestAcceptance(t *testing.T) {
