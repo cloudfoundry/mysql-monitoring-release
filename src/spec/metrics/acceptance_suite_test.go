@@ -62,8 +62,12 @@ var _ = BeforeSuite(func() {
 	TestSetup = workflowhelpers.NewTestSuiteSetup(Config)
 	TestSetup.Setup()
 
-	session := cf.Cf("install-plugin", "-f", "log-cache", "-r", "CF-Community").Wait(10 * time.Minute)
-	Expect(session.ExitCode()).To(BeZero())
+	session := cf.Cf("tail", "--help").Wait(10 * time.Second)
+	if session.ExitCode() != 0 {
+		session = cf.Cf("install-plugin", "-f", "log-cache", "-r", "CF-Community").Wait(10 * time.Minute)
+		Expect(session.ExitCode()).To(BeZero())
+	}
+
 })
 
 var _ = AfterSuite(func() {
