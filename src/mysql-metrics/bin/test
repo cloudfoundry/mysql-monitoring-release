@@ -8,6 +8,7 @@ source ${test_helpers_dir}/linter.sh
 
 # Needed for disk metrics; may need to create manually if permission denied
 mkdir -p /var/vcap/store
+mkdir -p /var/vcap/data
 
 if [ "$(uname)" == "Darwin" ]; then
   if [[ ! -d /proc ]]; then
