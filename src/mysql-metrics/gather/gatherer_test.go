@@ -101,7 +101,7 @@ var _ = Describe("Gatherer", func() {
 
 			Expect(stater.StatsCallCount()).To(Equal(2))
 			Expect(stater.StatsArgsForCall(0)).To(Equal("/var/vcap/store"))
-			Expect(stater.StatsArgsForCall(1)).To(Equal("/"))
+			Expect(stater.StatsArgsForCall(1)).To(Equal("/var/vcap/data"))
 		})
 
 		Context("error cases", func() {
@@ -122,7 +122,7 @@ var _ = Describe("Gatherer", func() {
 				Expect(err).To(MatchError("failed to inspect ephemeral disk"))
 
 				Expect(stater.StatsCallCount()).To(Equal(2))
-				Expect(stater.StatsArgsForCall(1)).To(Equal("/"))
+				Expect(stater.StatsArgsForCall(1)).To(Equal("/var/vcap/data"))
 			})
 		})
 	})
