@@ -20,6 +20,6 @@ pushd "${base_dir}" > /dev/null
     -randomizeAllSpecs \
     -randomizeSuites \
     -slowSpecThreshold="${SLOW_SPEC_THRESHOLD}" \
-    -skipPackage="spec/metrics" \
+    -skipPackage="metrics" \
     "$@"
 popd > /dev/null
