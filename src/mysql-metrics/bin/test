@@ -24,7 +24,7 @@ pushd "${base_dir}" > /dev/null
   bin/regenerate-fakes
 
   if [[ -n $UNIT ]]; then
-    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites -skipPackage="integration_test,acceptance_test" \
+    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites -skipPackage="integration_test" \
       "$@"
   elif [[ -n $INTEGRATION ]]; then
     ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites integration_test \
