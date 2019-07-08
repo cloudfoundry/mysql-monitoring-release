@@ -2,6 +2,10 @@ package acceptance_test
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
+	"time"
+
 	"github.com/cloudfoundry-incubator/cf-test-helpers/cf"
 	"github.com/cloudfoundry-incubator/cf-test-helpers/workflowhelpers"
 	. "github.com/onsi/ginkgo"
@@ -9,9 +13,6 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 	"github.com/pivotal/mysql-test-utils/testhelpers"
-	"regexp"
-	"strconv"
-	"time"
 )
 
 var _ = Describe("Metrics are received", func() {
@@ -37,7 +38,7 @@ var _ = Describe("Metrics are received", func() {
 
 		})
 		AfterEach(func() {
-			args = []string{"ssh", "mysql/0", "-c", "sudo rm /var/vcap/data/pxc-mysql/tmp/file"}
+			args = []string{"ssh", "mysql/0", "-c", "sudo rm /var/vcap/data/file"}
 			session = testhelpers.ExecuteBosh(args, 20*time.Second)
 		})
 
@@ -82,7 +83,7 @@ var _ = Describe("Metrics are received", func() {
 
 			By("Writing 50% of available ephemeral disk", func() {
 				amountToAllocate := availBytes / 2
-				vmCommand := fmt.Sprintf("sudo fallocate -l%d /var/vcap/data/pxc-mysql/tmp/file", amountToAllocate)
+				vmCommand := fmt.Sprintf("sudo fallocate -l%d /var/vcap/data/file", amountToAllocate)
 				args = []string{"ssh", "mysql/0", "-c", vmCommand}
 				session = testhelpers.ExecuteBosh(args, 10*time.Second)
 				Expect(session.ExitCode()).To(BeZero())
