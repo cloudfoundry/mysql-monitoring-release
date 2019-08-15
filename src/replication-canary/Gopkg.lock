@@ -2,71 +2,108 @@
 
 
 [[projects]]
+  digest = "1:0a6b6912fbd82335b2d5d0ce3a02c6b32427f625cc580d005aa1961c4aeea11d"
   name = "code.cloudfoundry.org/cflager"
   packages = ["."]
+  pruneopts = "UT"
   revision = "3b0406dd8038bb31452dfaf171c4f0efa55393bf"
   source = "https://github.com/cloudfoundry/cflager"
 
 [[projects]]
+  digest = "1:910148452b4cc2ff14fd5e7c53c5e85af347d1fb3f4f07bdd667fd80da2f05da"
   name = "code.cloudfoundry.org/clock"
   packages = ["."]
+  pruneopts = "UT"
   revision = "da8295109ceb031ff96dc126bb68d75dd9fddc4b"
 
 [[projects]]
+  digest = "1:5a78f1b0a0fa8a659f19194a2d3d280671edd42fc49ad38a17cbccc813bbd06e"
   name = "code.cloudfoundry.org/lager"
   packages = [
     ".",
     "lagerctx",
-    "lagertest"
+    "lagertest",
   ]
+  pruneopts = "UT"
   revision = "438ab98cc3b9b81e97c2281422b2722cd8e80ed8"
 
 [[projects]]
   branch = "master"
+  digest = "1:133c748d60a89400639f72bb9cb94941374c82b119bb3df467b95bbae1fd9138"
   name = "code.cloudfoundry.org/trace-logger"
   packages = ["."]
+  pruneopts = "UT"
   revision = "107ef08a939d5be6092ce2b5f171a16aba149cb2"
 
 [[projects]]
+  digest = "1:2bf3164ee96a9ed9667cbb054954ae056a5f7cad0c0a27f25976215d469ff1ad"
   name = "code.cloudfoundry.org/uaa-go-client"
   packages = [
     ".",
     "config",
-    "schema"
+    "schema",
   ]
+  pruneopts = "UT"
   revision = "64195cff4edb7b374b4777d6ded2a42d6ef8e994"
 
 [[projects]]
+  digest = "1:a3289f5f820c91573f70b584ba5a9651968a6c8aa588bd74d6a1e55c30479ea7"
   name = "github.com/DATA-DOG/go-sqlmock"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f191e8603617b8de5cff91e17997d5eada180133"
 
 [[projects]]
+  digest = "1:1993e0226b04bd1b202a0de0d91f1be138866eb77b57ef5567c0ccd256e0aeda"
   name = "github.com/cloudfoundry/multierror"
   packages = ["."]
+  pruneopts = "UT"
   revision = "6bb1731c7a73a24f2bdaffc04e170d4c2c54d1e7"
 
 [[projects]]
+  digest = "1:dca288a67fa373fc2d0422d951fc6b880ec774f78baef16c51c2236de55a4f2f"
   name = "github.com/dgrijalva/jwt-go"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f62f64ea222e5e6d6d86421b5507b0862a3ebf7f"
 
 [[projects]]
+  digest = "1:21fed264e3d596b1fcf957f61c415960d2546bd03ecff45cb6381d36721b26b8"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
+  pruneopts = "UT"
   revision = "3654d25ec346ee8ce71a68431025458d52a38ac0"
 
 [[projects]]
+  digest = "1:fc13bfd642eaf0d5497a36e6258957777f0e2378b4140d55bd4215ae38063771"
   name = "github.com/golang/protobuf"
   packages = ["proto"]
+  pruneopts = "UT"
   revision = "0c1f6d65b5a189c2250d10e71a5506f06f9fa0a0"
 
 [[projects]]
+  digest = "1:a1038ef593beb4771c8f0f9c26e8b00410acd800af5c6864651d9bf160ea1813"
+  name = "github.com/hpcloud/tail"
+  packages = [
+    ".",
+    "ratelimiter",
+    "util",
+    "watch",
+    "winfile",
+  ]
+  pruneopts = "UT"
+  revision = "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:ee0f3214956a6e5a4866c97c902ee2ec784f2f5827934bc71a5f20b026029007"
   name = "github.com/imdario/mergo"
   packages = ["."]
+  pruneopts = "UT"
   revision = "50d4dbd4eb0e84778abe37cefef140271d96fade"
 
 [[projects]]
+  digest = "1:b013cb97ec8147b033199dfc5360d410130e1fc5d74dd6f08c4d777fe49b5c37"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -78,17 +115,23 @@
     "internal/leafnodes",
     "internal/remote",
     "internal/spec",
+    "internal/spec_iterator",
     "internal/specrunner",
     "internal/suite",
     "internal/testingtproxy",
     "internal/writer",
     "reporters",
     "reporters/stenographer",
-    "types"
+    "reporters/stenographer/support/go-colorable",
+    "reporters/stenographer/support/go-isatty",
+    "types",
   ]
-  revision = "059cec02d342bab423425a99b191186a03255e9e"
+  pruneopts = "UT"
+  revision = "eea6ad008b96acdaa524f5b409513bf062b500ad"
+  version = "v1.8.0"
 
 [[projects]]
+  digest = "1:a8fd46bae377d252cec5305bc5ef294d02a313b60f6100fbffd2fc11b6dfa88c"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -104,31 +147,121 @@
     "matchers/support/goraph/edge",
     "matchers/support/goraph/node",
     "matchers/support/goraph/util",
-    "types"
+    "types",
   ]
-  revision = "3e93f011213c200aadafcb19ed56eb718381cfbd"
+  pruneopts = "UT"
+  revision = "90e289841c1ed79b7a598a7cd9959750cb5e89e2"
+  version = "v1.5.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:2929af4bb9befc4d9bac868c96818c856625d3895dc412f80a6ecbf4e958e119"
   name = "github.com/pivotal-cf-experimental/service-config"
   packages = ["."]
+  pruneopts = "UT"
   revision = "b1dc94de6ada8bfddf159ce2234958a8f02aec77"
 
 [[projects]]
+  branch = "master"
+  digest = "1:a167b5c532f3245f5a147ade26185f16d6ee8f8d3f6c9846f447e9d8b9705505"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom",
+    "html/charset",
+  ]
+  pruneopts = "UT"
+  revision = "74dc4d7220e7acc4e100824340f3e66577424772"
+
+[[projects]]
+  branch = "master"
+  digest = "1:47844666be86089349a441f5f0ece22f42a87a8cb8c9a31294c593f43209ad19"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  pruneopts = "UT"
+  revision = "fde4db37ae7ad8191b03d30d27f258b5291ae4e3"
+
+[[projects]]
+  digest = "1:8a0baffd5559acaa560f854d7d525c02f4fec2d4f8a214398556fb661a10f6e0"
+  name = "golang.org/x/text"
+  packages = [
+    "encoding",
+    "encoding/charmap",
+    "encoding/htmlindex",
+    "encoding/internal",
+    "encoding/internal/identifier",
+    "encoding/japanese",
+    "encoding/korean",
+    "encoding/simplifiedchinese",
+    "encoding/traditionalchinese",
+    "encoding/unicode",
+    "internal/gen",
+    "internal/language",
+    "internal/language/compact",
+    "internal/tag",
+    "internal/utf8internal",
+    "language",
+    "runes",
+    "transform",
+    "unicode/cldr",
+  ]
+  pruneopts = "UT"
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
+
+[[projects]]
+  digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
+  name = "gopkg.in/fsnotify.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
+  source = "gopkg.in/fsnotify/fsnotify.v1"
+  version = "v1.4.7"
+
+[[projects]]
+  branch = "v1"
+  digest = "1:0caa92e17bc0b65a98c63e5bc76a9e844cd5e56493f8fdbb28fad101a16254d9"
+  name = "gopkg.in/tomb.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
+
+[[projects]]
   branch = "v2"
+  digest = "1:7408a415bd6adc6b6b3830cdb75a28639bee2e3cbe9b4fc4dbcae7b94bbecb46"
   name = "gopkg.in/validator.v2"
   packages = ["."]
+  pruneopts = "UT"
   revision = "3e4f037f12a1221a0864cf0dd2e81c452ab22448"
 
 [[projects]]
   branch = "v2"
+  digest = "1:858458e1fcdb1cb44ded97c2ae2b610ee9336fdb0a8347ea1ad835e6a1db6c76"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = "UT"
   revision = "a83829b6f1293c91addabc89d0571c246397bbf4"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "22c70eb3f6a665b178337ab2826b27a8f2fbdc7e75da8c64927fb9cc2e99a7f9"
+  input-imports = [
+    "code.cloudfoundry.org/cflager",
+    "code.cloudfoundry.org/clock",
+    "code.cloudfoundry.org/lager",
+    "code.cloudfoundry.org/lager/lagertest",
+    "code.cloudfoundry.org/uaa-go-client",
+    "code.cloudfoundry.org/uaa-go-client/config",
+    "code.cloudfoundry.org/uaa-go-client/schema",
+    "github.com/DATA-DOG/go-sqlmock",
+    "github.com/cloudfoundry/multierror",
+    "github.com/go-sql-driver/mysql",
+    "github.com/onsi/ginkgo",
+    "github.com/onsi/ginkgo/extensions/table",
+    "github.com/onsi/gomega",
+    "github.com/onsi/gomega/ghttp",
+    "github.com/pivotal-cf-experimental/service-config",
+    "gopkg.in/validator.v2",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
