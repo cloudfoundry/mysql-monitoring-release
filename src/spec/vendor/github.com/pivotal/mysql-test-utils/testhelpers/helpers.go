@@ -19,6 +19,13 @@ import (
 )
 
 const boshPath = "/usr/local/bin/bosh"
+const TestFailureMessage = `
+*****************************************
+
+TEST FAILURE
+
+*****************************************
+`
 
 func ProperYaml(improperYaml string) []byte {
 	return []byte(strings.Replace(improperYaml, "\t", "  ", -1))

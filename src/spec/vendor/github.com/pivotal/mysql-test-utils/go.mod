@@ -3,6 +3,7 @@ module github.com/pivotal/mysql-test-utils
 require (
 	code.cloudfoundry.org/credhub-cli v0.0.0-20190415201820-e3951663d25c
 	code.cloudfoundry.org/socks5-proxy v0.1.0
+	github.com/cloudfoundry-incubator/cf-test-helpers v1.0.0
 	github.com/cloudfoundry/go-socks5 v0.0.0-20180221174514-54f73bdb8a8e // indirect
 	github.com/cloudfoundry/socks5-proxy v0.1.0 // indirect
 	github.com/fsouza/go-dockerclient v1.3.3

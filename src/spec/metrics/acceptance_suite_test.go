@@ -1,11 +1,13 @@
 package acceptance_test
 
 import (
-	"github.com/cloudfoundry-incubator/cf-test-helpers/cf"
-	"github.com/pivotal/mysql-test-utils/testhelpers"
+	"fmt"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/cloudfoundry-incubator/cf-test-helpers/cf"
+	"github.com/pivotal/mysql-test-utils/testhelpers"
 
 	"github.com/cloudfoundry-incubator/cf-test-helpers/config"
 	"github.com/cloudfoundry-incubator/cf-test-helpers/workflowhelpers"
@@ -49,5 +51,11 @@ var _ = BeforeSuite(func() {
 var _ = AfterSuite(func() {
 	if TestSetup != nil {
 		TestSetup.Teardown()
+	}
+})
+
+var _ = JustAfterEach(func() {
+	if CurrentGinkgoTestDescription().Failed {
+		fmt.Fprint(GinkgoWriter, testhelpers.TestFailureMessage)
 	}
 })

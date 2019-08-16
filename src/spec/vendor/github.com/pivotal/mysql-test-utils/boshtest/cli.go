@@ -1,16 +1,14 @@
-package bosh
+package boshtest
 
 import (
-	"encoding/json"
-	"fmt"
-	"os/exec"
-	"sort"
-	"strings"
-	"time"
-
 	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
 	"io"
+	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/cloudfoundry-incubator/cf-test-helpers/commandreporter"
 	"github.com/onsi/ginkgo"
@@ -21,11 +19,13 @@ type CLI struct {
 	Deployment string
 	Timeout    time.Duration
 	reporter   *commandreporter.CommandReporter
+	cnfPath    string
 }
 
 type DeploymentOption func(args *[]string)
 
 type Instance struct {
+	Group        string
 	IP           string
 	Index        string
 	UUID         string
@@ -38,9 +38,18 @@ func NewCLI(deployment string, timeout time.Duration) *CLI {
 		Deployment: deployment,
 		Timeout:    timeout,
 		reporter:   commandreporter.NewCommandReporter(ginkgo.GinkgoWriter),
+		cnfPath:    "/var/vcap/jobs/mysql/config/mylogin.cnf",
 	}
 }
 
+func NewCLIWithCnfPath(deployment string, timeout time.Duration, path string) *CLI {
+	return &CLI{
+		Deployment: deployment,
+		Timeout:    timeout,
+		reporter:   commandreporter.NewCommandReporter(ginkgo.GinkgoWriter),
+		cnfPath:    path,
+	}
+}
 func (c *CLI) DeleteDeployment() error {
 	_, err := c.Run("delete-deployment", "--force")
 	return errors.Wrapf(err, "failed to delete deployment %q", c.Deployment)
@@ -61,13 +70,16 @@ func (c *CLI) Deploy(manifestPath string, options ...DeploymentOption) error {
 }
 
 func (c *CLI) InstanceAddress(instance string) (string, error) {
-	instances, err := c.InstancesByIndex()
+	instanceParts := strings.Split(instance, "/")
+	instanceGroup := instanceParts[0]
+
+	instances, err := c.InstanceGroupByName(instanceGroup)
 	if err != nil {
 		return "", err
 	}
 
 	for _, inst := range instances {
-		if "mysql/"+inst.Index == instance {
+		if inst.Group+"/"+inst.Index == instance {
 			return inst.IP, nil
 		}
 	}
@@ -75,7 +87,7 @@ func (c *CLI) InstanceAddress(instance string) (string, error) {
 	return "", errors.New("No matching instance found.")
 }
 
-func (c *CLI) InstancesByIndex() ([]Instance, error) {
+func (c *CLI) InstanceGroupByName(instanceGroup string) ([]Instance, error) {
 	output, err := c.Run(
 		"instances",
 		"--details",
@@ -109,22 +121,26 @@ func (c *CLI) InstancesByIndex() ([]Instance, error) {
 
 	var instances []Instance
 	for _, row := range result.Tables[0].Rows {
-		if strings.HasPrefix(row.Instance, "mysql/") {
+		if strings.HasPrefix(row.Instance, instanceGroup) {
 			parts := strings.Split(row.Instance, "/")
+			group := parts[0]
 			uuid := parts[1]
-			instances = append(instances, Instance{IP: row.IP, Index: row.Index, UUID: uuid, VmCid: row.VmCid, ProcessState: row.ProcessState})
+			instances = append(instances, Instance{
+				Group:        group,
+				IP:           row.IP,
+				Index:        row.Index,
+				UUID:         uuid,
+				VmCid:        row.VmCid,
+				ProcessState: row.ProcessState,
+			})
 		}
 	}
-
-	sort.Slice(instances, func(i, j int) bool {
-		return instances[i].Index < instances[j].Index
-	})
 
 	return instances, nil
 }
 
 func (c *CLI) Leader() (*Instance, error) {
-	instances, err := c.InstancesByIndex()
+	instances, err := c.InstanceGroupByName("mysql")
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +168,7 @@ func (c *CLI) Leader() (*Instance, error) {
 }
 
 func (c *CLI) Follower() (*Instance, error) {
-	instances, err := c.InstancesByIndex()
+	instances, err := c.InstanceGroupByName("mysql")
 	if err != nil {
 		return nil, err
 	}
@@ -187,8 +203,9 @@ func (c *CLI) MySQLIsReadOnly(instance string) (bool, error) {
 
 func (c *CLI) MySQLExec(instance, sql string) error {
 	mysqlCmd := strings.Join([]string{
+		"sudo",
 		"mysql",
-		"--defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf",
+		fmt.Sprintf("--defaults-file=%s", c.cnfPath),
 		"-ss", // suppress column names and pretty output
 		"--execute='" + sql + "'",
 	}, " ")
@@ -205,8 +222,9 @@ func (c *CLI) MySQLExec(instance, sql string) error {
 
 func (c *CLI) MySQLQuery(instance, sql string) (string, error) {
 	mysqlCmd := strings.Join([]string{
+		"sudo",
 		"mysql",
-		"--defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf",
+		fmt.Sprintf("--defaults-file=%s", c.cnfPath),
 		"-ss", // suppress column names and pretty output
 		`--execute="` + sql + `"`,
 	}, " ")
