@@ -1,0 +1,30 @@
+---
+apiVersion: v0
+product:
+  name: mysql-pxc
+  version: v2.5
+
+metadata:
+  deployment: <%= spec.deployment %>
+  source_id: <%= p("mysql-metrics.source_id") %>
+  origin: <%= p("mysql-metrics.origin") %>
+
+indicators:
+- name: mysql_availability
+  promql:  _$origin_available{source_id="$source_id", deployment="$deployment"}
+  thresholds:
+  - level: critical
+    lt: 1
+  alert:
+    for: 5m
+  documentation:
+    title: MySQL Server Availability
+    description: A boolean value that indicates whether the MySQL process is running or not.
+    recommendedResponse: Run mysql-diag and check the MySQL Server logs for errors.
+
+# TODO: /mysql/galera/wsrep_ready only for Galera clusters?
+# TODO: /mysql/galera/wsrep_cluster_size only for Galera clusters?
+# TODO: /mysql/galera/wsrep_cluster_status only for Galera clusters?
+
+- name: connections_per_second
+  promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
