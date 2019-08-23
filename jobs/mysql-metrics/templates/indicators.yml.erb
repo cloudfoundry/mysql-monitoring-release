@@ -35,3 +35,16 @@ indicators:
     description: "Shows whether each cluster node can accept queries. Returns only 0 or 1. When this metric is 0, almost all queries to that node fail with the error:
 ERROR 1047 (08501) Unknown Command"
     recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. \nMake sure there has been no infrastructure event that affects intra-cluster communication. \nEnsure that wsrep_ready has not been set to off by using the query: SHOW STATUS LIKE 'wsrep_ready';"
+- name: mysql_galera_cluster_size
+  promql:  _$origin_galera_wsrep_cluster_size{source_id="$source_id", deployment="$deployment"}
+  thresholds:
+    - level: critical
+      lt: 1
+    - level: warning
+      lt: 3
+  alert:
+    for: 5m
+  documentation:
+    title: Galera Cluster Size
+    description: "The number of cluster nodes with which each node is communicating normally. Use: When running in a multi-node configuration, this metric indicates if each member of the cluster is communicating normally with all other nodes."
+    recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors."
