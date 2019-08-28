@@ -5,7 +5,7 @@ product:
   version: v2.5
 
 metadata:
-  deployment: <%= spec.deployment %>
+  deployment: <%= p("deployment") %>
   source_id: <%= p("mysql-metrics.source_id") %>
   origin: <%= p("mysql-metrics.origin") %>
 
@@ -48,3 +48,53 @@ ERROR 1047 (08501) Unknown Command"
     title: Galera Cluster Size
     description: "The number of cluster nodes with which each node is communicating normally. Use: When running in a multi-node configuration, this metric indicates if each member of the cluster is communicating normally with all other nodes."
     recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors."
+- name: mysql_galera_cluster_status
+  promql:  _$origin_galera_wsrep_cluster_status{source_id="$source_id", deployment="$deployment"}
+  thresholds:
+    - level: critical
+      lt: 1
+    - level: warning
+      lt: 3
+  alert:
+    for: 5m
+  documentation:
+    title: Galera Cluster Status
+    description: "Shows the primary status of the cluster component that the node is in."
+    recommendedResponse: "Check node status to ensure that they are all in working order and able to receive write-sets. Run mysql-diag and check the MySQL Server logs for errors."
+- name: mysql_net_connections
+  promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
+  thresholds:
+    - level: critical
+      gt: .9
+    - level: warning
+      gt: .8
+  alert:
+    for: 1m
+  documentation:
+    title: Connections per Second
+    description: "Connections per second made to the server."
+    recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. The connections per second for the cluster vary based on application instances and app utilization. If this threshold is met or exceeded for an extended period of time, monitor app usage to ensure everything is behaving as expected."
+- name: mysql_performance_cpu_utilization_percent
+  promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
+  thresholds:
+    - level: critical
+      gt: .9
+    - level: warning
+      gt: .8
+  alert:
+    for: 10m
+  documentation:
+    title: CPU Utilization Percent
+    description: "CPU time being consumed by the MySQL service."
+    recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. The connections per second for the cluster vary based on application instances and app utilization. Determine what is using so much CPU. If it is from normal processes, update the service instance to use a plan with larger CPU capacity."
+- name: mysql_performance_queries_delta
+  promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
+  thresholds:
+    - level: critical
+      eq: 0
+  alert:
+    for: 2m
+  documentation:
+    title: Queries Delta
+    description: "The number of statements executed by the server over the last 30 seconds."
+    recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. Investigate the MySQL server logs, such as the audit log, to understand why query rate changed and determine appropriate action."
