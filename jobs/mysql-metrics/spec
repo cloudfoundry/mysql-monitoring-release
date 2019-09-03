@@ -23,8 +23,6 @@ consumes:
   type: mysql
 
 properties:
-  deployment:
-    description: "The name of the deployment as defined in the loggregator agent. This is used to scope the metrics for the indicator protocol."
   mysql-metrics.username:
     description: "database username for mysql metrics"
     default: mysql-metrics
