@@ -38,10 +38,20 @@ ERROR 1047 (08501) Unknown Command"
 - name: mysql_galera_cluster_size
   promql:  _$origin_galera_wsrep_cluster_size{source_id="$source_id", deployment="$deployment"}
   thresholds:
+  <%
+    instance_count = link("mysql").instances.length
+    if instance_count >= 3
+      crit_threshold = 2
+    else
+      crit_threshold = 1
+    end
+  %>
     - level: critical
-      lt: 1
+      lt: <%= crit_threshold %>
+  <% if instance_count >= 3 %>
     - level: warning
       lt: 3
+  <% end %>
   alert:
     for: 5m
   documentation:
