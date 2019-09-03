@@ -7,7 +7,7 @@ product:
 metadata:
   deployment: <%= p("deployment") %>
   source_id: <%= p("mysql-metrics.source_id") %>
-  origin: <%= p("mysql-metrics.origin") %>
+  origin: <%= p("mysql-metrics.origin").gsub(/[^A-Z,a-z,0-9]/,"_") %>
 
 indicators:
 - name: mysql_availability

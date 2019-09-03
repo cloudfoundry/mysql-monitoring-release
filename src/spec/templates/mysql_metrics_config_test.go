@@ -11,12 +11,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type TemplateContext struct {
-	Links      map[string]interface{} `json:"links"`
-	Networks   map[string]interface{} `json:"networks"`
-	Properties map[string]interface{} `json:"properties"`
-}
-
 var _ = Describe("MysqlMetricsConfig", func() {
 	var (
 		templateContextFile *os.File
