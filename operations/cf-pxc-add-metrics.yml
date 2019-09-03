@@ -12,7 +12,7 @@
     version: latest
 
 - type: replace
-  path: /instance_groups/name=database/jobs/-
+  path: /instance_groups/name=database/jobs/name=mysql-metrics?
   value:
     name: mysql-metrics
     release: mysql-monitoring
@@ -37,7 +37,7 @@
   value: mysql-metrics
 
 - type: replace
-  path: /variables/-
+  path: /variables/name=mysql_metrics_password?
   value:
     name: mysql_metrics_password
     type: password
