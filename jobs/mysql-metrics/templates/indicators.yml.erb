@@ -75,7 +75,7 @@ ERROR 1047 (08501) Unknown Command"
     description: "Connections per second made to the server."
     recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. The connections per second for the cluster vary based on application instances and app utilization. If this threshold is met or exceeded for an extended period of time, monitor app usage to ensure everything is behaving as expected."
 - name: mysql_performance_cpu_utilization_percent
-  promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
+  promql:  _$origin_performance_cpu_utilization_percent{source_id="$source_id", deployment="$deployment"}
   thresholds:
     - level: critical
       gt: .9
@@ -88,7 +88,7 @@ ERROR 1047 (08501) Unknown Command"
     description: "CPU time being consumed by the MySQL service."
     recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. The connections per second for the cluster vary based on application instances and app utilization. Determine what is using so much CPU. If it is from normal processes, update the service instance to use a plan with larger CPU capacity."
 - name: mysql_performance_queries_delta
-  promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
+  promql:  _$origin_performance_queries_delta{source_id="$source_id", deployment="$deployment"}
   thresholds:
     - level: critical
       eq: 0
