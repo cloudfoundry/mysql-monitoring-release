@@ -1,22 +1,19 @@
-package acceptance_test
+package indicator_protocol_test
 
 import (
 	"os"
 	"testing"
-	"time"
-
-	"github.com/cloudfoundry-incubator/cf-test-helpers/cf"
-	"github.com/pivotal/mysql-test-utils/testhelpers"
 
 	"github.com/cloudfoundry-incubator/cf-test-helpers/config"
 	"github.com/cloudfoundry-incubator/cf-test-helpers/workflowhelpers"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/pivotal/mysql-test-utils/testhelpers"
 )
 
-func TestAcceptance(t *testing.T) {
+func TestIndicatorProtocol(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "MySql monitoring release Acceptance Suite")
+	RunSpecs(t, "IndicatorProtocol Suite")
 }
 
 var TestSetup *workflowhelpers.ReproducibleTestSuiteSetup
@@ -38,12 +35,6 @@ var _ = BeforeSuite(func() {
 
 	TestSetup = workflowhelpers.NewTestSuiteSetup(Config)
 	TestSetup.Setup()
-
-	session := cf.Cf("tail", "--help").Wait(10 * time.Second)
-	if session.ExitCode() != 0 {
-		session = cf.Cf("install-plugin", "-f", "log-cache", "-r", "CF-Community").Wait(10 * time.Minute)
-		Expect(session.ExitCode()).To(BeZero())
-	}
 
 })
 
