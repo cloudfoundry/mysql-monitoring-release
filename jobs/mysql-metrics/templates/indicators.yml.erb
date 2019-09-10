@@ -58,11 +58,13 @@ ERROR 1047 (08501) Unknown Command"
     title: Galera Cluster Size
     description: "The number of cluster nodes with which each node is communicating normally. Use: When running in a multi-node configuration, this metric indicates if each member of the cluster is communicating normally with all other nodes."
     recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors."
+
+<% if link("mysql").instances.length >= 3 %>
 - name: mysql_galera_cluster_status
-  promql:  _$origin_galera_wsrep_cluster_status{source_id="$source_id", deployment="$deployment"}
+  promql:  sum(_$origin_galera_wsrep_cluster_status{source_id="$source_id", deployment="$deployment"})
   thresholds:
     - level: critical
-      lt: 1
+      lt: 2
     - level: warning
       lt: 3
   alert:
@@ -71,6 +73,7 @@ ERROR 1047 (08501) Unknown Command"
     title: Galera Cluster Status
     description: "Shows the primary status of the cluster component that the node is in."
     recommendedResponse: "Check node status to ensure that they are all in working order and able to receive write-sets. Run mysql-diag and check the MySQL Server logs for errors."
+<% end %>
 - name: mysql_net_connections
   promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
   thresholds:
