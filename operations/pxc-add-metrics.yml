@@ -51,6 +51,11 @@
           agent:
             cert: ((loggregator_tls_agent_cert))
             key: ((loggregator_tls_agent_key))
+      metrics:
+        ca_cert: "((loggregator_agent_metrics_tls.ca))"
+        cert: "((loggregator_agent_metrics_tls.certificate))"
+        key: "((loggregator_agent_metrics_tls.private_key))"
+        server_name: loggregator_agent_metrics
       bosh_dns: true
 
 - type: replace
@@ -58,3 +63,24 @@
   value:
     name: mysql_metrics_password
     type: password
+
+- type: replace
+  path: /variables/name=metric_scraper_ca?
+  value:
+    name: metric_scraper_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: metricScraperCA
+
+
+- type: replace
+  path: /variables/name=loggregator_agent_metrics_tls?
+  value:
+    name: loggregator_agent_metrics_tls
+    type: certificate
+    options:
+      ca: metric_scraper_ca
+      common_name: loggregator_agent_metrics
+      extended_key_usage:
+        - server_auth
