@@ -14,10 +14,9 @@ import (
 
 var _ = Describe("Indicators", func() {
 	type Threshold struct {
-		Level       string `yaml:"level"`
-		GreaterThan int    `yaml:"gt,omitempty"`
-		LessThan    int    `yaml:"lt,omitempty"`
-		EqualTo     int    `yaml:"eq,omitempty"`
+		Level    string `yaml:"level"`
+		Operator string `yaml:"operator,omitempty"`
+		Value    int    `yaml:"value,omitempty"`
 	}
 
 	type Indicator struct {
@@ -26,20 +25,22 @@ var _ = Describe("Indicators", func() {
 	}
 
 	type config struct {
-		Indicators []Indicator `yaml:"indicators"`
+		Spec struct {
+			Indicators []Indicator `yaml:"indicators"`
+		} `yaml:"spec"`
 	}
 
-	var clusterSizeThreshold = func(level string, c config) int {
-		for _, indicator := range c.Indicators {
-			if indicator.Name == "mysql_galera_cluster_size" {
+	var getThresholdByNameAndLevel = func(c config, name, level string) Threshold {
+		for _, indicator := range c.Spec.Indicators {
+			if indicator.Name == name {
 				for _, threshold := range indicator.Thresholds {
 					if threshold.Level == level {
-						return threshold.LessThan
+						return threshold
 					}
 				}
 			}
 		}
-		return -1
+		return Threshold{}
 	}
 
 	var renderTemplate = func(context *TemplateContext) string {
@@ -129,9 +130,10 @@ var _ = Describe("Indicators", func() {
 				var c config
 				err := yaml.Unmarshal([]byte(a), &c)
 				Expect(err).NotTo(HaveOccurred())
-				criticalThreshold := clusterSizeThreshold("critical", c)
+				criticalThreshold := getThresholdByNameAndLevel(c, "mysql_galera_cluster_size", "critical")
 
-				Expect(criticalThreshold).To(Equal(1))
+				Expect(criticalThreshold.Operator).To(Equal("lt"))
+				Expect(criticalThreshold.Value).To(Equal(1))
 			})
 
 			It("Does not emit a warning", func() {
@@ -158,9 +160,8 @@ var _ = Describe("Indicators", func() {
 				var c config
 				err := yaml.Unmarshal([]byte(a), &c)
 				Expect(err).NotTo(HaveOccurred())
-				warningThreshold := clusterSizeThreshold("warning", c)
-
-				Expect(warningThreshold).To(Equal(-1))
+				warningThreshold := getThresholdByNameAndLevel(c, "mysql_galera_cluster_size", "warning")
+				Expect(warningThreshold).To(BeZero())
 			})
 		})
 
@@ -196,9 +197,11 @@ var _ = Describe("Indicators", func() {
 				var c config
 				err := yaml.Unmarshal([]byte(a), &c)
 				Expect(err).NotTo(HaveOccurred())
-				criticalThreshold := clusterSizeThreshold("critical", c)
-				Expect(criticalThreshold).To(Equal(2))
+				criticalThreshold := getThresholdByNameAndLevel(c, "mysql_galera_cluster_size", "critical")
+				Expect(criticalThreshold.Operator).To(Equal("lt"))
+				Expect(criticalThreshold.Value).To(Equal(2))
 			})
+
 			It("Emits a warning when the node size is less than was configured", func() {
 				templateContext := &TemplateContext{}
 
@@ -229,37 +232,94 @@ var _ = Describe("Indicators", func() {
 				var c config
 				err := yaml.Unmarshal([]byte(a), &c)
 				Expect(err).NotTo(HaveOccurred())
-				warningThreshold := clusterSizeThreshold("warning", c)
-				Expect(warningThreshold).To(Equal(3))
+				warningThreshold := getThresholdByNameAndLevel(c, "mysql_galera_cluster_size", "warning")
+				Expect(warningThreshold.Operator).To(Equal("lt"))
+				Expect(warningThreshold.Value).To(Equal(3))
 			})
 		})
 	})
 
-	XDescribe("mysql_galera_wsrep_ready", func() {
-		It("mysql_galera_wsrep_ready", func() {
+	Describe("Galera Cluster Status", func() {
+		var (
+			indicatorConfig config
+		)
 
-			templateContext := &TemplateContext{}
+		Context("the instances count is less than 3", func() {
+			BeforeEach(func() {
+				templateContext := &TemplateContext{}
 
-			templateContext.Properties = map[string]interface{}{
-				"mysql-metrics": map[string]interface{}{
-					"source_id": "source",
-					"origin":    "origin",
-				},
-			}
-			templateContext.Links = map[string]interface{}{
-				"mysql": map[string]interface{}{
-					"properties": map[string]interface{}{},
-					"instances": []map[string]interface{}{
-						{
-							"address": "mysql link address",
+				templateContext.Properties = map[string]interface{}{
+					"mysql-metrics": map[string]interface{}{
+						"source_id": "source",
+						"origin":    "origin",
+					},
+				}
+				templateContext.Links = map[string]interface{}{
+					"mysql": map[string]interface{}{
+						"properties": map[string]interface{}{},
+						"instances": []map[string]interface{}{
+							{
+								"address": "mysql link address",
+							},
 						},
 					},
-				},
-			}
+				}
 
-			a := renderTemplate(templateContext)
+				a := renderTemplate(templateContext)
+				err := yaml.Unmarshal([]byte(a), &indicatorConfig)
+				Expect(err).NotTo(HaveOccurred())
+			})
 
-			Expect(a).ToNot(ContainSubstring(`mysql_galera_wsrep_ready`))
+			It("is not provided as an indicator", func() {
+				for _, indicator := range indicatorConfig.Spec.Indicators {
+					Expect(indicator.Name).ToNot(Equal("mysql_galera_cluster_status"))
+				}
+			})
+		})
+
+		Context("the instances count is greater than or equal to 3", func() {
+			BeforeEach(func() {
+				templateContext := &TemplateContext{}
+
+				templateContext.Properties = map[string]interface{}{
+					"mysql-metrics": map[string]interface{}{
+						"source_id": "source",
+						"origin":    "origin",
+					},
+				}
+				templateContext.Links = map[string]interface{}{
+					"mysql": map[string]interface{}{
+						"properties": map[string]interface{}{},
+						"instances": []map[string]interface{}{
+							{
+								"address": "mysql link address",
+							},
+							{
+								"address": "mysql link address",
+							},
+							{
+								"address": "mysql link address",
+							},
+						},
+					},
+				}
+
+				a := renderTemplate(templateContext)
+				err := yaml.Unmarshal([]byte(a), &indicatorConfig)
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			It("is provided as an indicator", func() {
+				var found bool
+				for _, indicator := range indicatorConfig.Spec.Indicators {
+					if indicator.Name == "mysql_galera_cluster_status" {
+						found = true
+						break
+					}
+				}
+
+				Expect(found).To(BeTrue(), "Did not find mysql_galera_cluster_status in the indicators")
+			})
 		})
 	})
 })
