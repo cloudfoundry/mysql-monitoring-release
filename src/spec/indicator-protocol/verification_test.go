@@ -31,7 +31,7 @@ var _ = Describe("Verification", func() {
 			var token string
 			workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
 				session := cf.Cf("oauth-token")
-				Eventually(session).Should(gexec.Exit(0))
+				Eventually(session, 10*time.Second).Should(gexec.Exit(0))
 				token = string(session.Out.Contents())
 				Expect(token).To(ContainSubstring("bearer"))
 				session.Terminate()
