@@ -26,25 +26,6 @@ spec:
       title: MySQL Server Availability
       description: A boolean value that indicates whether the MySQL process is running or not.
       recommendedResponse: Run mysql-diag and check the MySQL Server logs for errors.
-  - name: mysql_galera_wsrep_ready
-    promql:  _$origin_galera_wsrep_ready{source_id="$source_id", deployment="$deployment"}
-    thresholds:
-    - level: critical
-      operator: eq
-      value: 0
-    - level: warning
-      operator: lt
-      value: 1
-    alert:
-      for: 5m
-    documentation:
-      title: Galera Cluster Node Readiness
-      description: "Shows whether each cluster node can accept queries. Returns only 0 or 1. When this metric is 0, almost all queries to that node fail with the error:
-  ERROR 1047 (08501) Unknown Command"
-      recommendedResponse: |
-        Run mysql-diag and check the MySQL Server logs for errors.
-        Make sure there has been no infrastructure event that affects intra-cluster communication.
-        Ensure that `wsrep_ready` has not been set to off by using the query: `SHOW STATUS LIKE 'wsrep_ready';`
   - name: mysql_galera_cluster_size
     promql:  _$origin_galera_wsrep_cluster_size{source_id="$source_id", deployment="$deployment"}
     thresholds:
@@ -137,3 +118,24 @@ spec:
       title: Queries Delta
       description: "The number of statements executed by the server over the last 30 seconds."
       recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. Investigate the MySQL server logs, such as the audit log, to understand why query rate changed and determine appropriate action."
+  <% if p("mysql-metrics.galera_metrics_enabled") %>
+  - name: mysql_galera_wsrep_ready
+    promql:  _$origin_galera_wsrep_ready{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+    - level: critical
+      operator: eq
+      value: 0
+    - level: warning
+      operator: lt
+      value: 1
+    alert:
+      for: 5m
+    documentation:
+      title: Galera Cluster Node Readiness
+      description: "Shows whether each cluster node can accept queries. Returns only 0 or 1. When this metric is 0, almost all queries to that node fail with the error:
+  ERROR 1047 (08501) Unknown Command"
+      recommendedResponse: |
+        Run mysql-diag and check the MySQL Server logs for errors.
+        Make sure there has been no infrastructure event that affects intra-cluster communication.
+        Ensure that `wsrep_ready` has not been set to off by using the query: `SHOW STATUS LIKE 'wsrep_ready';`
+  <% end %>
