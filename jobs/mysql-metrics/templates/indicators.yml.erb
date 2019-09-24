@@ -85,20 +85,20 @@ spec:
       description: "Shows the primary status of the cluster component that the node is in."
       recommendedResponse: "Check node status to ensure that they are all in working order and able to receive write-sets. Run mysql-diag and check the MySQL Server logs for errors."
   <% end %>
-  - name: mysql_net_connections
-    promql:  _$origin_net_connections{source_id="$source_id", deployment="$deployment"}
+  - name: percentage_of_available_connections_used
+    promql:  (_$origin_performance_threads_connected{source_id="$source_id", deployment="$deployment"} / _$origin_variables_max_connections{source_id="$source_id", deployment="$deployment"}) * 100
     thresholds:
       - level: critical
         operator: gt
-        value: .9
+        value: 90
       - level: warning
         operator: gt
-        value: .8
+        value: 80
     alert:
       for: 1m
     documentation:
-      title: Connections per Second
-      description: "Connections per second made to the server."
+      title: Percentage of Available Connections Used
+      description: "Percentage of available connections used"
       recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. The connections per second for the cluster vary based on application instances and app utilization. If this threshold is met or exceeded for an extended period of time, monitor app usage to ensure everything is behaving as expected."
   - name: mysql_performance_cpu_utilization_percent
     promql:  _$origin_performance_cpu_utilization_percent{source_id="$source_id", deployment="$deployment"}
