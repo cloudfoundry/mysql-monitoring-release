@@ -41,7 +41,10 @@ spec:
       title: Galera Cluster Node Readiness
       description: "Shows whether each cluster node can accept queries. Returns only 0 or 1. When this metric is 0, almost all queries to that node fail with the error:
   ERROR 1047 (08501) Unknown Command"
-      recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. \nMake sure there has been no infrastructure event that affects intra-cluster communication. \nEnsure that wsrep_ready has not been set to off by using the query: SHOW STATUS LIKE 'wsrep_ready';"
+      recommendedResponse: |
+        Run mysql-diag and check the MySQL Server logs for errors.
+        Make sure there has been no infrastructure event that affects intra-cluster communication.
+        Ensure that `wsrep_ready` has not been set to off by using the query: `SHOW STATUS LIKE 'wsrep_ready';`
   - name: mysql_galera_cluster_size
     promql:  _$origin_galera_wsrep_cluster_size{source_id="$source_id", deployment="$deployment"}
     thresholds:
@@ -82,7 +85,14 @@ spec:
       for: 5m
     documentation:
       title: Galera Cluster Status
-      description: "Shows the primary status of the cluster component that the node is in."
+      description: |
+        Shows the primary status of the cluster component that the node is in.
+        Values are:
+        - Primary = 1
+        - Non-primary = 0
+        - Disconnected = -1
+
+        See: https://www.percona.com/doc/percona-xtradb-cluster/LATEST/manual/monitoring.html
       recommendedResponse: "Check node status to ensure that they are all in working order and able to receive write-sets. Run mysql-diag and check the MySQL Server logs for errors."
   <% end %>
   - name: percentage_of_available_connections_used
@@ -99,7 +109,7 @@ spec:
     documentation:
       title: Percentage of Available Connections Used
       description: "Percentage of available connections used"
-      recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. The connections per second for the cluster vary based on application instances and app utilization. If this threshold is met or exceeded for an extended period of time, monitor app usage to ensure everything is behaving as expected."
+      recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. If this threshold is met or exceeded for an extended period of time, monitor app usage to ensure everything is behaving as expected."
   - name: mysql_performance_cpu_utilization_percent
     promql:  _$origin_performance_cpu_utilization_percent{source_id="$source_id", deployment="$deployment"}
     thresholds:
@@ -113,8 +123,8 @@ spec:
       for: 10m
     documentation:
       title: CPU Utilization Percent
-      description: "CPU time being consumed by the MySQL service."
-      recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. The connections per second for the cluster vary based on application instances and app utilization. Determine what is using so much CPU. If it is from normal processes, update the service instance to use a plan with larger CPU capacity."
+      description: "CPU utilization on the MySQL node."
+      recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. Determine what is using so much CPU. If it is from normal processes, update the service instance to use a plan with larger CPU capacity."
   - name: mysql_performance_queries_delta
     promql:  _$origin_performance_queries_delta{source_id="$source_id", deployment="$deployment"}
     thresholds:
