@@ -30,6 +30,8 @@ var _ = Describe("Indicators", func() {
 		} `yaml:"spec"`
 	}
 
+	var templateContext *TemplateContext
+
 	var getThresholdByNameAndLevel = func(c config, name, level string) Threshold {
 		for _, indicator := range c.Spec.Indicators {
 			if indicator.Name == name {
@@ -67,16 +69,21 @@ var _ = Describe("Indicators", func() {
 	}
 
 	var renderIndicatorTemplateWithOriginHavingValue = func(origin string) string {
-		templateContext := &TemplateContext{}
+		templateContext.Properties["mysql-metrics"].(map[string]interface{})["origin"] = origin
+
+		return renderTemplate(templateContext)
+	}
+
+	BeforeEach(func() {
+		templateContext = &TemplateContext{}
 
 		templateContext.Properties = map[string]interface{}{
 			"mysql-metrics": map[string]interface{}{
-				"source_id":              "source1",
-				"origin":                 origin,
+				"source_id":              "source",
+				"origin":                 "origin",
 				"galera_metrics_enabled": true,
 			},
 		}
-
 		templateContext.Links = map[string]interface{}{
 			"mysql": map[string]interface{}{
 				"properties": map[string]interface{}{},
@@ -87,9 +94,7 @@ var _ = Describe("Indicators", func() {
 				},
 			},
 		}
-
-		return renderTemplate(templateContext)
-	}
+	})
 
 	Describe("origin is sanitized for any non-alphanumeric character into an underscore", func() {
 		It("sanitizes -", func() {
@@ -106,27 +111,12 @@ var _ = Describe("Indicators", func() {
 	})
 
 	Describe("Non Galera", func() {
+		BeforeEach(func() {
+			templateContext.Properties["mysql-metrics"].(map[string]interface{})["galera_metrics_enabled"] = false
+		})
+
 		It("should not have mysql_galera_wsrep_ready indicator", func() {
 			var indicatorConfig config
-			templateContext := &TemplateContext{}
-
-			templateContext.Properties = map[string]interface{}{
-				"mysql-metrics": map[string]interface{}{
-					"source_id":              "source",
-					"origin":                 "origin",
-					"galera_metrics_enabled": false,
-				},
-			}
-			templateContext.Links = map[string]interface{}{
-				"mysql": map[string]interface{}{
-					"properties": map[string]interface{}{},
-					"instances": []map[string]interface{}{
-						{
-							"address": "mysql link address",
-						},
-					},
-				},
-			}
 
 			a := renderTemplate(templateContext)
 			err := yaml.Unmarshal([]byte(a), &indicatorConfig)
@@ -142,26 +132,6 @@ var _ = Describe("Indicators", func() {
 		Describe("Size", func() {
 			Context("When the node size is 1", func() {
 				It("Emits a critical alert when the node size is less than 1", func() {
-					templateContext := &TemplateContext{}
-
-					templateContext.Properties = map[string]interface{}{
-						"mysql-metrics": map[string]interface{}{
-							"source_id":              "source",
-							"origin":                 "origin",
-							"galera_metrics_enabled": true,
-						},
-					}
-					templateContext.Links = map[string]interface{}{
-						"mysql": map[string]interface{}{
-							"properties": map[string]interface{}{},
-							"instances": []map[string]interface{}{
-								{
-									"address": "mysql link address",
-								},
-							},
-						},
-					}
-
 					a := renderTemplate(templateContext)
 					var c config
 					err := yaml.Unmarshal([]byte(a), &c)
@@ -173,26 +143,6 @@ var _ = Describe("Indicators", func() {
 				})
 
 				It("Does not emit a warning", func() {
-					templateContext := &TemplateContext{}
-
-					templateContext.Properties = map[string]interface{}{
-						"mysql-metrics": map[string]interface{}{
-							"source_id":              "source",
-							"origin":                 "origin",
-							"galera_metrics_enabled": true,
-						},
-					}
-					templateContext.Links = map[string]interface{}{
-						"mysql": map[string]interface{}{
-							"properties": map[string]interface{}{},
-							"instances": []map[string]interface{}{
-								{
-									"address": "mysql link address",
-								},
-							},
-						},
-					}
-
 					a := renderTemplate(templateContext)
 					var c config
 					err := yaml.Unmarshal([]byte(a), &c)
@@ -203,17 +153,7 @@ var _ = Describe("Indicators", func() {
 			})
 
 			Context("When the node size is 3 or greater", func() {
-
-				It("Emits a critical alert when the node size is less than 2", func() {
-					templateContext := &TemplateContext{}
-
-					templateContext.Properties = map[string]interface{}{
-						"mysql-metrics": map[string]interface{}{
-							"source_id":              "source",
-							"origin":                 "origin",
-							"galera_metrics_enabled": true,
-						},
-					}
+				BeforeEach(func() {
 					templateContext.Links = map[string]interface{}{
 						"mysql": map[string]interface{}{
 							"properties": map[string]interface{}{},
@@ -230,7 +170,9 @@ var _ = Describe("Indicators", func() {
 							},
 						},
 					}
+				})
 
+				It("Emits a critical alert when the node size is less than 2", func() {
 					a := renderTemplate(templateContext)
 					var c config
 					err := yaml.Unmarshal([]byte(a), &c)
@@ -241,32 +183,6 @@ var _ = Describe("Indicators", func() {
 				})
 
 				It("Emits a warning when the node size is less than was configured", func() {
-					templateContext := &TemplateContext{}
-
-					templateContext.Properties = map[string]interface{}{
-						"mysql-metrics": map[string]interface{}{
-							"source_id":              "source",
-							"origin":                 "origin",
-							"galera_metrics_enabled": true,
-						},
-					}
-					templateContext.Links = map[string]interface{}{
-						"mysql": map[string]interface{}{
-							"properties": map[string]interface{}{},
-							"instances": []map[string]interface{}{
-								{
-									"address": "mysql link address",
-								},
-								{
-									"address": "mysql link address",
-								},
-								{
-									"address": "mysql link address",
-								},
-							},
-						},
-					}
-
 					a := renderTemplate(templateContext)
 					var c config
 					err := yaml.Unmarshal([]byte(a), &c)
@@ -285,15 +201,6 @@ var _ = Describe("Indicators", func() {
 
 			Context("the instances count is less than 3", func() {
 				BeforeEach(func() {
-					templateContext := &TemplateContext{}
-
-					templateContext.Properties = map[string]interface{}{
-						"mysql-metrics": map[string]interface{}{
-							"source_id":              "source",
-							"origin":                 "origin",
-							"galera_metrics_enabled": true,
-						},
-					}
 					templateContext.Links = map[string]interface{}{
 						"mysql": map[string]interface{}{
 							"properties": map[string]interface{}{},
@@ -319,15 +226,6 @@ var _ = Describe("Indicators", func() {
 
 			Context("the instances count is greater than or equal to 3", func() {
 				BeforeEach(func() {
-					templateContext := &TemplateContext{}
-
-					templateContext.Properties = map[string]interface{}{
-						"mysql-metrics": map[string]interface{}{
-							"source_id":              "source",
-							"origin":                 "origin",
-							"galera_metrics_enabled": true,
-						},
-					}
 					templateContext.Links = map[string]interface{}{
 						"mysql": map[string]interface{}{
 							"properties": map[string]interface{}{},
