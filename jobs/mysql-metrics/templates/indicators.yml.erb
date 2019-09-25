@@ -7,6 +7,7 @@ metadata:
     deployment: <%= spec.deployment %>
     source_id: <%= p("mysql-metrics.source_id") %>
     origin: <%= p("mysql-metrics.origin").gsub(/[^A-Z,a-z,0-9]/,"_") %>
+    component: mysql-metrics
 
 spec:
   product:
