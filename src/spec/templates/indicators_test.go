@@ -111,20 +111,59 @@ var _ = Describe("Indicators", func() {
 	})
 
 	Describe("Non Galera", func() {
+		var (
+			indicatorConfig config
+		)
+
 		BeforeEach(func() {
 			templateContext.Properties["mysql-metrics"].(map[string]interface{})["galera_metrics_enabled"] = false
-		})
-
-		It("should not have mysql_galera_wsrep_ready indicator", func() {
-			var indicatorConfig config
 
 			a := renderTemplate(templateContext)
 			err := yaml.Unmarshal([]byte(a), &indicatorConfig)
 			Expect(err).NotTo(HaveOccurred())
+		})
 
+		It("should not have mysql_galera_wsrep_ready indicator", func() {
 			for _, indicator := range indicatorConfig.Spec.Indicators {
 				Expect(indicator.Name).ToNot(Equal("mysql_galera_wsrep_ready"))
 			}
+		})
+
+		It("should not have mysql_galera_cluster_size indicator", func() {
+			for _, indicator := range indicatorConfig.Spec.Indicators {
+				Expect(indicator.Name).ToNot(Equal("mysql_galera_cluster_size"))
+			}
+		})
+
+		Context("and there are 3 or more nodes", func() {
+			BeforeEach(func() {
+				templateContext.Links = map[string]interface{}{
+					"mysql": map[string]interface{}{
+						"properties": map[string]interface{}{},
+						"instances": []map[string]interface{}{
+							{
+								"address": "mysql link address",
+							},
+							{
+								"address": "mysql link address",
+							},
+							{
+								"address": "mysql link address",
+							},
+						},
+					},
+				}
+
+				a := renderTemplate(templateContext)
+				err := yaml.Unmarshal([]byte(a), &indicatorConfig)
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			It("should not have mysql_galera_cluster_status indicator", func() {
+				for _, indicator := range indicatorConfig.Spec.Indicators {
+					Expect(indicator.Name).ToNot(Equal("mysql_galera_cluster_status"))
+				}
+			})
 		})
 	})
 

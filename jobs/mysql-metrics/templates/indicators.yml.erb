@@ -26,56 +26,6 @@ spec:
       title: MySQL Server Availability
       description: A boolean value that indicates whether the MySQL process is running or not.
       recommendedResponse: Run mysql-diag and check the MySQL Server logs for errors.
-  - name: mysql_galera_cluster_size
-    promql:  _$origin_galera_wsrep_cluster_size{source_id="$source_id", deployment="$deployment"}
-    thresholds:
-    <%
-      instance_count = link("mysql").instances.length
-      if instance_count >= 3
-        crit_threshold = 2
-      else
-        crit_threshold = 1
-      end
-    %>
-      - level: critical
-        operator: lt
-        value: <%= crit_threshold %>
-    <% if instance_count >= 3 %>
-      - level: warning
-        operator: lt
-        value: 3
-    <% end %>
-    alert:
-      for: 5m
-    documentation:
-      title: Galera Cluster Size
-      description: "The number of cluster nodes with which each node is communicating normally. Use: When running in a multi-node configuration, this metric indicates if each member of the cluster is communicating normally with all other nodes."
-      recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors."
-
-  <% if link("mysql").instances.length >= 3 %>
-  - name: mysql_galera_cluster_status
-    promql:  sum(_$origin_galera_wsrep_cluster_status{source_id="$source_id", deployment="$deployment"})
-    thresholds:
-      - level: critical
-        operator: lt
-        value: 2
-      - level: warning
-        operator: lt
-        value: 3
-    alert:
-      for: 5m
-    documentation:
-      title: Galera Cluster Status
-      description: |
-        Shows the primary status of the cluster component that the node is in.
-        Values are:
-        - Primary = 1
-        - Non-primary = 0
-        - Disconnected = -1
-
-        See: https://www.percona.com/doc/percona-xtradb-cluster/LATEST/manual/monitoring.html
-      recommendedResponse: "Check node status to ensure that they are all in working order and able to receive write-sets. Run mysql-diag and check the MySQL Server logs for errors."
-  <% end %>
   - name: percentage_of_available_connections_used
     promql:  (_$origin_performance_threads_connected{source_id="$source_id", deployment="$deployment"} / _$origin_variables_max_connections{source_id="$source_id", deployment="$deployment"}) * 100
     thresholds:
@@ -138,4 +88,53 @@ spec:
         Run mysql-diag and check the MySQL Server logs for errors.
         Make sure there has been no infrastructure event that affects intra-cluster communication.
         Ensure that `wsrep_ready` has not been set to off by using the query: `SHOW STATUS LIKE 'wsrep_ready';`
+  - name: mysql_galera_cluster_size
+    promql:  _$origin_galera_wsrep_cluster_size{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+    <%
+      instance_count = link("mysql").instances.length
+      if instance_count >= 3
+        crit_threshold = 2
+      else
+        crit_threshold = 1
+      end
+    %>
+      - level: critical
+        operator: lt
+        value: <%= crit_threshold %>
+    <% if instance_count >= 3 %>
+      - level: warning
+        operator: lt
+        value: 3
+    <% end %>
+    alert:
+      for: 5m
+    documentation:
+      title: Galera Cluster Size
+      description: "The number of cluster nodes with which each node is communicating normally. Use: When running in a multi-node configuration, this metric indicates if each member of the cluster is communicating normally with all other nodes."
+      recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors."
+    <% if link("mysql").instances.length >= 3 %>
+  - name: mysql_galera_cluster_status
+    promql:  sum(_$origin_galera_wsrep_cluster_status{source_id="$source_id", deployment="$deployment"})
+    thresholds:
+      - level: critical
+        operator: lt
+        value: 2
+      - level: warning
+        operator: lt
+        value: 3
+    alert:
+      for: 5m
+    documentation:
+      title: Galera Cluster Status
+      description: |
+        Shows the primary status of the cluster component that the node is in.
+        Values are:
+        - Primary = 1
+        - Non-primary = 0
+        - Disconnected = -1
+
+        See: https://www.percona.com/doc/percona-xtradb-cluster/LATEST/manual/monitoring.html
+      recommendedResponse: "Check node status to ensure that they are all in working order and able to receive write-sets. Run mysql-diag and check the MySQL Server logs for errors."
+    <% end %>
   <% end %>
