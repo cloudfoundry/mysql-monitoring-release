@@ -18,7 +18,7 @@
     release: mysql-monitoring
     properties:
       mysql-metrics:
-        host: localhost
+        host: /var/vcap/sys/run/pxc-mysql/mysqld.sock
         password: ((mysql_metrics_password))
         tls:
           ca: ((loggregator_tls_ca_cert))
