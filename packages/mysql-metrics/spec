@@ -2,7 +2,7 @@
 name: mysql-metrics
 
 dependencies:
-- golang-1.12-linux
+- golang-1.13-linux
 
 files:
 - mysql-metrics/**/*
