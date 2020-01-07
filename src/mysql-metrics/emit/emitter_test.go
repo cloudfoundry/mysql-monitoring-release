@@ -9,8 +9,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/hashicorp/go-multierror"
-	"mysql-metrics/emit"
-	"mysql-metrics/emit/emitfakes"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/emit"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/emit/emitfakes"
 )
 
 type Sleeper struct {

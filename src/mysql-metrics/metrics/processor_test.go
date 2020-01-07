@@ -2,9 +2,9 @@ package metrics_test
 
 import (
 	"github.com/hashicorp/go-multierror"
-	"mysql-metrics/config"
-	"mysql-metrics/metrics"
-	"mysql-metrics/metrics/metricsfakes"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/config"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics/metricsfakes"
 
 	"errors"
 

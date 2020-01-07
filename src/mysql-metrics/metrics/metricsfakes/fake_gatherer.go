@@ -2,7 +2,7 @@
 package metricsfakes
 
 import (
-	"mysql-metrics/metrics"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics"
 	"sync"
 )
 

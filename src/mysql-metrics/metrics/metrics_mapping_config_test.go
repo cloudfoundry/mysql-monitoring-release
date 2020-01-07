@@ -1,7 +1,7 @@
 package metrics_test
 
 import (
-	"mysql-metrics/metrics"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

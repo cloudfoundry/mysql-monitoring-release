@@ -1,5 +1,4 @@
 package config
-
 import (
 	"io/ioutil"
 

@@ -7,8 +7,8 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	configPackage "mysql-metrics/config"
-	"mysql-metrics/database_client"
+	configPackage "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/config"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/database_client"
 )
 
 var _ = Describe("DatabaseClient", func() {

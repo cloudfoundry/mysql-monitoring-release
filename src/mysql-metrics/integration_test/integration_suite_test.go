@@ -24,7 +24,7 @@ func TestMysqlMetrics(t *testing.T) {
 var _ = BeforeSuite(func() {
 	By("Compiling binary")
 	var err error
-	metricsBinPath, err = gexec.Build("mysql-metrics", "-race")
+	metricsBinPath, err = gexec.Build("github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics", "-race")
 	if err != nil {
 		fmt.Println(err.Error())
 	}

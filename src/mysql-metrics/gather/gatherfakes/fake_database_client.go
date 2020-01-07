@@ -2,7 +2,7 @@
 package gatherfakes
 
 import (
-	"mysql-metrics/gather"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/gather"
 	"sync"
 )
 
