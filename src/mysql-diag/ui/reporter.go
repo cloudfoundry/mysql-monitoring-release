@@ -2,9 +2,9 @@ package ui
 
 import (
 	"fmt"
-	. "mysql-diag/config"
-	. "mysql-diag/diskspaceissue"
-	"mysql-diag/msg"
+	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
+	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diskspaceissue"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/msg"
 )
 
 type ReporterParams struct {

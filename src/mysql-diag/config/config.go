@@ -9,7 +9,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	yaml "gopkg.in/yaml.v2"
-	"mysql-diag/msg"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/msg"
 )
 
 type Config struct {

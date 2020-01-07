@@ -2,7 +2,7 @@ package diagagentclient
 
 import (
 	"fmt"
-	"mysql-diag/hattery"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/hattery"
 	"time"
 )
 

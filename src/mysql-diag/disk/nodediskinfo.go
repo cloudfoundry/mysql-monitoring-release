@@ -1,8 +1,8 @@
 package disk
 
 import (
-	"mysql-diag/config"
-	"mysql-diag/diagagentclient"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diagagentclient"
 )
 
 type NodeDiskInfo struct {

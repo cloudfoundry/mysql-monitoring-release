@@ -4,8 +4,8 @@ import (
 	"bytes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"mysql-diag/diagagentclient"
-	"mysql-diag/ui"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diagagentclient"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/ui"
 )
 
 var _ = Describe("DiskInfoTable", func() {

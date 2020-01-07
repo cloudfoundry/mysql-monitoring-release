@@ -4,9 +4,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
-	. "mysql-diag/canaryclient"
-	"mysql-diag/config"
-	"mysql-diag/testutil"
+	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/canaryclient"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/testutil"
 	"net/http"
 )
 
