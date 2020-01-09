@@ -8,7 +8,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"mysql-diag-agent/config"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent/config"
 )
 
 var _ = Describe("config", func() {

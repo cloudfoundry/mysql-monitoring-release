@@ -27,7 +27,7 @@ var _ = BeforeSuite(func() {
 	By("Compiling binary")
 	var err error
 	binPath, err = gexec.Build(
-		"mysql-diag-agent",
+		"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent",
 		"-race",
 	)
 	Expect(err).ShouldNot(HaveOccurred())

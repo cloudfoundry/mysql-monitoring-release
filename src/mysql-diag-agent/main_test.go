@@ -12,9 +12,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-	"mysql-diag-agent/config"
-	"mysql-diag-agent/hattery"
-	"mysql-diag/diagagentclient"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent/config"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent/hattery"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diagagentclient"
 )
 
 var _ = Describe("mysql diag agent", func() {
