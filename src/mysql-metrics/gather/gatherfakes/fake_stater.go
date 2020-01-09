@@ -2,8 +2,9 @@
 package gatherfakes
 
 import (
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/gather"
 	"sync"
+
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/gather"
 )
 
 type FakeStater struct {

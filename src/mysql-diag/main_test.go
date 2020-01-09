@@ -9,18 +9,18 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
 
 	"net/http"
 
-	"github.com/onsi/gomega/gbytes"
-	"github.com/onsi/gomega/gexec"
-	"github.com/onsi/gomega/ghttp"
 	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/canaryclient"
 	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diagagentclient"
 	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/testutil"
+	"github.com/onsi/gomega/gbytes"
+	"github.com/onsi/gomega/gexec"
+	"github.com/onsi/gomega/ghttp"
 )
 
 var _ = Describe("mysql-diag cli", func() {

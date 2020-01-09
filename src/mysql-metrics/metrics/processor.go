@@ -1,8 +1,8 @@
 package metrics
 
 import (
-	"github.com/hashicorp/go-multierror"
 	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/config"
+	"github.com/hashicorp/go-multierror"
 )
 
 //go:generate counterfeiter . Gatherer

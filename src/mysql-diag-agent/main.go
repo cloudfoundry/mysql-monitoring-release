@@ -1,18 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 
-	"encoding/json"
-	"io/ioutil"
 	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent/config"
 	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent/disk"
 	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent/middleware"
-	"os"
-	"strconv"
 )
 
 const (
