@@ -2,7 +2,7 @@ package integration_test
 
 import (
 	"github.com/nu7hatch/gouuid"
-	"notifications-client/notificationemailer"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/notifications-client/notificationemailer"
 
 	"fmt"
 	"os"
@@ -19,7 +19,7 @@ import (
 	"code.cloudfoundry.org/uaa-go-client/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"notifications-client/notificationemailer/integration/mailinator"
+	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/notifications-client/notificationemailer/integration/mailinator"
 )
 
 type fakeLogger struct{}

@@ -1,7 +1,7 @@
 package notificationemailer_test
 
 import (
-	. "notifications-client/notificationemailer"
+	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/notifications-client/notificationemailer"
 
 	"net/http"
 

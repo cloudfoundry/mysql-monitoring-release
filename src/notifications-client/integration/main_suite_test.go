@@ -40,7 +40,7 @@ func TestUpgrader(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	var err error
-	binPath, err = gexec.Build("notifications-client")
+	binPath, err = gexec.Build("github.com/cloudfoundry-incubator/mysql-monitoring-release/src/notifications-client")
 	Expect(err).NotTo(HaveOccurred())
 
 	t, ok := os.LookupEnv("NOTIFICATIONS_MAILINATOR_TOKEN")
