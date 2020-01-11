@@ -11,14 +11,14 @@ import (
 
 	"path/filepath"
 
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/config"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/cpu"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/database_client"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/disk"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/emit"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/gather"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics_computer"
+	"mysql-metrics/config"
+	"mysql-metrics/cpu"
+	"mysql-metrics/database_client"
+	"mysql-metrics/disk"
+	"mysql-metrics/emit"
+	"mysql-metrics/gather"
+	"mysql-metrics/metrics"
+	"mysql-metrics/metrics_computer"
 
 	loggregator "code.cloudfoundry.org/go-loggregator"
 	"code.cloudfoundry.org/lager"

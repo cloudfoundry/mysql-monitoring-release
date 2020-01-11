@@ -5,7 +5,7 @@ import (
 	"github.com/cloudfoundry/bytefmt"
 	"github.com/olekukonko/tablewriter"
 	"io"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diagagentclient"
+	"mysql-diag/diagagentclient"
 	"sync"
 )
 

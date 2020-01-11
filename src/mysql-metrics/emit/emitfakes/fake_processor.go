@@ -2,9 +2,8 @@
 package emitfakes
 
 import (
+	"mysql-metrics/emit"
 	"sync"
-
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/emit"
 )
 
 type FakeProcessor struct {

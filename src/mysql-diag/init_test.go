@@ -26,7 +26,7 @@ func TestCLI(t *testing.T) {
 var _ = BeforeSuite(func() {
 	By("Compiling binary")
 	var err error
-	mysqlDiagBinPath, err = gexec.Build("github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag", "-race")
+	mysqlDiagBinPath, err = gexec.Build("mysql-diag", "-race")
 	Expect(err).ShouldNot(HaveOccurred())
 })
 

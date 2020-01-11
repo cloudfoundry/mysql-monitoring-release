@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"io"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/database"
+	"mysql-diag/database"
 	"strconv"
 	"sync"
 )

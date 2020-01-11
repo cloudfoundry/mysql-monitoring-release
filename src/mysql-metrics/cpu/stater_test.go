@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/cpu"
+	"mysql-metrics/cpu"
 )
 
 type fakeReadSeeker struct {

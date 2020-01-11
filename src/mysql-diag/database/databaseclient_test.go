@@ -6,7 +6,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/database"
+	"mysql-diag/database"
 )
 
 var _ = Describe("database client", func() {

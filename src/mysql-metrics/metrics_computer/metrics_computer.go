@@ -8,7 +8,7 @@ import (
 
 	"strings"
 
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics"
+	"mysql-metrics/metrics"
 )
 
 type MetricsComputer struct {

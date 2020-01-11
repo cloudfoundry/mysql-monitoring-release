@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	configPackage "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/config"
+	configPackage "mysql-metrics/config"
 )
 
 type DbClient struct {

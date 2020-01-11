@@ -4,7 +4,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/hattery"
+	"mysql-diag/hattery"
 	"net/http"
 	"time"
 )

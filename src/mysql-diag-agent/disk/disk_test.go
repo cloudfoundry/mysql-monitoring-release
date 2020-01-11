@@ -3,7 +3,7 @@ package disk_test
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag-agent/disk"
+	"mysql-diag-agent/disk"
 )
 
 var _ = Describe("GetDiskInfo", func() {

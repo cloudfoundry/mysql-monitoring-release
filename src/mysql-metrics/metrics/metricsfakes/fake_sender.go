@@ -2,9 +2,8 @@
 package metricsfakes
 
 import (
+	"mysql-metrics/metrics"
 	"sync"
-
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/metrics"
 )
 
 type FakeSender struct {

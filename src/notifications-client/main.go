@@ -12,7 +12,7 @@ import (
 	"code.cloudfoundry.org/uaa-go-client"
 	uaa_config "code.cloudfoundry.org/uaa-go-client/config"
 	"code.cloudfoundry.org/uaa-go-client/schema"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/notifications-client/notificationemailer"
+	"notifications-client/notificationemailer"
 )
 
 var (

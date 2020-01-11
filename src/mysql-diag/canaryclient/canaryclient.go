@@ -2,8 +2,8 @@ package canaryclient
 
 import (
 	"fmt"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/hattery"
+	"mysql-diag/config"
+	"mysql-diag/hattery"
 	"time"
 )
 

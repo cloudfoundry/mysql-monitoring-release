@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/config"
+	. "mysql-metrics/config"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

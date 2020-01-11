@@ -12,7 +12,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-metrics/cpu"
+	"mysql-metrics/cpu"
 )
 
 type cpuBurner struct {

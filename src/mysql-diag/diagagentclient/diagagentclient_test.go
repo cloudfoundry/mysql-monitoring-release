@@ -4,8 +4,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
-	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diagagentclient"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/testutil"
+	. "mysql-diag/diagagentclient"
+	"mysql-diag/testutil"
 	"net/http"
 )
 

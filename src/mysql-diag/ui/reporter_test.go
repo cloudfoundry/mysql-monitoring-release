@@ -3,9 +3,9 @@ package ui_test
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
-	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diskspaceissue"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/ui"
+	. "mysql-diag/config"
+	. "mysql-diag/diskspaceissue"
+	"mysql-diag/ui"
 )
 
 var (

@@ -2,11 +2,11 @@ package disk
 
 import (
 	"fmt"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diagagentclient"
-	. "github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/diskspaceissue"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/msg"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/ui"
+	"mysql-diag/config"
+	"mysql-diag/diagagentclient"
+	. "mysql-diag/diskspaceissue"
+	"mysql-diag/msg"
+	"mysql-diag/ui"
 	"os"
 )
 

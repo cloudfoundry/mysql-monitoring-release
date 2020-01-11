@@ -6,12 +6,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/canaryclient"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/config"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/database"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/disk"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/msg"
-	"github.com/cloudfoundry-incubator/mysql-monitoring-release/src/mysql-diag/ui"
+	"mysql-diag/canaryclient"
+	"mysql-diag/config"
+	"mysql-diag/database"
+	"mysql-diag/disk"
+	"mysql-diag/msg"
+	"mysql-diag/ui"
 )
 
 const (
