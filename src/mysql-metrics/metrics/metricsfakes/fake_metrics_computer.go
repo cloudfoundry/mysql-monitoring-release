@@ -2,8 +2,9 @@
 package metricsfakes
 
 import (
-	"mysql-metrics/metrics"
 	"sync"
+
+	"github.com/cloudfoundry/mysql-metrics/metrics"
 )
 
 type FakeMetricsComputer struct {

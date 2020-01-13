@@ -5,5 +5,5 @@ dependencies:
 - golang-1.13-linux
 
 files:
-- mysql-metrics/**/*
+- mysql-metrics/**
 

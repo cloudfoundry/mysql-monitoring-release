@@ -11,14 +11,14 @@ import (
 
 	"path/filepath"
 
-	"mysql-metrics/config"
-	"mysql-metrics/cpu"
-	"mysql-metrics/database_client"
-	"mysql-metrics/disk"
-	"mysql-metrics/emit"
-	"mysql-metrics/gather"
-	"mysql-metrics/metrics"
-	"mysql-metrics/metrics_computer"
+	"github.com/cloudfoundry/mysql-metrics/config"
+	"github.com/cloudfoundry/mysql-metrics/cpu"
+	"github.com/cloudfoundry/mysql-metrics/database_client"
+	"github.com/cloudfoundry/mysql-metrics/disk"
+	"github.com/cloudfoundry/mysql-metrics/emit"
+	"github.com/cloudfoundry/mysql-metrics/gather"
+	"github.com/cloudfoundry/mysql-metrics/metrics"
+	"github.com/cloudfoundry/mysql-metrics/metrics_computer"
 
 	loggregator "code.cloudfoundry.org/go-loggregator"
 	"code.cloudfoundry.org/lager"

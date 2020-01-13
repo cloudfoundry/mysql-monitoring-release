@@ -8,8 +8,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"mysql-metrics/gather"
-	"mysql-metrics/gather/gatherfakes"
+	"github.com/cloudfoundry/mysql-metrics/gather"
+	"github.com/cloudfoundry/mysql-metrics/gather/gatherfakes"
 )
 
 var _ = Describe("Gatherer", func() {

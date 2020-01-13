@@ -2,8 +2,9 @@
 package gatherfakes
 
 import (
-	"mysql-metrics/gather"
 	"sync"
+
+	"github.com/cloudfoundry/mysql-metrics/gather"
 )
 
 type FakeCpuStater struct {

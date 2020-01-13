@@ -8,7 +8,7 @@ import (
 
 	"strings"
 
-	"mysql-metrics/metrics"
+	"github.com/cloudfoundry/mysql-metrics/metrics"
 )
 
 type MetricsComputer struct {

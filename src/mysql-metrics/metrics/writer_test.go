@@ -4,10 +4,10 @@ import (
 	"errors"
 
 	"fmt"
+	"github.com/cloudfoundry/mysql-metrics/metrics"
+	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"mysql-metrics/metrics"
-	"mysql-metrics/metrics/metricsfakes"
 )
 
 var _ = Describe("MetricWriter", func() {

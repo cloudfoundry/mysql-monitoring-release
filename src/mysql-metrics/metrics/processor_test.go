@@ -1,10 +1,10 @@
 package metrics_test
 
 import (
+	"github.com/cloudfoundry/mysql-metrics/config"
+	"github.com/cloudfoundry/mysql-metrics/metrics"
+	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
 	"github.com/hashicorp/go-multierror"
-	"mysql-metrics/config"
-	"mysql-metrics/metrics"
-	"mysql-metrics/metrics/metricsfakes"
 
 	"errors"
 

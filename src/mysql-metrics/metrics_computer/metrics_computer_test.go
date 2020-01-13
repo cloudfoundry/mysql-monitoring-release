@@ -1,8 +1,8 @@
 package metrics_computer_test
 
 import (
-	"mysql-metrics/metrics"
-	"mysql-metrics/metrics_computer"
+	"github.com/cloudfoundry/mysql-metrics/metrics"
+	"github.com/cloudfoundry/mysql-metrics/metrics_computer"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

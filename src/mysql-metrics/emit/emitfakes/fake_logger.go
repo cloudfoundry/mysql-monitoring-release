@@ -2,8 +2,9 @@
 package emitfakes
 
 import (
-	"mysql-metrics/emit"
 	"sync"
+
+	"github.com/cloudfoundry/mysql-metrics/emit"
 )
 
 type FakeLogger struct {

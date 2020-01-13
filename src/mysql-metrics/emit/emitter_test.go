@@ -8,9 +8,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
+	"github.com/cloudfoundry/mysql-metrics/emit"
+	"github.com/cloudfoundry/mysql-metrics/emit/emitfakes"
 	"github.com/hashicorp/go-multierror"
-	"mysql-metrics/emit"
-	"mysql-metrics/emit/emitfakes"
 )
 
 type Sleeper struct {

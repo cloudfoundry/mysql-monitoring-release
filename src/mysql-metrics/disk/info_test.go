@@ -5,7 +5,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"errors"
-	"mysql-metrics/disk"
+	"github.com/cloudfoundry/mysql-metrics/disk"
 	"syscall"
 )
 
