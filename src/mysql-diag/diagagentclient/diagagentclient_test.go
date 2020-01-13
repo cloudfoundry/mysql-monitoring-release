@@ -1,12 +1,13 @@
 package diagagentclient_test
 
 import (
+	"net/http"
+
+	. "github.com/cloudfoundry/mysql-diag/diagagentclient"
+	"github.com/cloudfoundry/mysql-diag/testutil"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
-	. "mysql-diag/diagagentclient"
-	"mysql-diag/testutil"
-	"net/http"
 )
 
 var _ = Describe("Diagagentclient", func() {

@@ -1,9 +1,9 @@
 package database_test
 
 import (
+	. "github.com/cloudfoundry/mysql-diag/database"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "mysql-diag/database"
 )
 
 var _ = Describe("bootstrappable", func() {

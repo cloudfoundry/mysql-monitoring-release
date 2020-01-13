@@ -6,12 +6,12 @@ import (
 	"os"
 	"time"
 
-	"mysql-diag/canaryclient"
-	"mysql-diag/config"
-	"mysql-diag/database"
-	"mysql-diag/disk"
-	"mysql-diag/msg"
-	"mysql-diag/ui"
+	"github.com/cloudfoundry/mysql-diag/canaryclient"
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/database"
+	"github.com/cloudfoundry/mysql-diag/disk"
+	"github.com/cloudfoundry/mysql-diag/msg"
+	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
 const (

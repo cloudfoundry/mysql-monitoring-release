@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cloudfoundry/mysql-diag/msg"
 	_ "github.com/go-sql-driver/mysql"
 	yaml "gopkg.in/yaml.v2"
-	"mysql-diag/msg"
 )
 
 type Config struct {

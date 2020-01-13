@@ -4,9 +4,9 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"mysql-diag/config"
-	"mysql-diag/diagagentclient"
-	"mysql-diag/disk"
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/diagagentclient"
+	"github.com/cloudfoundry/mysql-diag/disk"
 )
 
 var (

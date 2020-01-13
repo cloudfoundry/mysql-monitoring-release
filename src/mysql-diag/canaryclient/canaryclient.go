@@ -2,9 +2,10 @@ package canaryclient
 
 import (
 	"fmt"
-	"mysql-diag/config"
-	"mysql-diag/hattery"
 	"time"
+
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/hattery"
 )
 
 type CanaryStatus struct {

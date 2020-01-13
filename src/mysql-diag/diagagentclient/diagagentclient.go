@@ -2,8 +2,9 @@ package diagagentclient
 
 import (
 	"fmt"
-	"mysql-diag/hattery"
 	"time"
+
+	"github.com/cloudfoundry/mysql-diag/hattery"
 )
 
 type DiskInfo struct {

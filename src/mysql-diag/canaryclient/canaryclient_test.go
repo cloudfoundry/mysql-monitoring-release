@@ -1,13 +1,14 @@
 package canaryclient_test
 
 import (
+	"net/http"
+
+	. "github.com/cloudfoundry/mysql-diag/canaryclient"
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/testutil"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
-	. "mysql-diag/canaryclient"
-	"mysql-diag/config"
-	"mysql-diag/testutil"
-	"net/http"
 )
 
 var goodCanaryConfig = config.CanaryConfig{Username: "username", Password: "fake-password", ApiPort: 1234}

@@ -2,12 +2,13 @@ package disk
 
 import (
 	"fmt"
-	"mysql-diag/config"
-	"mysql-diag/diagagentclient"
-	. "mysql-diag/diskspaceissue"
-	"mysql-diag/msg"
-	"mysql-diag/ui"
 	"os"
+
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/diagagentclient"
+	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
+	"github.com/cloudfoundry/mysql-diag/msg"
+	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
 func ValidateCapacity(nodeDiskInfos []NodeDiskInfo, threshold *config.ThresholdConfig) []DiskSpaceIssue {

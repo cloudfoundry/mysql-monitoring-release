@@ -3,10 +3,11 @@ package database_test
 import (
 	"database/sql"
 	"errors"
+
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/cloudfoundry/mysql-diag/database"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"mysql-diag/database"
 )
 
 var _ = Describe("database client", func() {

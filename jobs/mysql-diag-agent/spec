@@ -6,7 +6,7 @@ templates:
   mysql-diag-agent_ctl.sh.erb: bin/mysql-diag-agent_ctl
 
 packages:
-- mysql-diag-agent
+- mysql-diag
 - mysql-monitoring-common
 
 provides:

@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/config"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

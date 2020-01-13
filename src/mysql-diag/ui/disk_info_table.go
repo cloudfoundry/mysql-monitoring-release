@@ -2,11 +2,12 @@ package ui
 
 import (
 	"fmt"
-	"github.com/cloudfoundry/bytefmt"
-	"github.com/olekukonko/tablewriter"
 	"io"
-	"mysql-diag/diagagentclient"
 	"sync"
+
+	"github.com/cloudfoundry/bytefmt"
+	"github.com/cloudfoundry/mysql-diag/diagagentclient"
+	"github.com/olekukonko/tablewriter"
 )
 
 type DiskInfoTable struct {

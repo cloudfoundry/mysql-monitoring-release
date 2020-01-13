@@ -2,11 +2,12 @@ package ui
 
 import (
 	"fmt"
-	"github.com/olekukonko/tablewriter"
 	"io"
-	"mysql-diag/database"
 	"strconv"
 	"sync"
+
+	"github.com/cloudfoundry/mysql-diag/database"
+	"github.com/olekukonko/tablewriter"
 )
 
 type ClusterStateTable struct {

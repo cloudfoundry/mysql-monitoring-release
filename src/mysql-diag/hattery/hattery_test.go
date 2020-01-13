@@ -1,12 +1,13 @@
 package hattery_test
 
 import (
+	"net/http"
+	"time"
+
+	"github.com/cloudfoundry/mysql-diag/hattery"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
-	"mysql-diag/hattery"
-	"net/http"
-	"time"
 )
 
 type payload struct {

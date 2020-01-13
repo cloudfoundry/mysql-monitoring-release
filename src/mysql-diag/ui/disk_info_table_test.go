@@ -2,10 +2,11 @@ package ui_test
 
 import (
 	"bytes"
+
+	"github.com/cloudfoundry/mysql-diag/diagagentclient"
+	"github.com/cloudfoundry/mysql-diag/ui"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"mysql-diag/diagagentclient"
-	"mysql-diag/ui"
 )
 
 var _ = Describe("DiskInfoTable", func() {

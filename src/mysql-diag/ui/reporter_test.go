@@ -1,11 +1,11 @@
 package ui_test
 
 import (
+	. "github.com/cloudfoundry/mysql-diag/config"
+	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
+	"github.com/cloudfoundry/mysql-diag/ui"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "mysql-diag/config"
-	. "mysql-diag/diskspaceissue"
-	"mysql-diag/ui"
 )
 
 var (
