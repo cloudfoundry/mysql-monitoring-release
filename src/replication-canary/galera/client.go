@@ -4,7 +4,7 @@ import (
 	"code.cloudfoundry.org/lager"
 	"database/sql"
 	"errors"
-	"replication-canary/models"
+	"github.com/cloudfoundry/replication-canary/models"
 )
 
 type Client struct {

@@ -3,35 +3,13 @@ package canaryfakes
 
 import (
 	"database/sql"
-	"replication-canary/canary"
 	"sync"
 	"time"
+
+	"github.com/cloudfoundry/replication-canary/canary"
 )
 
 type FakeSQLClient struct {
-	SetupStub        func(*sql.DB) error
-	setupMutex       sync.RWMutex
-	setupArgsForCall []struct {
-		arg1 *sql.DB
-	}
-	setupReturns struct {
-		result1 error
-	}
-	setupReturnsOnCall map[int]struct {
-		result1 error
-	}
-	WriteStub        func(*sql.DB, time.Time) error
-	writeMutex       sync.RWMutex
-	writeArgsForCall []struct {
-		arg1 *sql.DB
-		arg2 time.Time
-	}
-	writeReturns struct {
-		result1 error
-	}
-	writeReturnsOnCall map[int]struct {
-		result1 error
-	}
 	CheckStub        func(*sql.DB, time.Time) (bool, error)
 	checkMutex       sync.RWMutex
 	checkArgsForCall []struct {
@@ -57,105 +35,31 @@ type FakeSQLClient struct {
 	cleanupReturnsOnCall map[int]struct {
 		result1 error
 	}
-	invocations      map[string][][]interface{}
-	invocationsMutex sync.RWMutex
-}
-
-func (fake *FakeSQLClient) Setup(arg1 *sql.DB) error {
-	fake.setupMutex.Lock()
-	ret, specificReturn := fake.setupReturnsOnCall[len(fake.setupArgsForCall)]
-	fake.setupArgsForCall = append(fake.setupArgsForCall, struct {
+	SetupStub        func(*sql.DB) error
+	setupMutex       sync.RWMutex
+	setupArgsForCall []struct {
 		arg1 *sql.DB
-	}{arg1})
-	fake.recordInvocation("Setup", []interface{}{arg1})
-	fake.setupMutex.Unlock()
-	if fake.SetupStub != nil {
-		return fake.SetupStub(arg1)
 	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.setupReturns.result1
-}
-
-func (fake *FakeSQLClient) SetupCallCount() int {
-	fake.setupMutex.RLock()
-	defer fake.setupMutex.RUnlock()
-	return len(fake.setupArgsForCall)
-}
-
-func (fake *FakeSQLClient) SetupArgsForCall(i int) *sql.DB {
-	fake.setupMutex.RLock()
-	defer fake.setupMutex.RUnlock()
-	return fake.setupArgsForCall[i].arg1
-}
-
-func (fake *FakeSQLClient) SetupReturns(result1 error) {
-	fake.SetupStub = nil
-	fake.setupReturns = struct {
+	setupReturns struct {
 		result1 error
-	}{result1}
-}
-
-func (fake *FakeSQLClient) SetupReturnsOnCall(i int, result1 error) {
-	fake.SetupStub = nil
-	if fake.setupReturnsOnCall == nil {
-		fake.setupReturnsOnCall = make(map[int]struct {
-			result1 error
-		})
 	}
-	fake.setupReturnsOnCall[i] = struct {
+	setupReturnsOnCall map[int]struct {
 		result1 error
-	}{result1}
-}
-
-func (fake *FakeSQLClient) Write(arg1 *sql.DB, arg2 time.Time) error {
-	fake.writeMutex.Lock()
-	ret, specificReturn := fake.writeReturnsOnCall[len(fake.writeArgsForCall)]
-	fake.writeArgsForCall = append(fake.writeArgsForCall, struct {
+	}
+	WriteStub        func(*sql.DB, time.Time) error
+	writeMutex       sync.RWMutex
+	writeArgsForCall []struct {
 		arg1 *sql.DB
 		arg2 time.Time
-	}{arg1, arg2})
-	fake.recordInvocation("Write", []interface{}{arg1, arg2})
-	fake.writeMutex.Unlock()
-	if fake.WriteStub != nil {
-		return fake.WriteStub(arg1, arg2)
 	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.writeReturns.result1
-}
-
-func (fake *FakeSQLClient) WriteCallCount() int {
-	fake.writeMutex.RLock()
-	defer fake.writeMutex.RUnlock()
-	return len(fake.writeArgsForCall)
-}
-
-func (fake *FakeSQLClient) WriteArgsForCall(i int) (*sql.DB, time.Time) {
-	fake.writeMutex.RLock()
-	defer fake.writeMutex.RUnlock()
-	return fake.writeArgsForCall[i].arg1, fake.writeArgsForCall[i].arg2
-}
-
-func (fake *FakeSQLClient) WriteReturns(result1 error) {
-	fake.WriteStub = nil
-	fake.writeReturns = struct {
+	writeReturns struct {
 		result1 error
-	}{result1}
-}
-
-func (fake *FakeSQLClient) WriteReturnsOnCall(i int, result1 error) {
-	fake.WriteStub = nil
-	if fake.writeReturnsOnCall == nil {
-		fake.writeReturnsOnCall = make(map[int]struct {
-			result1 error
-		})
 	}
-	fake.writeReturnsOnCall[i] = struct {
+	writeReturnsOnCall map[int]struct {
 		result1 error
-	}{result1}
+	}
+	invocations      map[string][][]interface{}
+	invocationsMutex sync.RWMutex
 }
 
 func (fake *FakeSQLClient) Check(arg1 *sql.DB, arg2 time.Time) (bool, error) {
@@ -173,7 +77,8 @@ func (fake *FakeSQLClient) Check(arg1 *sql.DB, arg2 time.Time) (bool, error) {
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.checkReturns.result1, fake.checkReturns.result2
+	fakeReturns := fake.checkReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeSQLClient) CheckCallCount() int {
@@ -182,13 +87,22 @@ func (fake *FakeSQLClient) CheckCallCount() int {
 	return len(fake.checkArgsForCall)
 }
 
+func (fake *FakeSQLClient) CheckCalls(stub func(*sql.DB, time.Time) (bool, error)) {
+	fake.checkMutex.Lock()
+	defer fake.checkMutex.Unlock()
+	fake.CheckStub = stub
+}
+
 func (fake *FakeSQLClient) CheckArgsForCall(i int) (*sql.DB, time.Time) {
 	fake.checkMutex.RLock()
 	defer fake.checkMutex.RUnlock()
-	return fake.checkArgsForCall[i].arg1, fake.checkArgsForCall[i].arg2
+	argsForCall := fake.checkArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeSQLClient) CheckReturns(result1 bool, result2 error) {
+	fake.checkMutex.Lock()
+	defer fake.checkMutex.Unlock()
 	fake.CheckStub = nil
 	fake.checkReturns = struct {
 		result1 bool
@@ -197,6 +111,8 @@ func (fake *FakeSQLClient) CheckReturns(result1 bool, result2 error) {
 }
 
 func (fake *FakeSQLClient) CheckReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.checkMutex.Lock()
+	defer fake.checkMutex.Unlock()
 	fake.CheckStub = nil
 	if fake.checkReturnsOnCall == nil {
 		fake.checkReturnsOnCall = make(map[int]struct {
@@ -224,7 +140,8 @@ func (fake *FakeSQLClient) Cleanup(arg1 *sql.DB) error {
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.cleanupReturns.result1
+	fakeReturns := fake.cleanupReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeSQLClient) CleanupCallCount() int {
@@ -233,13 +150,22 @@ func (fake *FakeSQLClient) CleanupCallCount() int {
 	return len(fake.cleanupArgsForCall)
 }
 
+func (fake *FakeSQLClient) CleanupCalls(stub func(*sql.DB) error) {
+	fake.cleanupMutex.Lock()
+	defer fake.cleanupMutex.Unlock()
+	fake.CleanupStub = stub
+}
+
 func (fake *FakeSQLClient) CleanupArgsForCall(i int) *sql.DB {
 	fake.cleanupMutex.RLock()
 	defer fake.cleanupMutex.RUnlock()
-	return fake.cleanupArgsForCall[i].arg1
+	argsForCall := fake.cleanupArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeSQLClient) CleanupReturns(result1 error) {
+	fake.cleanupMutex.Lock()
+	defer fake.cleanupMutex.Unlock()
 	fake.CleanupStub = nil
 	fake.cleanupReturns = struct {
 		result1 error
@@ -247,6 +173,8 @@ func (fake *FakeSQLClient) CleanupReturns(result1 error) {
 }
 
 func (fake *FakeSQLClient) CleanupReturnsOnCall(i int, result1 error) {
+	fake.cleanupMutex.Lock()
+	defer fake.cleanupMutex.Unlock()
 	fake.CleanupStub = nil
 	if fake.cleanupReturnsOnCall == nil {
 		fake.cleanupReturnsOnCall = make(map[int]struct {
@@ -258,17 +186,138 @@ func (fake *FakeSQLClient) CleanupReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *FakeSQLClient) Setup(arg1 *sql.DB) error {
+	fake.setupMutex.Lock()
+	ret, specificReturn := fake.setupReturnsOnCall[len(fake.setupArgsForCall)]
+	fake.setupArgsForCall = append(fake.setupArgsForCall, struct {
+		arg1 *sql.DB
+	}{arg1})
+	fake.recordInvocation("Setup", []interface{}{arg1})
+	fake.setupMutex.Unlock()
+	if fake.SetupStub != nil {
+		return fake.SetupStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.setupReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeSQLClient) SetupCallCount() int {
+	fake.setupMutex.RLock()
+	defer fake.setupMutex.RUnlock()
+	return len(fake.setupArgsForCall)
+}
+
+func (fake *FakeSQLClient) SetupCalls(stub func(*sql.DB) error) {
+	fake.setupMutex.Lock()
+	defer fake.setupMutex.Unlock()
+	fake.SetupStub = stub
+}
+
+func (fake *FakeSQLClient) SetupArgsForCall(i int) *sql.DB {
+	fake.setupMutex.RLock()
+	defer fake.setupMutex.RUnlock()
+	argsForCall := fake.setupArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeSQLClient) SetupReturns(result1 error) {
+	fake.setupMutex.Lock()
+	defer fake.setupMutex.Unlock()
+	fake.SetupStub = nil
+	fake.setupReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeSQLClient) SetupReturnsOnCall(i int, result1 error) {
+	fake.setupMutex.Lock()
+	defer fake.setupMutex.Unlock()
+	fake.SetupStub = nil
+	if fake.setupReturnsOnCall == nil {
+		fake.setupReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.setupReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeSQLClient) Write(arg1 *sql.DB, arg2 time.Time) error {
+	fake.writeMutex.Lock()
+	ret, specificReturn := fake.writeReturnsOnCall[len(fake.writeArgsForCall)]
+	fake.writeArgsForCall = append(fake.writeArgsForCall, struct {
+		arg1 *sql.DB
+		arg2 time.Time
+	}{arg1, arg2})
+	fake.recordInvocation("Write", []interface{}{arg1, arg2})
+	fake.writeMutex.Unlock()
+	if fake.WriteStub != nil {
+		return fake.WriteStub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.writeReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeSQLClient) WriteCallCount() int {
+	fake.writeMutex.RLock()
+	defer fake.writeMutex.RUnlock()
+	return len(fake.writeArgsForCall)
+}
+
+func (fake *FakeSQLClient) WriteCalls(stub func(*sql.DB, time.Time) error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
+	fake.WriteStub = stub
+}
+
+func (fake *FakeSQLClient) WriteArgsForCall(i int) (*sql.DB, time.Time) {
+	fake.writeMutex.RLock()
+	defer fake.writeMutex.RUnlock()
+	argsForCall := fake.writeArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeSQLClient) WriteReturns(result1 error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
+	fake.WriteStub = nil
+	fake.writeReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeSQLClient) WriteReturnsOnCall(i int, result1 error) {
+	fake.writeMutex.Lock()
+	defer fake.writeMutex.Unlock()
+	fake.WriteStub = nil
+	if fake.writeReturnsOnCall == nil {
+		fake.writeReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.writeReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeSQLClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.setupMutex.RLock()
-	defer fake.setupMutex.RUnlock()
-	fake.writeMutex.RLock()
-	defer fake.writeMutex.RUnlock()
 	fake.checkMutex.RLock()
 	defer fake.checkMutex.RUnlock()
 	fake.cleanupMutex.RLock()
 	defer fake.cleanupMutex.RUnlock()
+	fake.setupMutex.RLock()
+	defer fake.setupMutex.RUnlock()
+	fake.writeMutex.RLock()
+	defer fake.writeMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

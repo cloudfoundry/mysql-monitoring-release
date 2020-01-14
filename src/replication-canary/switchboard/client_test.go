@@ -6,7 +6,7 @@ import (
 
 	"code.cloudfoundry.org/lager/lagertest"
 
-	. "replication-canary/switchboard"
+	. "github.com/cloudfoundry/replication-canary/switchboard"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

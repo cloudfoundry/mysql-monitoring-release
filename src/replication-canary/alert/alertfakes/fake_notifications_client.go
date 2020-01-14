@@ -2,19 +2,20 @@
 package alertfakes
 
 import (
-	"replication-canary/alert"
 	"sync"
+
+	"github.com/cloudfoundry/replication-canary/alert"
 )
 
 type FakeNotificationsClient struct {
-	EmailStub        func(clientToken string, to string, subject string, html string, kindID string) error
+	EmailStub        func(string, string, string, string, string) error
 	emailMutex       sync.RWMutex
 	emailArgsForCall []struct {
-		clientToken string
-		to          string
-		subject     string
-		html        string
-		kindID      string
+		arg1 string
+		arg2 string
+		arg3 string
+		arg4 string
+		arg5 string
 	}
 	emailReturns struct {
 		result1 error
@@ -26,25 +27,26 @@ type FakeNotificationsClient struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeNotificationsClient) Email(clientToken string, to string, subject string, html string, kindID string) error {
+func (fake *FakeNotificationsClient) Email(arg1 string, arg2 string, arg3 string, arg4 string, arg5 string) error {
 	fake.emailMutex.Lock()
 	ret, specificReturn := fake.emailReturnsOnCall[len(fake.emailArgsForCall)]
 	fake.emailArgsForCall = append(fake.emailArgsForCall, struct {
-		clientToken string
-		to          string
-		subject     string
-		html        string
-		kindID      string
-	}{clientToken, to, subject, html, kindID})
-	fake.recordInvocation("Email", []interface{}{clientToken, to, subject, html, kindID})
+		arg1 string
+		arg2 string
+		arg3 string
+		arg4 string
+		arg5 string
+	}{arg1, arg2, arg3, arg4, arg5})
+	fake.recordInvocation("Email", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.emailMutex.Unlock()
 	if fake.EmailStub != nil {
-		return fake.EmailStub(clientToken, to, subject, html, kindID)
+		return fake.EmailStub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.emailReturns.result1
+	fakeReturns := fake.emailReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeNotificationsClient) EmailCallCount() int {
@@ -53,13 +55,22 @@ func (fake *FakeNotificationsClient) EmailCallCount() int {
 	return len(fake.emailArgsForCall)
 }
 
+func (fake *FakeNotificationsClient) EmailCalls(stub func(string, string, string, string, string) error) {
+	fake.emailMutex.Lock()
+	defer fake.emailMutex.Unlock()
+	fake.EmailStub = stub
+}
+
 func (fake *FakeNotificationsClient) EmailArgsForCall(i int) (string, string, string, string, string) {
 	fake.emailMutex.RLock()
 	defer fake.emailMutex.RUnlock()
-	return fake.emailArgsForCall[i].clientToken, fake.emailArgsForCall[i].to, fake.emailArgsForCall[i].subject, fake.emailArgsForCall[i].html, fake.emailArgsForCall[i].kindID
+	argsForCall := fake.emailArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4, argsForCall.arg5
 }
 
 func (fake *FakeNotificationsClient) EmailReturns(result1 error) {
+	fake.emailMutex.Lock()
+	defer fake.emailMutex.Unlock()
 	fake.EmailStub = nil
 	fake.emailReturns = struct {
 		result1 error
@@ -67,6 +78,8 @@ func (fake *FakeNotificationsClient) EmailReturns(result1 error) {
 }
 
 func (fake *FakeNotificationsClient) EmailReturnsOnCall(i int, result1 error) {
+	fake.emailMutex.Lock()
+	defer fake.emailMutex.Unlock()
 	fake.EmailStub = nil
 	if fake.emailReturnsOnCall == nil {
 		fake.emailReturnsOnCall = make(map[int]struct {

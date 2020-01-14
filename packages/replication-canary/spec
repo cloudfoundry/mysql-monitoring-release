@@ -5,5 +5,4 @@ dependencies:
 - golang-1.13-linux
 
 files:
-- replication-canary/**/*
-- notifications-client/**/*
+- replication-canary/**

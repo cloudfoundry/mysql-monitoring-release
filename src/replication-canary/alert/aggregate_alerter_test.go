@@ -1,12 +1,12 @@
 package alert_test
 
 import (
-	. "replication-canary/alert"
+	. "github.com/cloudfoundry/replication-canary/alert"
 
 	"errors"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/alert/alertfakes"
+	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
 	"time"
 )
 

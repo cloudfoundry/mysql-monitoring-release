@@ -1,0 +1,20 @@
+#!/bin/bash
+set -ex
+
+my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+base_dir="$( cd "${my_dir}/.." && pwd )"
+test_helpers_dir="$( cd "$(git rev-parse --show-toplevel)/src/test-helpers" && pwd )"
+source ${test_helpers_dir}/linter.sh
+
+go get github.com/onsi/ginkgo/ginkgo
+
+pushd "${base_dir}"
+  lint_golang
+
+  echo "Verifying it builds..."
+  ./bin/build
+
+  ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites \
+    -skipPackage="integration" \
+    "$@"
+popd

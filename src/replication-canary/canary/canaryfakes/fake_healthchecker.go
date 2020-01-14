@@ -2,9 +2,10 @@
 package canaryfakes
 
 import (
-	"replication-canary/canary"
-	"replication-canary/models"
 	"sync"
+
+	"github.com/cloudfoundry/replication-canary/canary"
+	"github.com/cloudfoundry/replication-canary/models"
 )
 
 type FakeHealthchecker struct {
@@ -39,7 +40,8 @@ func (fake *FakeHealthchecker) Healthy(arg1 *models.NamedConnection) (bool, erro
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.healthyReturns.result1, fake.healthyReturns.result2
+	fakeReturns := fake.healthyReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeHealthchecker) HealthyCallCount() int {
@@ -48,13 +50,22 @@ func (fake *FakeHealthchecker) HealthyCallCount() int {
 	return len(fake.healthyArgsForCall)
 }
 
+func (fake *FakeHealthchecker) HealthyCalls(stub func(*models.NamedConnection) (bool, error)) {
+	fake.healthyMutex.Lock()
+	defer fake.healthyMutex.Unlock()
+	fake.HealthyStub = stub
+}
+
 func (fake *FakeHealthchecker) HealthyArgsForCall(i int) *models.NamedConnection {
 	fake.healthyMutex.RLock()
 	defer fake.healthyMutex.RUnlock()
-	return fake.healthyArgsForCall[i].arg1
+	argsForCall := fake.healthyArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeHealthchecker) HealthyReturns(result1 bool, result2 error) {
+	fake.healthyMutex.Lock()
+	defer fake.healthyMutex.Unlock()
 	fake.HealthyStub = nil
 	fake.healthyReturns = struct {
 		result1 bool
@@ -63,6 +74,8 @@ func (fake *FakeHealthchecker) HealthyReturns(result1 bool, result2 error) {
 }
 
 func (fake *FakeHealthchecker) HealthyReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.healthyMutex.Lock()
+	defer fake.healthyMutex.Unlock()
 	fake.HealthyStub = nil
 	if fake.healthyReturnsOnCall == nil {
 		fake.healthyReturnsOnCall = make(map[int]struct {

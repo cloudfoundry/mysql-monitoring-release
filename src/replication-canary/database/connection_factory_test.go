@@ -8,12 +8,12 @@ import (
 	"database/sql"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	. "replication-canary/database"
-	"replication-canary/database/databasefakes"
+	. "github.com/cloudfoundry/replication-canary/database"
+	"github.com/cloudfoundry/replication-canary/database/databasefakes"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/config"
+	"github.com/cloudfoundry/replication-canary/config"
 )
 
 var _ = Describe("Connection Factory", func() {

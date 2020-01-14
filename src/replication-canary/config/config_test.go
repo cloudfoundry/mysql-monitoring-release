@@ -5,7 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/config"
+	"github.com/cloudfoundry/replication-canary/config"
 )
 
 var _ = Describe("Config", func() {

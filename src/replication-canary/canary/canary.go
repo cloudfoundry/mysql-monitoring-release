@@ -9,7 +9,7 @@ import (
 
 	"errors"
 
-	"replication-canary/models"
+	"github.com/cloudfoundry/replication-canary/models"
 )
 
 //go:generate counterfeiter . SQLClient

@@ -8,8 +8,8 @@ import (
 
 	"database/sql"
 
-	"replication-canary/config"
-	"replication-canary/models"
+	"github.com/cloudfoundry/replication-canary/config"
+	"github.com/cloudfoundry/replication-canary/models"
 
 	"errors"
 

@@ -2,7 +2,7 @@ package integration
 
 import (
 	"code.cloudfoundry.org/lager/lagertest"
-	"replication-canary/switchboard"
+	"github.com/cloudfoundry/replication-canary/switchboard"
 
 	"net/http"
 	"os"

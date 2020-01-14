@@ -30,4 +30,4 @@ echo -e "\nTesting Mysql-Diag..."
 ${RELEASE_DIR}/src/mysql-diag/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
-USE_FGT=true ${RELEASE_DIR}/src/notifications-client/bin/test "$@"
+USE_FGT=true ${RELEASE_DIR}/src/replication-canary/notifications-client/bin/test "$@"

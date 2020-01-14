@@ -2,19 +2,20 @@
 package canaryfakes
 
 import (
-	"replication-canary/canary"
-	"replication-canary/models"
 	"sync"
 	"time"
+
+	"github.com/cloudfoundry/replication-canary/canary"
+	"github.com/cloudfoundry/replication-canary/models"
 )
 
 type FakeChirper struct {
-	ChirpStub        func(conns []*models.NamedConnection, writeConn *models.NamedConnection, timestamp time.Time) (bool, error)
+	ChirpStub        func([]*models.NamedConnection, *models.NamedConnection, time.Time) (bool, error)
 	chirpMutex       sync.RWMutex
 	chirpArgsForCall []struct {
-		conns     []*models.NamedConnection
-		writeConn *models.NamedConnection
-		timestamp time.Time
+		arg1 []*models.NamedConnection
+		arg2 *models.NamedConnection
+		arg3 time.Time
 	}
 	chirpReturns struct {
 		result1 bool
@@ -28,28 +29,29 @@ type FakeChirper struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeChirper) Chirp(conns []*models.NamedConnection, writeConn *models.NamedConnection, timestamp time.Time) (bool, error) {
-	var connsCopy []*models.NamedConnection
-	if conns != nil {
-		connsCopy = make([]*models.NamedConnection, len(conns))
-		copy(connsCopy, conns)
+func (fake *FakeChirper) Chirp(arg1 []*models.NamedConnection, arg2 *models.NamedConnection, arg3 time.Time) (bool, error) {
+	var arg1Copy []*models.NamedConnection
+	if arg1 != nil {
+		arg1Copy = make([]*models.NamedConnection, len(arg1))
+		copy(arg1Copy, arg1)
 	}
 	fake.chirpMutex.Lock()
 	ret, specificReturn := fake.chirpReturnsOnCall[len(fake.chirpArgsForCall)]
 	fake.chirpArgsForCall = append(fake.chirpArgsForCall, struct {
-		conns     []*models.NamedConnection
-		writeConn *models.NamedConnection
-		timestamp time.Time
-	}{connsCopy, writeConn, timestamp})
-	fake.recordInvocation("Chirp", []interface{}{connsCopy, writeConn, timestamp})
+		arg1 []*models.NamedConnection
+		arg2 *models.NamedConnection
+		arg3 time.Time
+	}{arg1Copy, arg2, arg3})
+	fake.recordInvocation("Chirp", []interface{}{arg1Copy, arg2, arg3})
 	fake.chirpMutex.Unlock()
 	if fake.ChirpStub != nil {
-		return fake.ChirpStub(conns, writeConn, timestamp)
+		return fake.ChirpStub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.chirpReturns.result1, fake.chirpReturns.result2
+	fakeReturns := fake.chirpReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeChirper) ChirpCallCount() int {
@@ -58,13 +60,22 @@ func (fake *FakeChirper) ChirpCallCount() int {
 	return len(fake.chirpArgsForCall)
 }
 
+func (fake *FakeChirper) ChirpCalls(stub func([]*models.NamedConnection, *models.NamedConnection, time.Time) (bool, error)) {
+	fake.chirpMutex.Lock()
+	defer fake.chirpMutex.Unlock()
+	fake.ChirpStub = stub
+}
+
 func (fake *FakeChirper) ChirpArgsForCall(i int) ([]*models.NamedConnection, *models.NamedConnection, time.Time) {
 	fake.chirpMutex.RLock()
 	defer fake.chirpMutex.RUnlock()
-	return fake.chirpArgsForCall[i].conns, fake.chirpArgsForCall[i].writeConn, fake.chirpArgsForCall[i].timestamp
+	argsForCall := fake.chirpArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
 func (fake *FakeChirper) ChirpReturns(result1 bool, result2 error) {
+	fake.chirpMutex.Lock()
+	defer fake.chirpMutex.Unlock()
 	fake.ChirpStub = nil
 	fake.chirpReturns = struct {
 		result1 bool
@@ -73,6 +84,8 @@ func (fake *FakeChirper) ChirpReturns(result1 bool, result2 error) {
 }
 
 func (fake *FakeChirper) ChirpReturnsOnCall(i int, result1 bool, result2 error) {
+	fake.chirpMutex.Lock()
+	defer fake.chirpMutex.Unlock()
 	fake.ChirpStub = nil
 	if fake.chirpReturnsOnCall == nil {
 		fake.chirpReturnsOnCall = make(map[int]struct {

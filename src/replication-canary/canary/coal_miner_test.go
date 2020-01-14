@@ -1,7 +1,7 @@
 package canary_test
 
 import (
-	. "replication-canary/canary"
+	. "github.com/cloudfoundry/replication-canary/canary"
 
 	"errors"
 	"time"
@@ -9,7 +9,7 @@ import (
 	"code.cloudfoundry.org/lager/lagertest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/canary/canaryfakes"
+	"github.com/cloudfoundry/replication-canary/canary/canaryfakes"
 )
 
 var _ = Describe("CoalMiner", func() {

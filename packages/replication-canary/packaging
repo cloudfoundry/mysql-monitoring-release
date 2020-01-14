@@ -3,10 +3,10 @@
 set -eux
 
 source /var/vcap/packages/golang-1.13-linux/bosh/compile.env
-mkdir -p ${BOSH_INSTALL_TARGET}/bin
-mkdir -p ${GOPATH}/src
 
-mv replication-canary ${GOPATH}/src
-mv notifications-client ${GOPATH}/src
+export GOBIN="${BOSH_INSTALL_TARGET}/bin"
+export GOFLAGS="-mod=vendor"
 
-go build -o ${BOSH_INSTALL_TARGET}/bin/replication-canary replication-canary
+cd replication-canary
+  go install github.com/cloudfoundry/replication-canary
+cd -

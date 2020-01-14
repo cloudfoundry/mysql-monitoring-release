@@ -2,77 +2,41 @@
 package alertfakes
 
 import (
-	"replication-canary/alert"
 	"sync"
+
+	"github.com/cloudfoundry/replication-canary/alert"
 )
 
 type FakeSwitchboardClient struct {
-	EnableClusterTrafficStub        func() error
-	enableClusterTrafficMutex       sync.RWMutex
-	enableClusterTrafficArgsForCall []struct{}
-	enableClusterTrafficReturns     struct {
-		result1 error
-	}
-	enableClusterTrafficReturnsOnCall map[int]struct {
-		result1 error
-	}
 	DisableClusterTrafficStub        func() error
 	disableClusterTrafficMutex       sync.RWMutex
-	disableClusterTrafficArgsForCall []struct{}
-	disableClusterTrafficReturns     struct {
+	disableClusterTrafficArgsForCall []struct {
+	}
+	disableClusterTrafficReturns struct {
 		result1 error
 	}
 	disableClusterTrafficReturnsOnCall map[int]struct {
+		result1 error
+	}
+	EnableClusterTrafficStub        func() error
+	enableClusterTrafficMutex       sync.RWMutex
+	enableClusterTrafficArgsForCall []struct {
+	}
+	enableClusterTrafficReturns struct {
+		result1 error
+	}
+	enableClusterTrafficReturnsOnCall map[int]struct {
 		result1 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeSwitchboardClient) EnableClusterTraffic() error {
-	fake.enableClusterTrafficMutex.Lock()
-	ret, specificReturn := fake.enableClusterTrafficReturnsOnCall[len(fake.enableClusterTrafficArgsForCall)]
-	fake.enableClusterTrafficArgsForCall = append(fake.enableClusterTrafficArgsForCall, struct{}{})
-	fake.recordInvocation("EnableClusterTraffic", []interface{}{})
-	fake.enableClusterTrafficMutex.Unlock()
-	if fake.EnableClusterTrafficStub != nil {
-		return fake.EnableClusterTrafficStub()
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fake.enableClusterTrafficReturns.result1
-}
-
-func (fake *FakeSwitchboardClient) EnableClusterTrafficCallCount() int {
-	fake.enableClusterTrafficMutex.RLock()
-	defer fake.enableClusterTrafficMutex.RUnlock()
-	return len(fake.enableClusterTrafficArgsForCall)
-}
-
-func (fake *FakeSwitchboardClient) EnableClusterTrafficReturns(result1 error) {
-	fake.EnableClusterTrafficStub = nil
-	fake.enableClusterTrafficReturns = struct {
-		result1 error
-	}{result1}
-}
-
-func (fake *FakeSwitchboardClient) EnableClusterTrafficReturnsOnCall(i int, result1 error) {
-	fake.EnableClusterTrafficStub = nil
-	if fake.enableClusterTrafficReturnsOnCall == nil {
-		fake.enableClusterTrafficReturnsOnCall = make(map[int]struct {
-			result1 error
-		})
-	}
-	fake.enableClusterTrafficReturnsOnCall[i] = struct {
-		result1 error
-	}{result1}
-}
-
 func (fake *FakeSwitchboardClient) DisableClusterTraffic() error {
 	fake.disableClusterTrafficMutex.Lock()
 	ret, specificReturn := fake.disableClusterTrafficReturnsOnCall[len(fake.disableClusterTrafficArgsForCall)]
-	fake.disableClusterTrafficArgsForCall = append(fake.disableClusterTrafficArgsForCall, struct{}{})
+	fake.disableClusterTrafficArgsForCall = append(fake.disableClusterTrafficArgsForCall, struct {
+	}{})
 	fake.recordInvocation("DisableClusterTraffic", []interface{}{})
 	fake.disableClusterTrafficMutex.Unlock()
 	if fake.DisableClusterTrafficStub != nil {
@@ -81,7 +45,8 @@ func (fake *FakeSwitchboardClient) DisableClusterTraffic() error {
 	if specificReturn {
 		return ret.result1
 	}
-	return fake.disableClusterTrafficReturns.result1
+	fakeReturns := fake.disableClusterTrafficReturns
+	return fakeReturns.result1
 }
 
 func (fake *FakeSwitchboardClient) DisableClusterTrafficCallCount() int {
@@ -90,7 +55,15 @@ func (fake *FakeSwitchboardClient) DisableClusterTrafficCallCount() int {
 	return len(fake.disableClusterTrafficArgsForCall)
 }
 
+func (fake *FakeSwitchboardClient) DisableClusterTrafficCalls(stub func() error) {
+	fake.disableClusterTrafficMutex.Lock()
+	defer fake.disableClusterTrafficMutex.Unlock()
+	fake.DisableClusterTrafficStub = stub
+}
+
 func (fake *FakeSwitchboardClient) DisableClusterTrafficReturns(result1 error) {
+	fake.disableClusterTrafficMutex.Lock()
+	defer fake.disableClusterTrafficMutex.Unlock()
 	fake.DisableClusterTrafficStub = nil
 	fake.disableClusterTrafficReturns = struct {
 		result1 error
@@ -98,6 +71,8 @@ func (fake *FakeSwitchboardClient) DisableClusterTrafficReturns(result1 error) {
 }
 
 func (fake *FakeSwitchboardClient) DisableClusterTrafficReturnsOnCall(i int, result1 error) {
+	fake.disableClusterTrafficMutex.Lock()
+	defer fake.disableClusterTrafficMutex.Unlock()
 	fake.DisableClusterTrafficStub = nil
 	if fake.disableClusterTrafficReturnsOnCall == nil {
 		fake.disableClusterTrafficReturnsOnCall = make(map[int]struct {
@@ -109,13 +84,65 @@ func (fake *FakeSwitchboardClient) DisableClusterTrafficReturnsOnCall(i int, res
 	}{result1}
 }
 
+func (fake *FakeSwitchboardClient) EnableClusterTraffic() error {
+	fake.enableClusterTrafficMutex.Lock()
+	ret, specificReturn := fake.enableClusterTrafficReturnsOnCall[len(fake.enableClusterTrafficArgsForCall)]
+	fake.enableClusterTrafficArgsForCall = append(fake.enableClusterTrafficArgsForCall, struct {
+	}{})
+	fake.recordInvocation("EnableClusterTraffic", []interface{}{})
+	fake.enableClusterTrafficMutex.Unlock()
+	if fake.EnableClusterTrafficStub != nil {
+		return fake.EnableClusterTrafficStub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.enableClusterTrafficReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeSwitchboardClient) EnableClusterTrafficCallCount() int {
+	fake.enableClusterTrafficMutex.RLock()
+	defer fake.enableClusterTrafficMutex.RUnlock()
+	return len(fake.enableClusterTrafficArgsForCall)
+}
+
+func (fake *FakeSwitchboardClient) EnableClusterTrafficCalls(stub func() error) {
+	fake.enableClusterTrafficMutex.Lock()
+	defer fake.enableClusterTrafficMutex.Unlock()
+	fake.EnableClusterTrafficStub = stub
+}
+
+func (fake *FakeSwitchboardClient) EnableClusterTrafficReturns(result1 error) {
+	fake.enableClusterTrafficMutex.Lock()
+	defer fake.enableClusterTrafficMutex.Unlock()
+	fake.EnableClusterTrafficStub = nil
+	fake.enableClusterTrafficReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeSwitchboardClient) EnableClusterTrafficReturnsOnCall(i int, result1 error) {
+	fake.enableClusterTrafficMutex.Lock()
+	defer fake.enableClusterTrafficMutex.Unlock()
+	fake.EnableClusterTrafficStub = nil
+	if fake.enableClusterTrafficReturnsOnCall == nil {
+		fake.enableClusterTrafficReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.enableClusterTrafficReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
 func (fake *FakeSwitchboardClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.enableClusterTrafficMutex.RLock()
-	defer fake.enableClusterTrafficMutex.RUnlock()
 	fake.disableClusterTrafficMutex.RLock()
 	defer fake.disableClusterTrafficMutex.RUnlock()
+	fake.enableClusterTrafficMutex.RLock()
+	defer fake.enableClusterTrafficMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

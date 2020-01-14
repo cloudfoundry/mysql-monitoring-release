@@ -2,15 +2,17 @@
 package databasefakes
 
 import (
-	"replication-canary/database"
 	"sync"
+
+	"github.com/cloudfoundry/replication-canary/database"
 )
 
 type FakeSwitchboardClient struct {
 	ActiveBackendHostStub        func() (string, error)
 	activeBackendHostMutex       sync.RWMutex
-	activeBackendHostArgsForCall []struct{}
-	activeBackendHostReturns     struct {
+	activeBackendHostArgsForCall []struct {
+	}
+	activeBackendHostReturns struct {
 		result1 string
 		result2 error
 	}
@@ -25,7 +27,8 @@ type FakeSwitchboardClient struct {
 func (fake *FakeSwitchboardClient) ActiveBackendHost() (string, error) {
 	fake.activeBackendHostMutex.Lock()
 	ret, specificReturn := fake.activeBackendHostReturnsOnCall[len(fake.activeBackendHostArgsForCall)]
-	fake.activeBackendHostArgsForCall = append(fake.activeBackendHostArgsForCall, struct{}{})
+	fake.activeBackendHostArgsForCall = append(fake.activeBackendHostArgsForCall, struct {
+	}{})
 	fake.recordInvocation("ActiveBackendHost", []interface{}{})
 	fake.activeBackendHostMutex.Unlock()
 	if fake.ActiveBackendHostStub != nil {
@@ -34,7 +37,8 @@ func (fake *FakeSwitchboardClient) ActiveBackendHost() (string, error) {
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.activeBackendHostReturns.result1, fake.activeBackendHostReturns.result2
+	fakeReturns := fake.activeBackendHostReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeSwitchboardClient) ActiveBackendHostCallCount() int {
@@ -43,7 +47,15 @@ func (fake *FakeSwitchboardClient) ActiveBackendHostCallCount() int {
 	return len(fake.activeBackendHostArgsForCall)
 }
 
+func (fake *FakeSwitchboardClient) ActiveBackendHostCalls(stub func() (string, error)) {
+	fake.activeBackendHostMutex.Lock()
+	defer fake.activeBackendHostMutex.Unlock()
+	fake.ActiveBackendHostStub = stub
+}
+
 func (fake *FakeSwitchboardClient) ActiveBackendHostReturns(result1 string, result2 error) {
+	fake.activeBackendHostMutex.Lock()
+	defer fake.activeBackendHostMutex.Unlock()
 	fake.ActiveBackendHostStub = nil
 	fake.activeBackendHostReturns = struct {
 		result1 string
@@ -52,6 +64,8 @@ func (fake *FakeSwitchboardClient) ActiveBackendHostReturns(result1 string, resu
 }
 
 func (fake *FakeSwitchboardClient) ActiveBackendHostReturnsOnCall(i int, result1 string, result2 error) {
+	fake.activeBackendHostMutex.Lock()
+	defer fake.activeBackendHostMutex.Unlock()
 	fake.ActiveBackendHostStub = nil
 	if fake.activeBackendHostReturnsOnCall == nil {
 		fake.activeBackendHostReturnsOnCall = make(map[int]struct {

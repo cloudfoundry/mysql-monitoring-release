@@ -2,7 +2,7 @@ package canary_test
 
 import (
 	"code.cloudfoundry.org/lager/lagertest"
-	. "replication-canary/canary"
+	. "github.com/cloudfoundry/replication-canary/canary"
 
 	"time"
 

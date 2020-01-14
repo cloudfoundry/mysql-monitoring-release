@@ -5,9 +5,9 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/alert/alertfakes"
-	"replication-canary/clientcreator"
-	"replication-canary/config"
+	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
+	"github.com/cloudfoundry/replication-canary/clientcreator"
+	"github.com/cloudfoundry/replication-canary/config"
 )
 
 var _ = Describe("Client Creator", func() {

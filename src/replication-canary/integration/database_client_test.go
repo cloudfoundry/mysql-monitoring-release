@@ -12,7 +12,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/database"
+	"github.com/cloudfoundry/replication-canary/database"
 )
 
 var _ = Describe("Database", func() {

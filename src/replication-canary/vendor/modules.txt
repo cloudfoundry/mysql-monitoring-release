@@ -1,0 +1,70 @@
+# code.cloudfoundry.org/cflager v0.0.0-20160705185420-3b0406dd8038
+code.cloudfoundry.org/cflager
+# code.cloudfoundry.org/clock v0.0.0-20171121005523-e9dc86bbf0e5
+code.cloudfoundry.org/clock
+code.cloudfoundry.org/clock/fakeclock
+# code.cloudfoundry.org/lager v1.0.0
+code.cloudfoundry.org/lager
+code.cloudfoundry.org/lager/lagerctx
+code.cloudfoundry.org/lager/lagertest
+# code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d
+code.cloudfoundry.org/trace-logger
+# code.cloudfoundry.org/uaa-go-client v0.0.0-20180330171353-56db3a97d446
+code.cloudfoundry.org/uaa-go-client
+code.cloudfoundry.org/uaa-go-client/config
+code.cloudfoundry.org/uaa-go-client/schema
+# github.com/DATA-DOG/go-sqlmock v1.1.4-0.20160414060851-f191e8603617
+github.com/DATA-DOG/go-sqlmock
+# github.com/cloudfoundry/multierror v0.0.0-20160301183015-6bb1731c7a73
+github.com/cloudfoundry/multierror
+# github.com/dgrijalva/jwt-go v2.7.0+incompatible
+github.com/dgrijalva/jwt-go
+# github.com/go-sql-driver/mysql v1.2.1-0.20160602001021-3654d25ec346
+github.com/go-sql-driver/mysql
+# github.com/golang/protobuf v0.0.0-20160712193813-874264fbbb43
+github.com/golang/protobuf/proto
+# github.com/imdario/mergo v0.0.0-20160517064435-50d4dbd4eb0e
+github.com/imdario/mergo
+# github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
+github.com/nu7hatch/gouuid
+# github.com/onsi/ginkgo v1.2.1-0.20160713133600-01a0bc330e32
+github.com/onsi/ginkgo
+github.com/onsi/ginkgo/config
+github.com/onsi/ginkgo/extensions/table
+github.com/onsi/ginkgo/internal/codelocation
+github.com/onsi/ginkgo/internal/containernode
+github.com/onsi/ginkgo/internal/failer
+github.com/onsi/ginkgo/internal/leafnodes
+github.com/onsi/ginkgo/internal/remote
+github.com/onsi/ginkgo/internal/spec
+github.com/onsi/ginkgo/internal/specrunner
+github.com/onsi/ginkgo/internal/suite
+github.com/onsi/ginkgo/internal/testingtproxy
+github.com/onsi/ginkgo/internal/writer
+github.com/onsi/ginkgo/reporters
+github.com/onsi/ginkgo/reporters/stenographer
+github.com/onsi/ginkgo/types
+# github.com/onsi/gomega v0.0.0-20160713044445-9574b2d94c03
+github.com/onsi/gomega
+github.com/onsi/gomega/format
+github.com/onsi/gomega/gbytes
+github.com/onsi/gomega/gexec
+github.com/onsi/gomega/ghttp
+github.com/onsi/gomega/internal/assertion
+github.com/onsi/gomega/internal/asyncassertion
+github.com/onsi/gomega/internal/oraclematcher
+github.com/onsi/gomega/internal/testingtsupport
+github.com/onsi/gomega/matchers
+github.com/onsi/gomega/matchers/support/goraph/bipartitegraph
+github.com/onsi/gomega/matchers/support/goraph/edge
+github.com/onsi/gomega/matchers/support/goraph/node
+github.com/onsi/gomega/matchers/support/goraph/util
+github.com/onsi/gomega/types
+# github.com/pivotal-cf-experimental/service-config v0.0.0-20160129003516-b1dc94de6ada
+github.com/pivotal-cf-experimental/service-config
+# golang.org/x/sys v0.0.0-20160712235641-b518c298ac9d
+golang.org/x/sys/unix
+# gopkg.in/validator.v2 v2.0.0-20160201165114-3e4f037f12a1
+gopkg.in/validator.v2
+# gopkg.in/yaml.v2 v2.0.0-20160301204022-a83829b6f129
+gopkg.in/yaml.v2

@@ -2,16 +2,18 @@
 package canaryfakes
 
 import (
-	"replication-canary/canary"
-	"replication-canary/models"
 	"sync"
+
+	"github.com/cloudfoundry/replication-canary/canary"
+	"github.com/cloudfoundry/replication-canary/models"
 )
 
 type FakeConnectionFactory struct {
 	ConnsStub        func() ([]*models.NamedConnection, error)
 	connsMutex       sync.RWMutex
-	connsArgsForCall []struct{}
-	connsReturns     struct {
+	connsArgsForCall []struct {
+	}
+	connsReturns struct {
 		result1 []*models.NamedConnection
 		result2 error
 	}
@@ -21,8 +23,9 @@ type FakeConnectionFactory struct {
 	}
 	WriteConnStub        func() (*models.NamedConnection, error)
 	writeConnMutex       sync.RWMutex
-	writeConnArgsForCall []struct{}
-	writeConnReturns     struct {
+	writeConnArgsForCall []struct {
+	}
+	writeConnReturns struct {
 		result1 *models.NamedConnection
 		result2 error
 	}
@@ -37,7 +40,8 @@ type FakeConnectionFactory struct {
 func (fake *FakeConnectionFactory) Conns() ([]*models.NamedConnection, error) {
 	fake.connsMutex.Lock()
 	ret, specificReturn := fake.connsReturnsOnCall[len(fake.connsArgsForCall)]
-	fake.connsArgsForCall = append(fake.connsArgsForCall, struct{}{})
+	fake.connsArgsForCall = append(fake.connsArgsForCall, struct {
+	}{})
 	fake.recordInvocation("Conns", []interface{}{})
 	fake.connsMutex.Unlock()
 	if fake.ConnsStub != nil {
@@ -46,7 +50,8 @@ func (fake *FakeConnectionFactory) Conns() ([]*models.NamedConnection, error) {
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.connsReturns.result1, fake.connsReturns.result2
+	fakeReturns := fake.connsReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeConnectionFactory) ConnsCallCount() int {
@@ -55,7 +60,15 @@ func (fake *FakeConnectionFactory) ConnsCallCount() int {
 	return len(fake.connsArgsForCall)
 }
 
+func (fake *FakeConnectionFactory) ConnsCalls(stub func() ([]*models.NamedConnection, error)) {
+	fake.connsMutex.Lock()
+	defer fake.connsMutex.Unlock()
+	fake.ConnsStub = stub
+}
+
 func (fake *FakeConnectionFactory) ConnsReturns(result1 []*models.NamedConnection, result2 error) {
+	fake.connsMutex.Lock()
+	defer fake.connsMutex.Unlock()
 	fake.ConnsStub = nil
 	fake.connsReturns = struct {
 		result1 []*models.NamedConnection
@@ -64,6 +77,8 @@ func (fake *FakeConnectionFactory) ConnsReturns(result1 []*models.NamedConnectio
 }
 
 func (fake *FakeConnectionFactory) ConnsReturnsOnCall(i int, result1 []*models.NamedConnection, result2 error) {
+	fake.connsMutex.Lock()
+	defer fake.connsMutex.Unlock()
 	fake.ConnsStub = nil
 	if fake.connsReturnsOnCall == nil {
 		fake.connsReturnsOnCall = make(map[int]struct {
@@ -80,7 +95,8 @@ func (fake *FakeConnectionFactory) ConnsReturnsOnCall(i int, result1 []*models.N
 func (fake *FakeConnectionFactory) WriteConn() (*models.NamedConnection, error) {
 	fake.writeConnMutex.Lock()
 	ret, specificReturn := fake.writeConnReturnsOnCall[len(fake.writeConnArgsForCall)]
-	fake.writeConnArgsForCall = append(fake.writeConnArgsForCall, struct{}{})
+	fake.writeConnArgsForCall = append(fake.writeConnArgsForCall, struct {
+	}{})
 	fake.recordInvocation("WriteConn", []interface{}{})
 	fake.writeConnMutex.Unlock()
 	if fake.WriteConnStub != nil {
@@ -89,7 +105,8 @@ func (fake *FakeConnectionFactory) WriteConn() (*models.NamedConnection, error) 
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	return fake.writeConnReturns.result1, fake.writeConnReturns.result2
+	fakeReturns := fake.writeConnReturns
+	return fakeReturns.result1, fakeReturns.result2
 }
 
 func (fake *FakeConnectionFactory) WriteConnCallCount() int {
@@ -98,7 +115,15 @@ func (fake *FakeConnectionFactory) WriteConnCallCount() int {
 	return len(fake.writeConnArgsForCall)
 }
 
+func (fake *FakeConnectionFactory) WriteConnCalls(stub func() (*models.NamedConnection, error)) {
+	fake.writeConnMutex.Lock()
+	defer fake.writeConnMutex.Unlock()
+	fake.WriteConnStub = stub
+}
+
 func (fake *FakeConnectionFactory) WriteConnReturns(result1 *models.NamedConnection, result2 error) {
+	fake.writeConnMutex.Lock()
+	defer fake.writeConnMutex.Unlock()
 	fake.WriteConnStub = nil
 	fake.writeConnReturns = struct {
 		result1 *models.NamedConnection
@@ -107,6 +132,8 @@ func (fake *FakeConnectionFactory) WriteConnReturns(result1 *models.NamedConnect
 }
 
 func (fake *FakeConnectionFactory) WriteConnReturnsOnCall(i int, result1 *models.NamedConnection, result2 error) {
+	fake.writeConnMutex.Lock()
+	defer fake.writeConnMutex.Unlock()
 	fake.WriteConnStub = nil
 	if fake.writeConnReturnsOnCall == nil {
 		fake.writeConnReturnsOnCall = make(map[int]struct {

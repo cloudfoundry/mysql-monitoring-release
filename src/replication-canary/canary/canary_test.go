@@ -5,7 +5,7 @@ import (
 
 	"code.cloudfoundry.org/lager/lagertest"
 
-	. "replication-canary/canary"
+	. "github.com/cloudfoundry/replication-canary/canary"
 
 	"errors"
 
@@ -14,8 +14,8 @@ import (
 	_ "github.com/DATA-DOG/go-sqlmock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/canary/canaryfakes"
-	"replication-canary/models"
+	"github.com/cloudfoundry/replication-canary/canary/canaryfakes"
+	"github.com/cloudfoundry/replication-canary/models"
 )
 
 var _ = Describe("Canary", func() {

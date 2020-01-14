@@ -2,7 +2,7 @@ package alert_test
 
 import (
 	"code.cloudfoundry.org/lager/lagertest"
-	. "replication-canary/alert"
+	. "github.com/cloudfoundry/replication-canary/alert"
 
 	"errors"
 	"time"
@@ -10,7 +10,7 @@ import (
 	"code.cloudfoundry.org/uaa-go-client/schema"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"replication-canary/alert/alertfakes"
+	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
 )
 
 var _ = Describe("EmailingAlerter", func() {

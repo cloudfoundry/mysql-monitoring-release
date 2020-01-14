@@ -3,7 +3,7 @@ package canary
 import (
 	"time"
 
-	"replication-canary/models"
+	"github.com/cloudfoundry/replication-canary/models"
 
 	"code.cloudfoundry.org/lager"
 )

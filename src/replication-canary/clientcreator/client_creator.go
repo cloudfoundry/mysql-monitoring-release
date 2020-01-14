@@ -3,7 +3,7 @@ package clientcreator
 import (
 	"code.cloudfoundry.org/uaa-go-client"
 	"code.cloudfoundry.org/uaa-go-client/schema"
-	canary_config "replication-canary/config"
+	canary_config "github.com/cloudfoundry/replication-canary/config"
 )
 
 func CreateClient(adminUaaClient uaa_go_client.Client, config *canary_config.Config) error {
