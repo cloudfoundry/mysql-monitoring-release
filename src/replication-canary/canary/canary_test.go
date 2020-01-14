@@ -12,10 +12,10 @@ import (
 	"database/sql"
 
 	_ "github.com/DATA-DOG/go-sqlmock"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/cloudfoundry/replication-canary/canary/canaryfakes"
 	"github.com/cloudfoundry/replication-canary/models"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Canary", func() {

@@ -3,11 +3,11 @@ package clientcreator_test
 import (
 	"errors"
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
 	"github.com/cloudfoundry/replication-canary/clientcreator"
 	"github.com/cloudfoundry/replication-canary/config"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Client Creator", func() {

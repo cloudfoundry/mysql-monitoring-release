@@ -3,9 +3,9 @@ package config_test
 import (
 	"fmt"
 
+	"github.com/cloudfoundry/replication-canary/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/replication-canary/config"
 )
 
 var _ = Describe("Config", func() {

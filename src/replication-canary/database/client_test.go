@@ -8,9 +8,9 @@ import (
 	"code.cloudfoundry.org/lager/lagertest"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/cloudfoundry/replication-canary/database"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/replication-canary/database"
 )
 
 var _ = Describe("Client", func() {

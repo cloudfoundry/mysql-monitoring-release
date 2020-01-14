@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"code.cloudfoundry.org/lager/lagertest"
+	"github.com/cloudfoundry/replication-canary/canary/canaryfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/replication-canary/canary/canaryfakes"
 )
 
 var _ = Describe("CoalMiner", func() {

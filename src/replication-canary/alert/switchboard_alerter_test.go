@@ -8,9 +8,9 @@ import (
 
 	"errors"
 
+	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
 )
 
 var _ = Describe("SwitchboardAlerter", func() {

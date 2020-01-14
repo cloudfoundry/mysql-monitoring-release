@@ -10,9 +10,9 @@ import (
 
 	"fmt"
 
+	"github.com/cloudfoundry/replication-canary/database"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/replication-canary/database"
 )
 
 var _ = Describe("Database", func() {

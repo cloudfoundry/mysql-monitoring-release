@@ -11,9 +11,9 @@ import (
 	. "github.com/cloudfoundry/replication-canary/database"
 	"github.com/cloudfoundry/replication-canary/database/databasefakes"
 
+	"github.com/cloudfoundry/replication-canary/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/replication-canary/config"
 )
 
 var _ = Describe("Connection Factory", func() {

@@ -6,11 +6,11 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/DATA-DOG/go-sqlmock"
+	. "github.com/cloudfoundry/replication-canary/galera"
+	"github.com/cloudfoundry/replication-canary/models"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
-	. "github.com/cloudfoundry/replication-canary/galera"
-	"github.com/cloudfoundry/replication-canary/models"
 )
 
 var _ = Describe("Client", func() {

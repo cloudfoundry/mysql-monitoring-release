@@ -14,7 +14,6 @@ import (
 	"code.cloudfoundry.org/lager"
 	"code.cloudfoundry.org/uaa-go-client"
 	uaa_config "code.cloudfoundry.org/uaa-go-client/config"
-	"github.com/cloudfoundry/replication-canary/notifications-client/notificationemailer"
 	"github.com/cloudfoundry/replication-canary/alert"
 	"github.com/cloudfoundry/replication-canary/canary"
 	"github.com/cloudfoundry/replication-canary/clientcreator"
@@ -22,6 +21,7 @@ import (
 	"github.com/cloudfoundry/replication-canary/database"
 	"github.com/cloudfoundry/replication-canary/galera"
 	"github.com/cloudfoundry/replication-canary/middleware"
+	"github.com/cloudfoundry/replication-canary/notifications-client/notificationemailer"
 	"github.com/cloudfoundry/replication-canary/switchboard"
 )
 
