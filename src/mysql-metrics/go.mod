@@ -8,7 +8,6 @@ require (
 	code.cloudfoundry.org/lager v1.1.0
 	code.cloudfoundry.org/rfc5424 v0.0.0-20170822183049-769e2ed6887e // indirect
 	github.com/DATA-DOG/go-sqlmock v1.3.0
-	github.com/GeertJohan/fgt v0.0.0-20160120143236-262f7b11eec0 // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/go-sql-driver/mysql v1.4.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
