@@ -135,7 +135,7 @@ func (g Gatherer) FollowerMetadata() (slaveStatus map[string]string, heartbeatSt
 
 	heartbeatStatus, err = g.client.HeartbeatStatus()
 	if err != nil {
-		return nil, nil, err
+		return slaveStatus, nil, err
 	}
 
 	return
