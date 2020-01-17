@@ -8,13 +8,13 @@ import (
 	"code.cloudfoundry.org/lager"
 )
 
-//go:generate counterfeiter . ConnectionFactory
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . ConnectionFactory
 type ConnectionFactory interface {
 	Conns() ([]*models.NamedConnection, error)
 	WriteConn() (*models.NamedConnection, error)
 }
 
-//go:generate counterfeiter . Chirper
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Chirper
 type Chirper interface {
 	Chirp(
 		conns []*models.NamedConnection,
@@ -23,13 +23,13 @@ type Chirper interface {
 	) (bool, error)
 }
 
-//go:generate counterfeiter . Alerter
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Alerter
 type Alerter interface {
 	NotUnhealthy(time.Time) error
 	Unhealthy(time.Time) error
 }
 
-//go:generate counterfeiter . StateMachine
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . StateMachine
 type StateMachine interface {
 	BecomesUnhealthy(time.Time)
 	BecomesNotUnhealthy(time.Time)

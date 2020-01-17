@@ -6,19 +6,12 @@ import (
 
 	"code.cloudfoundry.org/lager"
 
-	"code.cloudfoundry.org/uaa-go-client"
+	uaa_go_client "code.cloudfoundry.org/uaa-go-client"
 )
 
-//////
-// We need to generate counterfeiter fakes for the uaa-go-client library,
-// but counterfeiter generates them with a full package path, including the vendor directory
-// so we need to sed out the bad import path
-//
-//go:generate counterfeiter -o ./alertfakes/fake_uaa_client.go --fake-name FakeUAAClient ../vendor/code.cloudfoundry.org/uaa-go-client/client.go Client
-//go:generate sed -i "" "s%replication-canary/vendor/%%" alertfakes/fake_uaa_client.go
-//////
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o ./alertfakes/fake_uaa_client.go --fake-name FakeUAAClient ../vendor/code.cloudfoundry.org/uaa-go-client/client.go Client
 
-//go:generate counterfeiter . NotificationsClient
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . NotificationsClient
 type NotificationsClient interface {
 	Email(clientToken string, to string, subject string, html string, kindID string) error
 }

@@ -6,7 +6,7 @@ import (
 	"code.cloudfoundry.org/lager"
 )
 
-//go:generate counterfeiter . SwitchboardClient
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SwitchboardClient
 type SwitchboardClient interface {
 	EnableClusterTraffic() error
 	DisableClusterTraffic() error

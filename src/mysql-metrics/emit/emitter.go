@@ -5,12 +5,12 @@ import (
 	"time"
 )
 
-//go:generate counterfeiter . Logger
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Logger
 type Logger interface {
 	Error(string, error)
 }
 
-//go:generate counterfeiter . Processor
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Processor
 type Processor interface {
 	Process() error
 }

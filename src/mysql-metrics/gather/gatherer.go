@@ -2,7 +2,7 @@ package gather
 
 import "strconv"
 
-//go:generate counterfeiter . DatabaseClient
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . DatabaseClient
 type DatabaseClient interface {
 	ShowGlobalStatus() (map[string]string, error)
 	ShowGlobalVariables() (map[string]string, error)
@@ -13,12 +13,12 @@ type DatabaseClient interface {
 	IsFollower() (bool, error)
 }
 
-//go:generate counterfeiter . Stater
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Stater
 type Stater interface {
 	Stats(path string) (bytesFree, bytesTotal, inodesFree, inodesTotal uint64, err error)
 }
 
-//go:generate counterfeiter . CpuStater
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . CpuStater
 type CpuStater interface {
 	GetPercentage() (int, error)
 }

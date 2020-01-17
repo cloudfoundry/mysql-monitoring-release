@@ -16,7 +16,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-//go:generate counterfeiter . SwitchboardClient
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SwitchboardClient
 type SwitchboardClient interface {
 	ActiveBackendHost() (string, error)
 }

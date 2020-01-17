@@ -2,13 +2,13 @@ package metrics
 
 import "fmt"
 
-//go:generate counterfeiter . Logger
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Logger
 type Logger interface {
 	Debug(string, map[string]interface{})
 	Error(string, error)
 }
 
-//go:generate counterfeiter . Writer
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Writer
 type Writer interface {
 	Write(metric []*Metric) error
 }

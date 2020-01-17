@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-//go:generate counterfeiter . Alerter
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Alerter
 type Alerter interface {
 	NotUnhealthy(time.Time) error
 	Unhealthy(time.Time) error

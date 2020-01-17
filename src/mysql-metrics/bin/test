@@ -18,8 +18,6 @@ if [ "$(uname)" == "Darwin" ]; then
   echo "cpu 0 0 0 1000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" > /proc/stat
 fi
 
-go get github.com/maxbrunsfeld/counterfeiter
-
 pushd "${base_dir}" > /dev/null
   lint_golang
   bin/regenerate-fakes

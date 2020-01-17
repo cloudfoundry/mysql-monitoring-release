@@ -12,7 +12,7 @@ import (
 	"github.com/cloudfoundry/replication-canary/models"
 )
 
-//go:generate counterfeiter . SQLClient
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . SQLClient
 type SQLClient interface {
 	Setup(*sql.DB) error
 	Write(*sql.DB, time.Time) error
@@ -20,7 +20,7 @@ type SQLClient interface {
 	Cleanup(*sql.DB) error
 }
 
-//go:generate counterfeiter . Healthchecker
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Healthchecker
 type Healthchecker interface {
 	Healthy(*models.NamedConnection) (bool, error)
 }

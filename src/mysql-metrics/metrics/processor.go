@@ -5,7 +5,7 @@ import (
 	"github.com/hashicorp/go-multierror"
 )
 
-//go:generate counterfeiter . Gatherer
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Gatherer
 type Gatherer interface {
 	DatabaseMetadata() (globalStatus map[string]string, globalVariables map[string]string, err error)
 	FollowerMetadata() (slaveStatus map[string]string, heartbeatStatus map[string]string, err error)
@@ -16,7 +16,7 @@ type Gatherer interface {
 	CPUStats() (map[string]string, error)
 }
 
-//go:generate counterfeiter . MetricsComputer
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . MetricsComputer
 type MetricsComputer interface {
 	ComputeAvailabilityMetric(bool) *Metric
 	ComputeIsFollowerMetric(bool) *Metric

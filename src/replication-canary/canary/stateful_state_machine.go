@@ -7,7 +7,7 @@ import (
 	"code.cloudfoundry.org/lager"
 )
 
-//go:generate stringer -type=State
+//go:generate go run golang.org/x/tools/cmd/stringer -type=State
 type State int
 
 const (

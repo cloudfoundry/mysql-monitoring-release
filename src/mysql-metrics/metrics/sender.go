@@ -4,7 +4,7 @@ import (
 	"code.cloudfoundry.org/go-loggregator"
 )
 
-//go:generate counterfeiter . Sender
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Sender
 type Sender interface {
 	SendValue(name string, value float64, unit string) error
 }

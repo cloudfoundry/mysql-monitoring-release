@@ -9,25 +9,19 @@ RELEASE_DIR="$( cd $MY_DIR/.. && pwd )"
 
 source ${RELEASE_DIR}/.envrc
 
-# Remove and reinstall the ginkgo binary as it might be from the wrong target architecture
-rm -rf ${RELEASE_DIR}/bin/ginkgo
-rm -rf ${RELEASE_DIR}/bin/fgt
-
-go get github.com/onsi/ginkgo/ginkgo
-go get github.com/GeertJohan/fgt
 gem install bosh-template
 
 echo -e "\nTesting Release-Level Specs..."
 ${RELEASE_DIR}/src/spec/bin/test "$@"
 
 echo -e "\nTesting Metrics..."
-USE_FGT=true ${RELEASE_DIR}/src/mysql-metrics/bin/test "$@"
+${RELEASE_DIR}/src/mysql-metrics/bin/test "$@"
 
 echo -e "\nTesting Replication Canary..."
-USE_FGT=true ${RELEASE_DIR}/src/replication-canary/bin/test "$@"
+${RELEASE_DIR}/src/replication-canary/bin/test "$@"
 
 echo -e "\nTesting Mysql-Diag..."
 ${RELEASE_DIR}/src/mysql-diag/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
-USE_FGT=true ${RELEASE_DIR}/src/replication-canary/notifications-client/bin/test "$@"
+${RELEASE_DIR}/src/replication-canary/notifications-client/bin/test "$@"

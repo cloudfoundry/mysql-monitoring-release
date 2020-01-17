@@ -6,8 +6,6 @@ base_dir="$( cd "${my_dir}/.." && pwd )"
 test_helpers_dir="$( cd "$(git -C "${my_dir}" rev-parse --show-toplevel)/src/test-helpers" && pwd )"
 source ${test_helpers_dir}/linter.sh
 
-go get github.com/onsi/ginkgo/ginkgo
-
 pushd "${base_dir}"
   lint_golang
 
