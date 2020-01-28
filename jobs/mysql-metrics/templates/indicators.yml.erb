@@ -68,6 +68,20 @@ spec:
       title: Queries Delta
       description: "The number of statements executed by the server over the last 30 seconds."
       recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. Investigate the MySQL server logs, such as the audit log, to understand why query rate changed and determine appropriate action."
+
+<%
+  instance_count = link("mysql").instances.length
+  if instance_count >= 3
+    cluster_size_crit_threshold = 2
+    persistent_disk_crit_threshold = 90
+    persistent_disk_warning_threshold = 80
+  else
+    cluster_size_crit_threshold = 1
+    persistent_disk_crit_threshold = 30
+    persistent_disk_warning_threshold = 25
+  end
+%>
+
   <% if p("mysql-metrics.galera_metrics_enabled") %>
   - name: mysql_galera_wsrep_ready
     promql:  _$origin_galera_wsrep_ready{source_id="$source_id", deployment="$deployment"}
@@ -91,17 +105,9 @@ spec:
   - name: mysql_galera_cluster_size
     promql:  _$origin_galera_wsrep_cluster_size{source_id="$source_id", deployment="$deployment"}
     thresholds:
-    <%
-      instance_count = link("mysql").instances.length
-      if instance_count >= 3
-        crit_threshold = 2
-      else
-        crit_threshold = 1
-      end
-    %>
       - level: critical
         operator: lt
-        value: <%= crit_threshold %>
+        value: <%= cluster_size_crit_threshold %>
     <% if instance_count >= 3 %>
       - level: warning
         operator: lt
@@ -138,3 +144,33 @@ spec:
       recommendedResponse: "Check node status to ensure that they are all in working order and able to receive write-sets. Run mysql-diag and check the MySQL Server logs for errors."
     <% end %>
   <% end %>
+  - name: mysql_system_ephemeral_disk_used_percent
+    promql:  _$origin_system_ephemeral_disk_used_percent{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+      - level: critical
+        operator: gt
+        value: 95
+      - level: warning
+        operator: gt
+        value: 80
+    alert:
+      for: 10m
+    documentation:
+      title: Ephemeral Disk Used Percent
+      description: "Ephemeral disk used on the MySQL node."
+      recommendedResponse: "Upgrade the service instance to a plan with larger disk capacity."
+  - name: mysql_system_persistent_disk_used_percent
+    promql:  _$origin_system_persistent_disk_used_percent{source_id="$source_id", deployment="$deployment"}
+    thresholds:
+      - level: critical
+        operator: gt
+        value: <%= persistent_disk_crit_threshold %>
+      - level: warning
+        operator: gt
+        value: <%= persistent_disk_warning_threshold %>
+    alert:
+      for: 10m
+    documentation:
+      title: Persistent Disk Used Percent
+      description: "Persistent disk used on the MySQL node."
+      recommendedResponse: "Upgrade the service instance to a plan with larger disk capacity."
