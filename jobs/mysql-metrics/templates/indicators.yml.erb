@@ -41,6 +41,21 @@ spec:
       title: Percentage of Available Connections Used
       description: "Percentage of available connections used"
       recommendedResponse: "Run mysql-diag and check the MySQL Server logs for errors. When approaching 100% of max connections, Apps may be experiencing times when they cannot connect to the database. If this threshold is met or exceeded for an extended period of time, monitor app usage to ensure everything is behaving as expected."
+  - name: percentage_of_available_connections_ever_used
+    promql:  (_$origin_net_max_used_connections{source_id="$source_id", deployment="$deployment"} / _$origin_variables_max_connections{source_id="$source_id", deployment="$deployment"}) * 100
+    thresholds:
+      - level: critical
+        operator: gt
+        value: 90
+      - level: warning
+        operator: gt
+        value: 80
+    alert:
+      for: 1m
+    documentation:
+      title: Percentage of Available Connections Ever Used
+      description: "Percentage of available connections ever used. This value represents the high water mark for connections"
+      recommendedResponse: "If this measurement meets or exceeds 80% with linear growth, increase the value of max_connections. If this measurement meets or exceeds 80% with exponential growth, monitor app usage to ensure everything is behaving as expected. When approaching 100% of max connections, apps may be experiencing times when they cannot connect to the database. The connections/second for a service instance vary based on app instances and app utilization."
   - name: mysql_performance_cpu_utilization_percent
     promql:  _$origin_performance_cpu_utilization_percent{source_id="$source_id", deployment="$deployment"}
     thresholds:
