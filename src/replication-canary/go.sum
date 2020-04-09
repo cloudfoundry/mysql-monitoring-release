@@ -1,9 +1,7 @@
-code.cloudfoundry.org/cflager v0.0.0-20160705185420-3b0406dd8038 h1:WAxsM+7EM1cUdkI0PYA4EMeo5gFv+1aJ9vzDeR4Gt74=
-code.cloudfoundry.org/cflager v0.0.0-20160705185420-3b0406dd8038/go.mod h1:Vf3Ncy2M+LXvWLhrI32tHEsEzq2JBL5sGKRBPJqQlg0=
 code.cloudfoundry.org/clock v0.0.0-20171121005523-e9dc86bbf0e5 h1:1GnMPkoIUhHCI1N2wUl75EHGzgdr0Qo+JxmSrB0FKUw=
 code.cloudfoundry.org/clock v0.0.0-20171121005523-e9dc86bbf0e5/go.mod h1:QD9Lzhd/ux6eNQVUDVRJX/RKTigpewimNYBi7ivZKY8=
-code.cloudfoundry.org/lager v1.0.0 h1:ZW/aJB8upEKcCxUexFLoVjT32Iex3eWdkjw0F7wHbpE=
-code.cloudfoundry.org/lager v1.0.0/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
+code.cloudfoundry.org/lager v2.0.0+incompatible h1:WZwDKDB2PLd/oL+USK4b4aEjUymIej9My2nUQ9oWEwQ=
+code.cloudfoundry.org/lager v2.0.0+incompatible/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
 code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d h1:1I5BueV2nNkvIV40CQ0JQgmD/ijouF0QlLLOz0KMkRo=
 code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d/go.mod h1:KAH6N5nwHViCZsOgmApk6nj8TDuqRGb9R06Hk461Uwc=
 code.cloudfoundry.org/uaa-go-client v0.0.0-20180330171353-56db3a97d446 h1:JF5iXWgEzXMl9HxaNQB2pvXIddhZt6tmmx26rKohuus=

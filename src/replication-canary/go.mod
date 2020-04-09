@@ -3,9 +3,8 @@ module github.com/cloudfoundry/replication-canary
 go 1.13
 
 require (
-	code.cloudfoundry.org/cflager v0.0.0-20160705185420-3b0406dd8038
 	code.cloudfoundry.org/clock v0.0.0-20171121005523-e9dc86bbf0e5
-	code.cloudfoundry.org/lager v1.0.0
+	code.cloudfoundry.org/lager v2.0.0+incompatible
 	code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d // indirect
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20180330171353-56db3a97d446
 	github.com/DATA-DOG/go-sqlmock v1.1.4-0.20160414060851-f191e8603617

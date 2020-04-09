@@ -47,7 +47,7 @@ func main() {
 	flag.Parse()
 
 	logger := lager.NewLogger("Notifications Emailer")
-	outSink := lager.NewWriterSink(os.Stderr, lager.DEBUG)
+	outSink := lager.NewPrettySink(os.Stderr, lager.DEBUG)
 	logger.RegisterSink(outSink)
 
 	if toAddress == nil || *toAddress == "" {

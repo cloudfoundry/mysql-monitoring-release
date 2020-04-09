@@ -31,7 +31,7 @@ type uaaKey struct {
 	Value string `json:"value"`
 }
 
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o fakes/fake_client.go . Client
+//go:generate counterfeiter -o fakes/fake_client.go . Client
 type Client interface {
 	FetchToken(forceUpdate bool) (*schema.Token, error)
 	FetchKey() (string, error)
