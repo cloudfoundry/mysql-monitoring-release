@@ -2,8 +2,8 @@ code.cloudfoundry.org/go-diodes v0.0.0-20180717154652-3385e722aaa0 h1:Xwfl2tBiDS
 code.cloudfoundry.org/go-diodes v0.0.0-20180717154652-3385e722aaa0/go.mod h1:Jzi+ccHgo/V/PLQUaQ6hnZcC1c4BS790gx21LRRui4g=
 code.cloudfoundry.org/go-loggregator v7.0.0+incompatible h1:RjiphJts0Cja7zrt09YLZetVdCHSJ8YQWSAgSMMFn6M=
 code.cloudfoundry.org/go-loggregator v7.0.0+incompatible/go.mod h1:KPBTRqj+y738Nhf1+g4JHFaBU8j7dedirR5ETNHvMXU=
-code.cloudfoundry.org/lager v1.1.0 h1:v0RELJ2jqTeF2DW7PNjZaaGlrXbVxJBVz3uLxdP3fuY=
-code.cloudfoundry.org/lager v1.1.0/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
+code.cloudfoundry.org/lager v2.0.0+incompatible h1:WZwDKDB2PLd/oL+USK4b4aEjUymIej9My2nUQ9oWEwQ=
+code.cloudfoundry.org/lager v2.0.0+incompatible/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
 code.cloudfoundry.org/rfc5424 v0.0.0-20170822183049-769e2ed6887e h1:/dDrXXpNoE8Zjj1kHpwTNRik8OX2RuNxy2ptxInPPdQ=
 code.cloudfoundry.org/rfc5424 v0.0.0-20170822183049-769e2ed6887e/go.mod h1:tkZo8GtzBjySJ7USvxm4E36lNQw1D3xM6oKHGqdaAJ4=
 github.com/DATA-DOG/go-sqlmock v1.3.0 h1:ljjRxlddjfChBJdFKJs5LuCwCWPLaC1UZLwAo3PBBMk=

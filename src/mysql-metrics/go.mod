@@ -5,7 +5,7 @@ go 1.13
 require (
 	code.cloudfoundry.org/go-diodes v0.0.0-20180717154652-3385e722aaa0 // indirect
 	code.cloudfoundry.org/go-loggregator v7.0.0+incompatible
-	code.cloudfoundry.org/lager v1.1.0
+	code.cloudfoundry.org/lager v2.0.0+incompatible
 	code.cloudfoundry.org/rfc5424 v0.0.0-20170822183049-769e2ed6887e // indirect
 	github.com/DATA-DOG/go-sqlmock v1.3.0
 	github.com/go-sql-driver/mysql v1.4.0

@@ -11,6 +11,8 @@ import (
 
 	"path/filepath"
 
+	"code.cloudfoundry.org/lager/lagerflags"
+
 	"github.com/cloudfoundry/mysql-metrics/config"
 	"github.com/cloudfoundry/mysql-metrics/cpu"
 	"github.com/cloudfoundry/mysql-metrics/database_client"
@@ -52,6 +54,7 @@ func (d lagerLoggerWrapper) Error(action string, err error) {
 
 var configFilepath = flag.String("c", defaultConfigPath, "location of config file")
 var logFilepath = flag.String("l", "", "location of log file")
+var timeFormat = flag.String("timeFormat", "", "timestamp format for logs")
 
 func setupLogging(metricsLogger lager.Logger) {
 	if *logFilepath != "" {
@@ -60,7 +63,12 @@ func setupLogging(metricsLogger lager.Logger) {
 			panic(fmt.Sprintf("Could not open log file: %s\n", err))
 		}
 
-		sink := lager.NewWriterSink(file, lager.DEBUG)
+		var sink lager.Sink
+		if *timeFormat == "rfc3339" {
+			sink = lager.NewPrettySink(file, lager.DEBUG)
+		} else {
+			sink = lager.NewWriterSink(file, lager.DEBUG)
+		}
 		metricsLogger.RegisterSink(sink)
 	}
 }
@@ -68,9 +76,9 @@ func setupLogging(metricsLogger lager.Logger) {
 func main() {
 	flag.Parse()
 
-	metricsLogger := lager.NewLogger("MetricsLogger")
-	sink := lager.NewWriterSink(os.Stdout, lager.DEBUG)
-	metricsLogger.RegisterSink(sink)
+	lagerConfig := lagerflags.DefaultLagerConfig()
+	lagerConfig.TimeFormat.Set(*timeFormat)
+	metricsLogger, _ := lagerflags.NewFromConfig("MetricsLogger", lagerConfig)
 
 	setupLogging(metricsLogger)
 

@@ -38,6 +38,7 @@ case $1 in
         <% if p("mysql-metrics.log_metrics_to_disk") %> \
         -l="${metric_path}" \
         <% end %> \
+        -timeFormat=<%= p("logging.format.timestamp") %> \
          >> "${log_file}" \
         2>> "${err_log_file}"
     ;;
