@@ -22,7 +22,7 @@ func Report(params ReporterParams, config *Config) []string {
 	}
 
 	if params.NeedsBootstrap {
-		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: http://docs.pivotal.io/p-mysql/1-10/bootstrapping.html"))
+		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://docs.pivotal.io/p-mysql/bootstrapping.html"))
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap {

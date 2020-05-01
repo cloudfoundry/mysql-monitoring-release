@@ -177,7 +177,7 @@ var _ = Describe("mysql-diag cli", func() {
 
 	It("tells us that we need bootstrap", func() {
 		session := runMainWithArgs()
-		Eventually(session.Out).Should(gbytes.Say("\\[CRITICAL\\] You must bootstrap the cluster. Follow these instructions: http://docs.pivotal.io/p-mysql/1-10/bootstrapping.html"))
+		Eventually(session.Out).Should(gbytes.Say("\\[CRITICAL\\] You must bootstrap the cluster. Follow these instructions: https://docs.pivotal.io/p-mysql/bootstrapping.html"))
 	})
 
 	It("tells us that the canary is unhealthy", func() {
