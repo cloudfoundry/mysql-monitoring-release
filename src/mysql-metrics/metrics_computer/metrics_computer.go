@@ -55,6 +55,10 @@ func (mc *MetricsComputer) ComputeDiskMetrics(values map[string]string) []*metri
 	return mc.ComputeMetricsFromMapping(values, mc.metricMappingConfig.DiskMetricMappings)
 }
 
+func (mc *MetricsComputer) ComputeBackupMetrics(values map[string]string) []*metrics.Metric {
+	return mc.ComputeMetricsFromMapping(values, mc.metricMappingConfig.BackupMetricMappings)
+}
+
 func (mc *MetricsComputer) ComputeGaleraMetrics(values map[string]string) []*metrics.Metric {
 	return mc.ComputeMetricsFromMapping(values, mc.metricMappingConfig.GaleraMetricMappings)
 }

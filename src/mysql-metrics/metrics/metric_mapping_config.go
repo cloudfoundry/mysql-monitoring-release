@@ -5,6 +5,7 @@ type MetricMappingConfig struct {
 	GaleraMetricMappings         map[string]MetricDefinition
 	LeaderFollowerMetricMappings map[string]MetricDefinition
 	DiskMetricMappings           map[string]MetricDefinition
+	BackupMetricMappings         map[string]MetricDefinition
 	BrokerMetricMappings         map[string]MetricDefinition
 	CPUMetricMappings            map[string]MetricDefinition
 }
@@ -324,6 +325,16 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 			"service_plans_disk_allocated": {
 				Key:  "broker/disk_allocated_service_plans",
 				Unit: "megabyte",
+			},
+		},
+		BackupMetricMappings: map[string]MetricDefinition{
+			"last_successful_backup_time": {
+				Key:  "backup/last_successful_at",
+				Unit: "metric",
+			},
+			"next_backup_time": {
+				Key:  "backup/next_backup_time_at",
+				Unit: "metric",
 			},
 		},
 		CPUMetricMappings: map[string]MetricDefinition{
