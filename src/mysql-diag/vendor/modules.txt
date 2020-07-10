@@ -8,13 +8,13 @@ github.com/fatih/color
 github.com/go-sql-driver/mysql
 # github.com/golang/protobuf v0.0.0-20161117033126-8ee79997227b
 github.com/golang/protobuf/proto
-# github.com/mattn/go-colorable v0.0.7
+# github.com/mattn/go-colorable v0.0.9
 github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.0-20161123143637-30a891c33c7c
+# github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
-# github.com/mattn/go-runewidth v0.0.2-0.20161012013512-737072b4e32b
+# github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
-# github.com/olekukonko/tablewriter v0.0.0-20160923125401-bdcc175572fd
+# github.com/olekukonko/tablewriter v0.0.4
 github.com/olekukonko/tablewriter
 # github.com/onsi/ginkgo v1.2.1-0.20161110180313-00054c0bb96f
 github.com/onsi/ginkgo
@@ -50,7 +50,7 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# golang.org/x/sys v0.0.0-20161205170828-478fcf54317e
+# golang.org/x/sys v0.0.0-20200116001909-b77594299b42
 golang.org/x/sys/unix
-# gopkg.in/yaml.v2 v2.0.0-20160928153709-a5b47d31c556
+# gopkg.in/yaml.v2 v2.0.0
 gopkg.in/yaml.v2
