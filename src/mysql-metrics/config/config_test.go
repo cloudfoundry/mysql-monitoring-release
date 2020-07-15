@@ -29,6 +29,7 @@ var _ = Describe("Config", func() {
 		emitLeaderFollowerMetrics bool
 		emitGaleraMetrics         bool
 		emitDiskMetrics           bool
+		emitBackupMetrics         bool
 		heartbeatDatabase         string
 		heartbeatTable            string
 	)
@@ -51,6 +52,7 @@ var _ = Describe("Config", func() {
 			emitLeaderFollowerMetrics = true
 			emitGaleraMetrics = true
 			emitDiskMetrics = true
+			emitBackupMetrics = true
 			heartbeatDatabase = "someDatabase"
 			heartbeatTable = "someTable"
 
@@ -71,9 +73,10 @@ var _ = Describe("Config", func() {
 				"emit_leader_follower_metrics":%t,
 				"emit_galera_metrics":%t,
 				"emit_disk_metrics":%t,
+				"emit_backup_metrics":%t,
 				"heartbeat_database":"%s",
 				"heartbeat_table":"%s"
-			}`, instanceId, host, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, heartbeatDatabase, heartbeatTable)
+			}`, instanceId, host, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, emitBackupMetrics, heartbeatDatabase, heartbeatTable)
 
 			err = ioutil.WriteFile(configFilepath, []byte(configString), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
@@ -102,6 +105,7 @@ var _ = Describe("Config", func() {
 			Expect(config.EmitLeaderFollowerMetrics).To(Equal(emitLeaderFollowerMetrics))
 			Expect(config.EmitGaleraMetrics).To(Equal(emitGaleraMetrics))
 			Expect(config.EmitDiskMetrics).To(Equal(emitDiskMetrics))
+			Expect(config.EmitBackupMetrics).To(Equal(emitBackupMetrics))
 			Expect(config.HeartbeatDatabase).To(Equal(heartbeatDatabase))
 			Expect(config.HeartbeatTable).To(Equal(heartbeatTable))
 		})
