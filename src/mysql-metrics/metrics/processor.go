@@ -2,6 +2,9 @@ package metrics
 
 import (
 	"github.com/cloudfoundry/mysql-metrics/config"
+
+	"time"
+
 	"github.com/hashicorp/go-multierror"
 )
 
@@ -14,6 +17,7 @@ type Gatherer interface {
 	DiskStats() (map[string]string, error)
 	BrokerStats() (map[string]string, error)
 	CPUStats() (map[string]string, error)
+	FindLastBackupTimestamp() (time.Time, error)
 }
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . MetricsComputer
@@ -26,6 +30,7 @@ type MetricsComputer interface {
 	ComputeBrokerMetrics(map[string]string) []*Metric
 	ComputeGaleraMetrics(map[string]string) []*Metric
 	ComputeCPUMetrics(map[string]string) []*Metric
+	ComputeBackupMetric(time.Time) *Metric
 }
 
 type Processor struct {
@@ -75,6 +80,14 @@ func (p Processor) Process() error {
 			collectedErrors = multierror.Append(collectedErrors, err)
 		}
 		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeCPUMetrics(cpuStatMap)...)
+	}
+
+	if p.config.EmitBackupMetrics {
+		backupTimestamp, err := p.gatherer.FindLastBackupTimestamp()
+		if err != nil {
+			collectedErrors = multierror.Append(collectedErrors, err)
+		}
+		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeBackupMetric(backupTimestamp))
 	}
 
 	isAvailable := p.gatherer.IsDatabaseAvailable()

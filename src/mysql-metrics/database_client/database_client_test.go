@@ -3,12 +3,14 @@ package database_client_test
 import (
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	configPackage "github.com/cloudfoundry/mysql-metrics/config"
-	"github.com/cloudfoundry/mysql-metrics/database_client"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	configPackage "github.com/cloudfoundry/mysql-metrics/config"
+	"github.com/cloudfoundry/mysql-metrics/database_client"
 )
 
 var _ = Describe("DatabaseClient", func() {
@@ -240,6 +242,51 @@ var _ = Describe("DatabaseClient", func() {
 		It("quotes identifier while escaping existing quotes", func() {
 			Expect(database_client.QuoteIdentifier("foobar")).To(Equal("`foobar`"))
 			Expect(database_client.QuoteIdentifier("bar`baz")).To(Equal("`bar``baz`"))
+		})
+	})
+
+	Describe("FindLastBackupTimestamp", func() {
+		Context("when there is a timestamp", func() {
+			It("returns the timestamp", func() {
+				parsedTime, _ := time.Parse("2006-01-02 15:04:05", "2020-07-14 21:28:16.000000")
+
+				row := sqlmock.NewRows([]string{"timestamp"}).AddRow([]uint8("2020-07-14 21:28:16.000000"))
+				mock.ExpectQuery(`SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1`).WillReturnRows(row)
+
+				vars, err := dc.FindLastBackupTimestamp()
+				Expect(err).NotTo(HaveOccurred())
+				Expect(vars).To(Equal(parsedTime))
+			})
+		})
+
+		Context("when there is no timestamp", func() {
+			It("returns an empty timestamp", func() {
+				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{}))
+
+				vars, err := dc.FindLastBackupTimestamp()
+				Expect(err).NotTo(HaveOccurred())
+				Expect(vars).To(Equal(time.Time{}))
+			})
+		})
+
+		Context("when the timestamp is invalid", func() {
+			It("returns an error", func() {
+				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{"timestamp"}).AddRow([]uint8("bad time")))
+
+				_, err := dc.FindLastBackupTimestamp()
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(ContainSubstring(`cannot parse "bad time"`))
+			})
+		})
+
+
+		Context("when the query fails", func() {
+			It("returns an error and no data", func() {
+				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{})).
+					WillReturnError(errors.New("db unavailable"))
+				_, err := dc.FindLastBackupTimestamp()
+				Expect(err).To(MatchError("db unavailable"))
+			})
 		})
 	})
 })

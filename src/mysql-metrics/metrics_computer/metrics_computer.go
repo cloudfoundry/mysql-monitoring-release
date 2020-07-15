@@ -5,6 +5,7 @@ package metrics_computer
 import (
 	"errors"
 	"strconv"
+	"time"
 
 	"strings"
 
@@ -87,6 +88,14 @@ func (mc *MetricsComputer) ComputeMetricsFromMapping(metricValues map[string]str
 	return gatheredMetrics
 }
 
+func (mc *MetricsComputer) ComputeBackupMetric(backupTimestamp time.Time) *metrics.Metric {
+	backupTimestampSeconds := float64(backupTimestamp.Unix())
+	key := mc.metricMappingConfig.BackupMetricMappings["last_successful_backup"].Key
+	unit := mc.metricMappingConfig.BackupMetricMappings["last_successful_backup"].Unit
+	return &metrics.Metric{Key: key, Value: float64(backupTimestampSeconds), Unit: unit}
+
+	return &metrics.Metric{}
+}
 func (mc *MetricsComputer) parseMetricValue(rawValue string) (float64, error) {
 	floatValue, err := mc.parseFloat(rawValue)
 	if err != nil {

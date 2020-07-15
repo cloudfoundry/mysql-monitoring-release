@@ -20,6 +20,7 @@ type Config struct {
 	EmitGaleraMetrics         bool   `yaml:"emit_galera_metrics"`
 	EmitDiskMetrics           bool   `yaml:"emit_disk_metrics"`
 	EmitBrokerMetrics         bool   `yaml:"emit_broker_metrics"`
+	EmitBackupMetrics         bool   `yaml:"emit_backup_metrics"`
 	HeartbeatDatabase         string `yaml:"heartbeat_database"`
 	HeartbeatTable            string `yaml:"heartbeat_table"`
 	LoggregatorCAPath         string `yaml:"loggregator_ca_path"`

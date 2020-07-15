@@ -3,6 +3,7 @@ package metricsfakes
 
 import (
 	"sync"
+	"time"
 
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 )
@@ -17,6 +18,17 @@ type FakeMetricsComputer struct {
 		result1 *metrics.Metric
 	}
 	computeAvailabilityMetricReturnsOnCall map[int]struct {
+		result1 *metrics.Metric
+	}
+	ComputeBackupMetricStub        func(time.Time) *metrics.Metric
+	computeBackupMetricMutex       sync.RWMutex
+	computeBackupMetricArgsForCall []struct {
+		arg1 time.Time
+	}
+	computeBackupMetricReturns struct {
+		result1 *metrics.Metric
+	}
+	computeBackupMetricReturnsOnCall map[int]struct {
 		result1 *metrics.Metric
 	}
 	ComputeBrokerMetricsStub        func(map[string]string) []*metrics.Metric
@@ -156,6 +168,66 @@ func (fake *FakeMetricsComputer) ComputeAvailabilityMetricReturnsOnCall(i int, r
 		})
 	}
 	fake.computeAvailabilityMetricReturnsOnCall[i] = struct {
+		result1 *metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeBackupMetric(arg1 time.Time) *metrics.Metric {
+	fake.computeBackupMetricMutex.Lock()
+	ret, specificReturn := fake.computeBackupMetricReturnsOnCall[len(fake.computeBackupMetricArgsForCall)]
+	fake.computeBackupMetricArgsForCall = append(fake.computeBackupMetricArgsForCall, struct {
+		arg1 time.Time
+	}{arg1})
+	fake.recordInvocation("ComputeBackupMetric", []interface{}{arg1})
+	fake.computeBackupMetricMutex.Unlock()
+	if fake.ComputeBackupMetricStub != nil {
+		return fake.ComputeBackupMetricStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	fakeReturns := fake.computeBackupMetricReturns
+	return fakeReturns.result1
+}
+
+func (fake *FakeMetricsComputer) ComputeBackupMetricCallCount() int {
+	fake.computeBackupMetricMutex.RLock()
+	defer fake.computeBackupMetricMutex.RUnlock()
+	return len(fake.computeBackupMetricArgsForCall)
+}
+
+func (fake *FakeMetricsComputer) ComputeBackupMetricCalls(stub func(time.Time) *metrics.Metric) {
+	fake.computeBackupMetricMutex.Lock()
+	defer fake.computeBackupMetricMutex.Unlock()
+	fake.ComputeBackupMetricStub = stub
+}
+
+func (fake *FakeMetricsComputer) ComputeBackupMetricArgsForCall(i int) time.Time {
+	fake.computeBackupMetricMutex.RLock()
+	defer fake.computeBackupMetricMutex.RUnlock()
+	argsForCall := fake.computeBackupMetricArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeMetricsComputer) ComputeBackupMetricReturns(result1 *metrics.Metric) {
+	fake.computeBackupMetricMutex.Lock()
+	defer fake.computeBackupMetricMutex.Unlock()
+	fake.ComputeBackupMetricStub = nil
+	fake.computeBackupMetricReturns = struct {
+		result1 *metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeBackupMetricReturnsOnCall(i int, result1 *metrics.Metric) {
+	fake.computeBackupMetricMutex.Lock()
+	defer fake.computeBackupMetricMutex.Unlock()
+	fake.ComputeBackupMetricStub = nil
+	if fake.computeBackupMetricReturnsOnCall == nil {
+		fake.computeBackupMetricReturnsOnCall = make(map[int]struct {
+			result1 *metrics.Metric
+		})
+	}
+	fake.computeBackupMetricReturnsOnCall[i] = struct {
 		result1 *metrics.Metric
 	}{result1}
 }
@@ -585,6 +657,8 @@ func (fake *FakeMetricsComputer) Invocations() map[string][][]interface{} {
 	defer fake.invocationsMutex.RUnlock()
 	fake.computeAvailabilityMetricMutex.RLock()
 	defer fake.computeAvailabilityMetricMutex.RUnlock()
+	fake.computeBackupMetricMutex.RLock()
+	defer fake.computeBackupMetricMutex.RUnlock()
 	fake.computeBrokerMetricsMutex.RLock()
 	defer fake.computeBrokerMetricsMutex.RUnlock()
 	fake.computeCPUMetricsMutex.RLock()

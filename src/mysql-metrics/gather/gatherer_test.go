@@ -2,6 +2,7 @@ package gather_test
 
 import (
 	"fmt"
+	"time"
 
 	"errors"
 
@@ -300,5 +301,17 @@ var _ = Describe("Gatherer", func() {
 			})
 		})
 
+	})
+
+	Describe("FindLastBackupTimestamp", func() {
+		It("returns the last timestamp for the backup", func() {
+			expectedTimestamp := time.Now()
+			databaseClient.FindLastBackupTimestampReturns(expectedTimestamp, nil)
+
+			actualTimestamp, err := gatherer.FindLastBackupTimestamp()
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(expectedTimestamp).To(Equal(actualTimestamp))
+		})
 	})
 })

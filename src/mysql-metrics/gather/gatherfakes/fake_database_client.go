@@ -3,11 +3,24 @@ package gatherfakes
 
 import (
 	"sync"
+	"time"
 
 	"github.com/cloudfoundry/mysql-metrics/gather"
 )
 
 type FakeDatabaseClient struct {
+	FindLastBackupTimestampStub        func() (time.Time, error)
+	findLastBackupTimestampMutex       sync.RWMutex
+	findLastBackupTimestampArgsForCall []struct {
+	}
+	findLastBackupTimestampReturns struct {
+		result1 time.Time
+		result2 error
+	}
+	findLastBackupTimestampReturnsOnCall map[int]struct {
+		result1 time.Time
+		result2 error
+	}
 	HeartbeatStatusStub        func() (map[string]string, error)
 	heartbeatStatusMutex       sync.RWMutex
 	heartbeatStatusArgsForCall []struct {
@@ -92,6 +105,61 @@ type FakeDatabaseClient struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *FakeDatabaseClient) FindLastBackupTimestamp() (time.Time, error) {
+	fake.findLastBackupTimestampMutex.Lock()
+	ret, specificReturn := fake.findLastBackupTimestampReturnsOnCall[len(fake.findLastBackupTimestampArgsForCall)]
+	fake.findLastBackupTimestampArgsForCall = append(fake.findLastBackupTimestampArgsForCall, struct {
+	}{})
+	fake.recordInvocation("FindLastBackupTimestamp", []interface{}{})
+	fake.findLastBackupTimestampMutex.Unlock()
+	if fake.FindLastBackupTimestampStub != nil {
+		return fake.FindLastBackupTimestampStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.findLastBackupTimestampReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeDatabaseClient) FindLastBackupTimestampCallCount() int {
+	fake.findLastBackupTimestampMutex.RLock()
+	defer fake.findLastBackupTimestampMutex.RUnlock()
+	return len(fake.findLastBackupTimestampArgsForCall)
+}
+
+func (fake *FakeDatabaseClient) FindLastBackupTimestampCalls(stub func() (time.Time, error)) {
+	fake.findLastBackupTimestampMutex.Lock()
+	defer fake.findLastBackupTimestampMutex.Unlock()
+	fake.FindLastBackupTimestampStub = stub
+}
+
+func (fake *FakeDatabaseClient) FindLastBackupTimestampReturns(result1 time.Time, result2 error) {
+	fake.findLastBackupTimestampMutex.Lock()
+	defer fake.findLastBackupTimestampMutex.Unlock()
+	fake.FindLastBackupTimestampStub = nil
+	fake.findLastBackupTimestampReturns = struct {
+		result1 time.Time
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeDatabaseClient) FindLastBackupTimestampReturnsOnCall(i int, result1 time.Time, result2 error) {
+	fake.findLastBackupTimestampMutex.Lock()
+	defer fake.findLastBackupTimestampMutex.Unlock()
+	fake.FindLastBackupTimestampStub = nil
+	if fake.findLastBackupTimestampReturnsOnCall == nil {
+		fake.findLastBackupTimestampReturnsOnCall = make(map[int]struct {
+			result1 time.Time
+			result2 error
+		})
+	}
+	fake.findLastBackupTimestampReturnsOnCall[i] = struct {
+		result1 time.Time
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *FakeDatabaseClient) HeartbeatStatus() (map[string]string, error) {
@@ -479,6 +547,8 @@ func (fake *FakeDatabaseClient) ShowSlaveStatusReturnsOnCall(i int, result1 map[
 func (fake *FakeDatabaseClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
+	fake.findLastBackupTimestampMutex.RLock()
+	defer fake.findLastBackupTimestampMutex.RUnlock()
 	fake.heartbeatStatusMutex.RLock()
 	defer fake.heartbeatStatusMutex.RUnlock()
 	fake.isAvailableMutex.RLock()

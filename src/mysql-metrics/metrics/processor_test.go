@@ -1,9 +1,12 @@
 package metrics_test
 
 import (
+	"time"
+
 	"github.com/cloudfoundry/mysql-metrics/config"
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
+
 	"github.com/hashicorp/go-multierror"
 
 	"errors"
@@ -36,6 +39,32 @@ var _ = Describe("Processor", func() {
 	})
 
 	Describe("Process()", func() {
+		Context("when backup metrics are enabled", func() {
+			BeforeEach(func() {
+				configuration.EmitBackupMetrics = true
+			})
+
+			It("returns backup metrics", func() {
+				backupTimestampGathered := time.Now()
+				backupTimestampReturn := float64(backupTimestampGathered.Unix())
+
+				backupTimestampMetric := &metrics.Metric{
+					Key:   "last_successful_backup",
+					Value: backupTimestampReturn,
+				}
+
+				fakeMetricsComputer.ComputeBackupMetricReturns(backupTimestampMetric)
+				fakeGatherer.FindLastBackupTimestampReturns(backupTimestampGathered, nil)
+				err := processor.Process()
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(fakeMetricsWriter.WriteCallCount()).To(Equal(1))
+				metricsToEmit := fakeMetricsWriter.WriteArgsForCall(0)
+				Expect(len(metricsToEmit)).To(Equal(1))
+				Expect(metricsToEmit[0]).To(Equal(backupTimestampMetric))
+			})
+		})
+
 		Context("when broker metrics are enabled", func() {
 			BeforeEach(func() {
 				configuration.EmitBrokerMetrics = true

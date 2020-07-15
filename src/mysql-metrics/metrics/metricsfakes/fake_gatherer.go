@@ -3,6 +3,7 @@ package metricsfakes
 
 import (
 	"sync"
+	"time"
 
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 )
@@ -56,6 +57,18 @@ type FakeGatherer struct {
 	}
 	diskStatsReturnsOnCall map[int]struct {
 		result1 map[string]string
+		result2 error
+	}
+	FindLastBackupTimestampStub        func() (time.Time, error)
+	findLastBackupTimestampMutex       sync.RWMutex
+	findLastBackupTimestampArgsForCall []struct {
+	}
+	findLastBackupTimestampReturns struct {
+		result1 time.Time
+		result2 error
+	}
+	findLastBackupTimestampReturnsOnCall map[int]struct {
+		result1 time.Time
 		result2 error
 	}
 	FollowerMetadataStub        func() (map[string]string, map[string]string, error)
@@ -321,6 +334,61 @@ func (fake *FakeGatherer) DiskStatsReturnsOnCall(i int, result1 map[string]strin
 	}{result1, result2}
 }
 
+func (fake *FakeGatherer) FindLastBackupTimestamp() (time.Time, error) {
+	fake.findLastBackupTimestampMutex.Lock()
+	ret, specificReturn := fake.findLastBackupTimestampReturnsOnCall[len(fake.findLastBackupTimestampArgsForCall)]
+	fake.findLastBackupTimestampArgsForCall = append(fake.findLastBackupTimestampArgsForCall, struct {
+	}{})
+	fake.recordInvocation("FindLastBackupTimestamp", []interface{}{})
+	fake.findLastBackupTimestampMutex.Unlock()
+	if fake.FindLastBackupTimestampStub != nil {
+		return fake.FindLastBackupTimestampStub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	fakeReturns := fake.findLastBackupTimestampReturns
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeGatherer) FindLastBackupTimestampCallCount() int {
+	fake.findLastBackupTimestampMutex.RLock()
+	defer fake.findLastBackupTimestampMutex.RUnlock()
+	return len(fake.findLastBackupTimestampArgsForCall)
+}
+
+func (fake *FakeGatherer) FindLastBackupTimestampCalls(stub func() (time.Time, error)) {
+	fake.findLastBackupTimestampMutex.Lock()
+	defer fake.findLastBackupTimestampMutex.Unlock()
+	fake.FindLastBackupTimestampStub = stub
+}
+
+func (fake *FakeGatherer) FindLastBackupTimestampReturns(result1 time.Time, result2 error) {
+	fake.findLastBackupTimestampMutex.Lock()
+	defer fake.findLastBackupTimestampMutex.Unlock()
+	fake.FindLastBackupTimestampStub = nil
+	fake.findLastBackupTimestampReturns = struct {
+		result1 time.Time
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeGatherer) FindLastBackupTimestampReturnsOnCall(i int, result1 time.Time, result2 error) {
+	fake.findLastBackupTimestampMutex.Lock()
+	defer fake.findLastBackupTimestampMutex.Unlock()
+	fake.FindLastBackupTimestampStub = nil
+	if fake.findLastBackupTimestampReturnsOnCall == nil {
+		fake.findLastBackupTimestampReturnsOnCall = make(map[int]struct {
+			result1 time.Time
+			result2 error
+		})
+	}
+	fake.findLastBackupTimestampReturnsOnCall[i] = struct {
+		result1 time.Time
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeGatherer) FollowerMetadata() (map[string]string, map[string]string, error) {
 	fake.followerMetadataMutex.Lock()
 	ret, specificReturn := fake.followerMetadataReturnsOnCall[len(fake.followerMetadataArgsForCall)]
@@ -497,6 +565,8 @@ func (fake *FakeGatherer) Invocations() map[string][][]interface{} {
 	defer fake.databaseMetadataMutex.RUnlock()
 	fake.diskStatsMutex.RLock()
 	defer fake.diskStatsMutex.RUnlock()
+	fake.findLastBackupTimestampMutex.RLock()
+	defer fake.findLastBackupTimestampMutex.RUnlock()
 	fake.followerMetadataMutex.RLock()
 	defer fake.followerMetadataMutex.RUnlock()
 	fake.isDatabaseAvailableMutex.RLock()

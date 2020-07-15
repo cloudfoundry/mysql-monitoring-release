@@ -1,6 +1,8 @@
 package metrics_computer_test
 
 import (
+	"time"
+
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics_computer"
 
@@ -192,6 +194,32 @@ var _ = Describe("MetricsComputer", func() {
 			Expect(isFollowerMetric.Key).To(Equal("/p.mysql/follower/is_follower"))
 			Expect(isFollowerMetric.Unit).To(Equal("testUnit"))
 			Expect(isFollowerMetric.Value).To(Equal(0.0))
+		})
+	})
+
+	Describe("ComputeBackupMetric", func() {
+		var (
+			backupMetricMappings map[string]metrics.MetricDefinition
+		)
+
+		BeforeEach(func() {
+			backupMetricMappings = map[string]metrics.MetricDefinition{
+				"last_successful_backup": {Key: "last_successful_backup", Unit: "seconds"},
+			}
+			metricMappingConfig = metrics.MetricMappingConfig{
+				BackupMetricMappings: backupMetricMappings,
+			}
+			metricsComputer = metrics_computer.NewMetricsComputer(metricMappingConfig)
+		})
+
+		It("returns a last_backup_taken metric float seconds", func() {
+			now := time.Now()
+			nowMetricValue := float64(now.Unix())
+			backupMetric := metricsComputer.ComputeBackupMetric(now)
+
+			Expect(backupMetric.Key).To(Equal("last_successful_backup"))
+			Expect(backupMetric.Unit).To(Equal("seconds"))
+			Expect(backupMetric.Value).To(Equal(nowMetricValue))
 		})
 	})
 

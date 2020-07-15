@@ -1,6 +1,9 @@
 package gather
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+)
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . DatabaseClient
 type DatabaseClient interface {
@@ -11,6 +14,7 @@ type DatabaseClient interface {
 	ServicePlansDiskAllocated() (map[string]string, error)
 	IsAvailable() bool
 	IsFollower() (bool, error)
+	FindLastBackupTimestamp() (time.Time, error)
 }
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Stater
@@ -37,6 +41,10 @@ func NewGatherer(client DatabaseClient, stater Stater, cpuStater CpuStater) *Gat
 		cpuStater:       cpuStater,
 		previousQueries: -1,
 	}
+}
+
+func (g Gatherer) FindLastBackupTimestamp() (time.Time, error) {
+	return g.client.FindLastBackupTimestamp()
 }
 
 func (g Gatherer) BrokerStats() (map[string]string, error) {

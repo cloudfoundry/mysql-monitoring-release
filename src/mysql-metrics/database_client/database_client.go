@@ -3,6 +3,7 @@ package database_client
 import (
 	"database/sql"
 	"strings"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -64,6 +65,26 @@ func (dc *DbClient) ServicePlansDiskAllocated() (map[string]string, error) {
 	}
 	return row, nil
 }
+
+func(dc *DbClient) FindLastBackupTimestamp() (time.Time, error) {
+	// TODO: Should we handle when the schema/table does not exist
+	results, err := dc.runSingleRowQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1", []interface{}{})
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	if results["timestamp"] == "" {
+		return time.Time{}, nil
+	}
+
+	value, err := time.Parse("2006-01-02 15:04:05", results["timestamp"])
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return value, nil
+}
+
 
 func (dc *DbClient) runSingleRowQuery(query string, params []interface{}) (map[string]string, error) {
 	rows, err := dc.connection.Query(query, params...)
