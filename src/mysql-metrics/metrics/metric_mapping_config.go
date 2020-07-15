@@ -7,6 +7,7 @@ type MetricMappingConfig struct {
 	DiskMetricMappings           map[string]MetricDefinition
 	BrokerMetricMappings         map[string]MetricDefinition
 	CPUMetricMappings            map[string]MetricDefinition
+	BackupMetricMappings         map[string]MetricDefinition
 }
 
 type MetricDefinition struct {
@@ -330,6 +331,12 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 			"cpu_utilization_percent": {
 				Key:  "performance/cpu_utilization_percent",
 				Unit: "percentage",
+			},
+		},
+		BackupMetricMappings: map[string]MetricDefinition{
+			"last_successful_backup": {
+				Key: "last_successful_backup",
+				Unit: "seconds",
 			},
 		},
 	}

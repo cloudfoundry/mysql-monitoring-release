@@ -14,10 +14,11 @@ require (
 	github.com/hashicorp/errwrap v0.0.0-20180715044906-d6c0cd880357 // indirect
 	github.com/hashicorp/go-multierror v0.0.0-20180717150148-3d5d8f294aa0
 	github.com/hpcloud/tail v1.0.1-0.20180514194441-a1dbeea552b7 // indirect
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.2
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.3
 	github.com/onsi/ginkgo v1.8.0
-	github.com/onsi/gomega v1.5.0
+	github.com/onsi/gomega v1.9.0
 	golang.org/x/text v0.3.3 // indirect
+	golang.org/x/tools v0.0.0-20200715195738-4cea89713c0f // indirect
 	google.golang.org/appengine v1.1.0 // indirect
 	google.golang.org/genproto v0.0.0-20180731170733-daca94659cb5 // indirect
 	google.golang.org/grpc v1.14.0 // indirect

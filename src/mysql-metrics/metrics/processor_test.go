@@ -1,6 +1,8 @@
 package metrics_test
 
 import (
+	"time"
+
 	"github.com/cloudfoundry/mysql-metrics/config"
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
@@ -43,19 +45,20 @@ var _ = Describe("Processor", func() {
 			})
 
 			It("returns broker metrics", func() {
-				//backupTimestampReturn := time.Now()
+				backupTimestampReturn := time.Now()
 
-				servicePlansDiskAllocatedMetric := &metrics.Metric{
-					Key:   "ephemeral_disk_free",
-					Value: 1024,
+				backupTimestampMetric := &metrics.Metric{
+					Key:   "last_successful_backup",
+					Value: backupTimestampReturn,
 				}
 
-				fakeMetricsComputer.ComputeBrokerMetricsReturnsOnCall(0, []*metrics.Metric{servicePlansDiskAllocatedMetric})
+				fakeMetricsComputer.ComputeBackupMetricsReturns([]*metrics.Metric{backupTimestampMetric})
 				//fakeGatherer.FindLastBackupTimestampReturns(backupTimestampReturn, nil)
 				err := processor.Process()
 				Expect(err).NotTo(HaveOccurred())
 			})
 		})
+
 		Context("when broker metrics are enabled", func() {
 			BeforeEach(func() {
 				configuration.EmitBrokerMetrics = true
