@@ -335,7 +335,7 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 		},
 		BackupMetricMappings: map[string]MetricDefinition{
 			"last_successful_backup": {
-				Key: "last_successful_backup",
+				Key:  "last_successful_backup",
 				Unit: "seconds",
 			},
 		},

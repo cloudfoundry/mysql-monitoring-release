@@ -279,7 +279,6 @@ var _ = Describe("DatabaseClient", func() {
 			})
 		})
 
-
 		Context("when the query fails", func() {
 			It("returns an error and no data", func() {
 				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{})).
