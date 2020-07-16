@@ -5,9 +5,8 @@ package metrics_computer
 import (
 	"errors"
 	"strconv"
-	"time"
-
 	"strings"
+	"time"
 
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 )
@@ -93,9 +92,8 @@ func (mc *MetricsComputer) ComputeBackupMetric(backupTimestamp time.Time) *metri
 	key := mc.metricMappingConfig.BackupMetricMappings["last_successful_backup"].Key
 	unit := mc.metricMappingConfig.BackupMetricMappings["last_successful_backup"].Unit
 	return &metrics.Metric{Key: key, Value: float64(backupTimestampSeconds), Unit: unit}
-
-	return &metrics.Metric{}
 }
+
 func (mc *MetricsComputer) parseMetricValue(rawValue string) (float64, error) {
 	floatValue, err := mc.parseFloat(rawValue)
 	if err != nil {
