@@ -251,7 +251,7 @@ var _ = Describe("DatabaseClient", func() {
 				parsedTime, _ := time.Parse("2006-01-02 15:04:05", "2020-07-14 21:28:16.000000")
 
 				row := sqlmock.NewRows([]string{"timestamp"}).AddRow([]uint8("2020-07-14 21:28:16.000000"))
-				mock.ExpectQuery(`SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1`).WillReturnRows(row)
+				mock.ExpectQuery(`SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY ts DESC LIMIT 1`).WillReturnRows(row)
 
 				vars, err := dc.FindLastBackupTimestamp()
 				Expect(err).NotTo(HaveOccurred())
@@ -261,7 +261,7 @@ var _ = Describe("DatabaseClient", func() {
 
 		Context("when there is no timestamp", func() {
 			It("returns an empty timestamp", func() {
-				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{}))
+				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY ts DESC LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{}))
 
 				vars, err := dc.FindLastBackupTimestamp()
 				Expect(err).NotTo(HaveOccurred())
@@ -271,7 +271,7 @@ var _ = Describe("DatabaseClient", func() {
 
 		Context("when the timestamp is invalid", func() {
 			It("returns an error", func() {
-				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{"timestamp"}).AddRow([]uint8("bad time")))
+				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY ts DESC LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{"timestamp"}).AddRow([]uint8("bad time")))
 
 				_, err := dc.FindLastBackupTimestamp()
 				Expect(err).To(HaveOccurred())
@@ -281,7 +281,7 @@ var _ = Describe("DatabaseClient", func() {
 
 		Context("when the query fails", func() {
 			It("returns an error and no data", func() {
-				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY DESC ts LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{})).
+				mock.ExpectQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY ts DESC LIMIT 1").WillReturnRows(sqlmock.NewRows([]string{})).
 					WillReturnError(errors.New("db unavailable"))
 				_, err := dc.FindLastBackupTimestamp()
 				Expect(err).To(MatchError("db unavailable"))
