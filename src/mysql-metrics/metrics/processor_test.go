@@ -44,25 +44,41 @@ var _ = Describe("Processor", func() {
 				configuration.EmitBackupMetrics = true
 			})
 
-			It("returns backup metrics", func() {
-				backupTimestampGathered := time.Now()
-				backupTimestampReturn := float64(backupTimestampGathered.Unix())
+			Context("when there is no error returned from the gatherer", func() {
+				It("returns backup metrics", func() {
+					backupTimestampGathered := time.Now()
+					backupTimestampReturn := float64(backupTimestampGathered.Unix())
 
-				backupTimestampMetric := &metrics.Metric{
-					Key:   "last_successful_backup",
-					Value: backupTimestampReturn,
-				}
+					backupTimestampMetric := &metrics.Metric{
+						Key:   "last_successful_backup",
+						Value: backupTimestampReturn,
+					}
 
-				fakeMetricsComputer.ComputeBackupMetricReturns(backupTimestampMetric)
-				fakeGatherer.FindLastBackupTimestampReturns(backupTimestampGathered, nil)
-				err := processor.Process()
-				Expect(err).NotTo(HaveOccurred())
+					fakeMetricsComputer.ComputeBackupMetricReturns(backupTimestampMetric)
+					fakeGatherer.FindLastBackupTimestampReturns(backupTimestampGathered, nil)
+					err := processor.Process()
+					Expect(err).NotTo(HaveOccurred())
 
-				Expect(fakeMetricsWriter.WriteCallCount()).To(Equal(1))
-				metricsToEmit := fakeMetricsWriter.WriteArgsForCall(0)
-				Expect(len(metricsToEmit)).To(Equal(1))
-				Expect(metricsToEmit[0]).To(Equal(backupTimestampMetric))
+					Expect(fakeMetricsWriter.WriteCallCount()).To(Equal(1))
+					metricsToEmit := fakeMetricsWriter.WriteArgsForCall(0)
+					Expect(len(metricsToEmit)).To(Equal(1))
+					Expect(metricsToEmit[0]).To(Equal(backupTimestampMetric))
+				})
 			})
+
+			Context("when there is an error returned from the gatherer", func() {
+				It("does not have a metric written", func() {
+					fakeGatherer.FindLastBackupTimestampReturns(time.Time{}, errors.New("some-error"))
+					err := processor.Process()
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(ContainSubstring("some-error"))
+
+					Expect(fakeMetricsWriter.WriteCallCount()).To(Equal(1))
+					metricsToEmit := fakeMetricsWriter.WriteArgsForCall(0)
+					Expect(len(metricsToEmit)).To(Equal(0))
+				})
+			})
+
 		})
 
 		Context("when broker metrics are enabled", func() {

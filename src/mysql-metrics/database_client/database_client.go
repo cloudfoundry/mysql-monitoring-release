@@ -67,7 +67,6 @@ func (dc *DbClient) ServicePlansDiskAllocated() (map[string]string, error) {
 }
 
 func (dc *DbClient) FindLastBackupTimestamp() (time.Time, error) {
-	// TODO: Should we handle when the schema/table does not exist
 	results, err := dc.runSingleRowQuery("SELECT ts AS timestamp FROM backup_metrics.backup_times ORDER BY ts DESC LIMIT 1", []interface{}{})
 	if err != nil {
 		return time.Time{}, err

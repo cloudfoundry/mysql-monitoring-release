@@ -86,8 +86,9 @@ func (p Processor) Process() error {
 		backupTimestamp, err := p.gatherer.FindLastBackupTimestamp()
 		if err != nil {
 			collectedErrors = multierror.Append(collectedErrors, err)
+		} else {
+			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeBackupMetric(backupTimestamp))
 		}
-		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeBackupMetric(backupTimestamp))
 	}
 
 	isAvailable := p.gatherer.IsDatabaseAvailable()
