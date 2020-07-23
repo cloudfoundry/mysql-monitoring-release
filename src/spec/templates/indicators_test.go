@@ -79,9 +79,11 @@ var _ = Describe("Indicators", func() {
 
 		templateContext.Properties = map[string]interface{}{
 			"mysql-metrics": map[string]interface{}{
-				"source_id":              "source",
-				"origin":                 "origin",
-				"galera_metrics_enabled": true,
+				"source_id":                "source",
+				"origin":                   "origin",
+				"galera_metrics_enabled":   true,
+				"backup_schedule_in_hours": 8,
+				"backup_metrics_enabled":   false,
 			},
 		}
 		templateContext.Links = map[string]interface{}{
@@ -108,6 +110,52 @@ var _ = Describe("Indicators", func() {
 		It("Allows camel case %", func() {
 			Expect(renderIndicatorTemplateWithOriginHavingValue("Origin1")).To(ContainSubstring(`origin: Origin1`))
 		})
+	})
+
+	Describe("backups", func() {
+		var (
+			indicatorConfig config
+		)
+
+		Context("when backup metrics are emitted", func() {
+			BeforeEach(func() {
+				templateContext.Properties["mysql-metrics"].(map[string]interface{})["backup_metrics_enabled"] = true
+			})
+
+			It("renders a backup indicator with the right threshold", func() {
+				a := renderTemplate(templateContext)
+				err := yaml.Unmarshal([]byte(a), &indicatorConfig)
+				Expect(err).NotTo(HaveOccurred())
+
+				var backupIndicator Indicator
+
+				for _, indicator := range indicatorConfig.Spec.Indicators {
+					if indicator.Name == "mysql_backups" {
+						backupIndicator = indicator
+					}
+				}
+
+				Expect(backupIndicator).ToNot(Equal(Indicator{}))
+				Expect(backupIndicator.Thresholds[0].Value).To(Equal(8))
+			})
+		})
+
+		Context("when backup metrics are not emitted", func() {
+			BeforeEach(func() {
+				templateContext.Properties["mysql-metrics"].(map[string]interface{})["backup_metrics_enabled"] = false
+			})
+
+			It("does not render a backup indicator", func() {
+				a := renderTemplate(templateContext)
+				err := yaml.Unmarshal([]byte(a), &indicatorConfig)
+				Expect(err).NotTo(HaveOccurred())
+
+				for _, indicator := range indicatorConfig.Spec.Indicators {
+					Expect(indicator.Name).ToNot(Equal("mysql_backups"))
+				}
+			})
+		})
+
 	})
 
 	Describe("Non Galera", func() {
