@@ -1,15 +1,13 @@
 package integration
 
 import (
-	"code.cloudfoundry.org/lager/lagertest"
-	"github.com/cloudfoundry/replication-canary/switchboard"
-
+	"crypto/tls"
+	"encoding/json"
 	"net/http"
 	"os"
 
-	"crypto/tls"
-
-	"encoding/json"
+	"code.cloudfoundry.org/lager/lagertest"
+	"github.com/cloudfoundry/replication-canary/switchboard"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -92,11 +90,11 @@ var _ = Describe("Switchboard Client Integration Test", func() {
 	}
 
 	It("correctly turns traffic off/on", func() {
-		client.EnableClusterTraffic()
+		Expect(client.EnableClusterTraffic()).To(Succeed())
 
 		Expect(switchboardTrafficEnabled()).To(BeTrue())
 
-		client.DisableClusterTraffic()
+		Expect(client.DisableClusterTraffic()).To(Succeed())
 
 		Expect(switchboardTrafficEnabled()).To(BeFalse())
 
