@@ -2,7 +2,7 @@
 name: mysql-diag
 
 dependencies:
-- golang-1.14-linux
+- golang-1.18-linux
 
 files:
 - mysql-diag/**
