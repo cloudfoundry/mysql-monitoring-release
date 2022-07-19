@@ -1,0 +1,7 @@
+---
+- type: replace
+  path: /releases/name=mysql-monitoring?
+  value:
+    name: mysql-monitoring
+    version: create
+    url: .
