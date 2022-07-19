@@ -21,9 +21,9 @@
         host: /var/vcap/sys/run/pxc-mysql/mysqld.sock
         password: ((mysql_metrics_password))
         tls:
-          ca: ((loggregator_tls_ca_cert))
-          cert: ((loggregator_tls_agent_cert))
-          key: ((loggregator_tls_agent_key))
+          ca: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.ca))"
+          cert: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.certificate))"
+          key: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.private_key))"
 
 
 - type: replace
@@ -47,10 +47,11 @@
     properties:
       loggregator:
         tls:
-          ca_cert: ((loggregator_tls_ca_cert))
+          ca_cert: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.ca))"
           agent:
-            cert: ((loggregator_tls_agent_cert))
-            key: ((loggregator_tls_agent_key))
+            cert: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.certificate))"
+            key: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.private_key))"
+
       metrics:
         ca_cert: "((loggregator_agent_metrics_tls.ca))"
         cert: "((loggregator_agent_metrics_tls.certificate))"
