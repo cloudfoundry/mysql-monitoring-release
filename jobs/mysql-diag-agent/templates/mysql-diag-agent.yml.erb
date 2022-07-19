@@ -5,7 +5,15 @@ config = {
     Port: p('mysql-monitoring.mysql-diag-agent.port'),
     Username: p('mysql-monitoring.mysql-diag-agent.username'),
     Password: p('mysql-monitoring.mysql-diag-agent.password'),
-  }
+}
+
+if p('mysql-monitoring.mysql-diag-agent.tls.enabled')
+config[:TLS] = {
+  "Enabled": true,
+  "Certificate": p('mysql-monitoring.mysql-diag-agent.tls.certificate'),
+  "PrivateKey": p('mysql-monitoring.mysql-diag-agent.tls.private_key'),
+}
+end
 
 # JSON is valid yaml
 JSON.pretty_generate(config)

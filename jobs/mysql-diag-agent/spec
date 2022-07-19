@@ -29,4 +29,18 @@ properties:
   mysql-monitoring.mysql-diag-agent.password:
     description: "Basic auth password for the agent"
 
+  mysql-monitoring.mysql-diag-agent.tls.enabled:
+    description: Enable TLS for client connections to mysql-diag-agent
+    default: false
 
+  mysql-monitoring.mysql-diag-agent.tls.ca:
+    description: PEM-encoded authority certificate for mysql-diag-agent
+    default: ""
+
+  mysql-monitoring.mysql-diag-agent.tls.certificate:
+    description: PEM-encoded certificate for securing TLS communication to mysql-diag-agent
+    default: ""
+
+  mysql-monitoring.mysql-diag-agent.tls.private_key:
+    description: PEM-encoded key for securing TLS communication to mysql-diag-agent
+    default: ""

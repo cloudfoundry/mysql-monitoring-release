@@ -60,14 +60,19 @@ func main() {
 		w.Write(responseBytes)
 	}
 
+	router := http.NewServeMux()
 	basicAuth := middleware.NewBasicAuth(c.Username, c.Password)
-	http.Handle("/api/v1/info", basicAuth.Wrap(http.HandlerFunc(infoHandler)))
+	router.Handle("/api/v1/info", basicAuth.Wrap(http.HandlerFunc(infoHandler)))
 
 	bindAddress := fmt.Sprintf(":%d", c.Port)
 	fmt.Println(fmt.Sprintf("Listening on: '%s'", bindAddress))
 
-	err = http.ListenAndServe(bindAddress, nil)
+	listener, err := c.NetworkListener()
+	if err != nil {
+		log.Fatalf("Failed to create network listener: %v", err)
+	}
 
+	err = http.Serve(listener, router)
 	log.Fatal(err)
 }
 
