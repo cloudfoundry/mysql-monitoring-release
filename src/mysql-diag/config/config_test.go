@@ -55,7 +55,17 @@ var _ = Describe("config", func() {
 		diskUsedWarningPercent = 88
 		diskInodesUsedWarningPercent = 77
 
-		formatString := `{"canary":{"username":"%s","password":"%s","api_port":%d},
+		formatString := `{
+				"canary": {
+					"username": "%s",
+					"password": "%s",
+					"api_port": %d,
+					"tls": {
+						"enabled": true,
+						"ca": "pem-encoded-authority-for-replication",
+						"server_name": "expected-replication-canary-identity"
+					}
+				},
 				"mysql": {
 				"username": "%s",
 				"password": "%s",
@@ -134,6 +144,9 @@ var _ = Describe("config", func() {
 		Expect(c.Canary.Username).To(Equal(canaryUsername))
 		Expect(c.Canary.Password).To(Equal(canaryPassword))
 		Expect(c.Canary.ApiPort).To(Equal(canaryPort))
+		Expect(c.Canary.TLS.Enabled).To(BeTrue())
+		Expect(c.Canary.TLS.CA).To(Equal(`pem-encoded-authority-for-replication`))
+		Expect(c.Canary.TLS.ServerName).To(Equal(`expected-replication-canary-identity`))
 
 		Expect(c.Mysql.Username).To(Equal(username))
 		Expect(c.Mysql.Password).To(Equal(password))

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestGalerahealthcheckclient(t *testing.T) {
+func TestCanaryClient(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Replication Canary Client Suite")
 }

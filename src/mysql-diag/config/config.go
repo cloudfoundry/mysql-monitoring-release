@@ -24,7 +24,9 @@ type CanaryConfig struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	ApiPort  uint   `yaml:"api_port"`
+	TLS      TLS    `yaml:"tls"`
 }
+
 type MysqlConfig struct {
 	Username  string           `yaml:"username"`
 	Password  string           `yaml:"password"`
