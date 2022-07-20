@@ -1,11 +1,19 @@
 package config_test
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
+	"io/ioutil"
+	"net"
+	"time"
 
-	"github.com/cloudfoundry/replication-canary/config"
+	"code.cloudfoundry.org/tlsconfig/certtest"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/replication-canary/config"
 )
 
 var _ = Describe("Config", func() {
@@ -13,17 +21,6 @@ var _ = Describe("Config", func() {
 		rootConfig    *config.Config
 		configuration string
 	)
-
-	JustBeforeEach(func() {
-		osArgs := []string{
-			"replication-canary",
-			fmt.Sprintf("-config=%s", configuration),
-		}
-
-		var err error
-		rootConfig, err = config.NewConfig(osArgs)
-		Expect(err).NotTo(HaveOccurred())
-	})
 
 	Describe("Validate", func() {
 		BeforeEach(func() {
@@ -58,7 +55,23 @@ var _ = Describe("Config", func() {
 				"PollFrequency": 525600,
 				"SkipSSLValidation": true,
 				"APIPort": 8123,
+				"TLS": {
+					"Enabled": true,
+					"Certificate": "pem-encoded-certificate",
+					"PrivateKey": "pem-encoded-key",
+				},
 			}`
+		})
+
+		JustBeforeEach(func() {
+			osArgs := []string{
+				"replication-canary",
+				fmt.Sprintf("-config=%s", configuration),
+			}
+
+			var err error
+			rootConfig, err = config.NewConfig(osArgs)
+			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("does not return error on valid config", func() {
@@ -76,6 +89,12 @@ var _ = Describe("Config", func() {
 
 		It("contains APIPort information", func() {
 			Expect(rootConfig.APIPort).To(Equal(uint(8123)))
+		})
+
+		It("contains TLS configuration", func() {
+			Expect(rootConfig.TLS.Enabled).To(BeTrue())
+			Expect(rootConfig.TLS.Certificate).To(Equal(`pem-encoded-certificate`))
+			Expect(rootConfig.TLS.PrivateKey).To(Equal(`pem-encoded-key`))
 		})
 
 		It("contains Notifications information", func() {
@@ -120,4 +139,103 @@ var _ = Describe("Config", func() {
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
+
+	Context("NetworkListener", func() {
+		var rootConfig config.Config
+		BeforeEach(func() {
+			serverAuthority, err := certtest.BuildCA("test")
+			Expect(err).ToNot(HaveOccurred())
+
+			cert, err := serverAuthority.BuildSignedCertificate("localhost")
+			Expect(err).NotTo(HaveOccurred())
+
+			pemCert, pemKey, err := cert.CertificatePEMAndPrivateKey()
+			Expect(err).NotTo(HaveOccurred())
+
+			rootConfig.BindAddress = "127.0.0.1"
+			rootConfig.APIPort = uint(10000 + GinkgoParallelProcess())
+			rootConfig.TLS.Enabled = true
+			rootConfig.TLS.Certificate = string(pemCert)
+			rootConfig.TLS.PrivateKey = string(pemKey)
+		})
+
+		It("can provide a TLS listener", func() {
+			l, err := rootConfig.NetworkListener()
+			Expect(err).NotTo(HaveOccurred())
+			defer l.Close()
+
+			errCh := make(chan error, 1)
+			go func() {
+				conn, err := l.Accept()
+				if err != nil {
+					errCh <- err
+					return
+				}
+				defer conn.Close()
+				conn.Write([]byte("foo"))
+				errCh <- err
+			}()
+
+			block, _ := pem.Decode([]byte(rootConfig.TLS.Certificate))
+			cert, err := x509.ParseCertificate(block.Bytes)
+			Expect(err).NotTo(HaveOccurred())
+			certPool := x509.NewCertPool()
+			certPool.AddCert(cert)
+
+			address := fmt.Sprintf("%s:%d", rootConfig.BindAddress, rootConfig.APIPort)
+			conn, err := tls.Dial("tcp", address, &tls.Config{
+				RootCAs:    certPool,
+				ServerName: "localhost",
+			})
+			Expect(err).NotTo(HaveOccurred())
+
+			msg, err := ioutil.ReadAll(conn)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(string(msg)).To(Equal("foo"))
+			Expect(conn.Close()).To(Succeed())
+			Eventually(errCh).Should(Receive(nil))
+		})
+
+		When("tls is disabled", func() {
+			It("provides a plaintext TCP listener", func() {
+				rootConfig.TLS.Enabled = false
+
+				l, err := rootConfig.NetworkListener()
+				Expect(err).NotTo(HaveOccurred())
+				defer l.Close()
+
+				errCh := make(chan error, 1)
+				go func() {
+					conn, err := l.Accept()
+					if err == nil {
+						defer conn.Close()
+						_, _ = conn.Write([]byte("foo"))
+					}
+					errCh <- err
+				}()
+
+				address := fmt.Sprintf("%s:%d", rootConfig.BindAddress, rootConfig.APIPort)
+				conn, err := net.Dial("tcp", address)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(conn.SetReadDeadline(time.Now().Add(5 * time.Second))).To(Succeed())
+				msg, err := ioutil.ReadAll(conn)
+				Expect(err).NotTo(HaveOccurred(), `Expected to successfully read data from a plaintext connection, but it failed`)
+				Expect(string(msg)).To(Equal("foo"))
+				Expect(conn.Close()).To(Succeed())
+				Eventually(errCh).Should(Receive(nil))
+			})
+		})
+
+		When("tls is misconfigured", func() {
+			It("returns an error", func() {
+				rootConfig.TLS.Enabled = true
+				rootConfig.TLS.Certificate = "not proper PEM content"
+
+				_, err := rootConfig.NetworkListener()
+				Expect(err).To(MatchError(`tls: failed to find any PEM data in certificate input`))
+			})
+		})
+	})
+
 })

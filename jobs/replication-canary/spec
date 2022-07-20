@@ -29,7 +29,9 @@ provides:
   - mysql-monitoring.replication-canary.canary_username
   - mysql-monitoring.replication-canary.canary_password
   - mysql-monitoring.replication-canary.api_port
-
+  - mysql-monitoring.replication-canary.tls.enabled
+  - mysql-monitoring.replication-canary.tls.ca
+  - mysql-monitoring.replication-canary.tls.server_name
 
 properties:
   domain:
@@ -89,6 +91,26 @@ properties:
 
   mysql-monitoring.cluster_identifier:
     description: 'The cluster identifier will be included in the subject of replication notification e-mails. It should be a unique identifier.'
+
+  mysql-monitoring.replication-canary.tls.enabled:
+    description: Enable TLS for client connections to replication-canary
+    default: false
+
+  mysql-monitoring.replication-canary.tls.ca:
+    description: PEM-encoded authority certificate for replication-canary
+    default: ""
+
+  mysql-monitoring.replication-canary.tls.certificate:
+    description: PEM-encoded certificate for securing TLS communication to replication-canary
+    default: ""
+
+  mysql-monitoring.replication-canary.tls.private_key:
+    description: PEM-encoded key for securing TLS communication to replication-canary
+    default: ""
+
+  mysql-monitoring.replication-canary.tls.server_name:
+    description: ServerName is used to advertise the expected hostname on the replication-canary certificate
+    default: ""
 
   logging.format.timestamp:
     description: |

@@ -171,28 +171,33 @@ func main() {
 		logger,
 	)
 
-	go publishApi(coalMiner.StateMachine, appConfig.APIPort, appConfig.Canary.Username, appConfig.Canary.Password)
+	go publishApi(coalMiner.StateMachine, appConfig)
 
 	ticker := time.NewTicker(time.Duration(appConfig.PollFrequency) * time.Second)
 	logger.Info("ready to sing")
 	coalMiner.LetSing(ticker.C)
 }
 
-func publishApi(stateMachine canary.StateMachine, port uint, username string, password string) {
+func publishApi(stateMachine canary.StateMachine, cfg *config.Config) {
 	insecureStatusHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		healthy := stateMachine.GetState() == canary.NotUnhealthy
 		fmt.Fprintf(w, "{ \"healthy\": %t }", healthy)
 	})
 
-	basicAuth := middleware.NewBasicAuth(username, password)
+	basicAuth := middleware.NewBasicAuth(cfg.Canary.Username, cfg.Canary.Password)
 	secureStatusHandler := basicAuth.Wrap(insecureStatusHandler)
 
 	http.Handle("/api/v1/status", secureStatusHandler)
 
-	bindAddress := fmt.Sprintf(":%d", port)
+	bindAddress := fmt.Sprintf("%s:%d", cfg.BindAddress, cfg.APIPort)
 	fmt.Println(fmt.Sprintf("Listening on: '%s'", bindAddress))
 
-	if err := http.ListenAndServe(bindAddress, nil); err != nil {
+	l, err := cfg.NetworkListener()
+	if err != nil {
+		panic(err)
+	}
+
+	if err := http.Serve(l, nil); err != nil {
 		panic(err)
 	}
 }

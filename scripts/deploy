@@ -21,6 +21,7 @@ bosh --non-interactive --deployment=pxc deploy \
   -o operations/pxc-add-metrics.yml \
   -o operations/pxc-add-monitoring.yml \
   -o operations/mysql-diag-agent-tls.yml \
+  -o operations/replication-canary-tls.yml \
   -o operations/dev-release.yml \
   -v proxy_route_suffix="proxy.${SYSTEM_DOMAIN}" \
   -v cf_skip_ssl_validation=true \

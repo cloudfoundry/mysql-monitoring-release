@@ -1,13 +1,16 @@
 package config
 
 import (
+	"crypto/tls"
+	"errors"
 	"flag"
+	"fmt"
+	"net"
 
 	"code.cloudfoundry.org/lager/lagerflags"
+	"code.cloudfoundry.org/tlsconfig"
 	"github.com/pivotal-cf-experimental/service-config"
 	"gopkg.in/validator.v2"
-
-	"errors"
 
 	"code.cloudfoundry.org/lager"
 )
@@ -22,7 +25,13 @@ type Config struct {
 	PollFrequency     int           `yaml:"PollFrequency" validate:"nonzero,min=1"`
 	NotifyOnly        bool          `yaml:"NotifyOnly"`
 	SkipSSLValidation bool          `yaml:"SkipSSLValidation"`
+	BindAddress       string        `yaml:"BindAddress"`
 	APIPort           uint          `yaml:"APIPort"`
+	TLS               struct {
+		Enabled     bool   `yaml:"Enabled"`
+		Certificate string `yaml:"Certificate"`
+		PrivateKey  string `yaml:"PrivateKey"`
+	} `yaml:"TLS"`
 }
 
 type MySQL struct {
@@ -63,6 +72,29 @@ func (c Config) Validate() error {
 	}
 
 	return validator.Validate(c)
+}
+
+func (c *Config) NetworkListener() (net.Listener, error) {
+	address := fmt.Sprintf("%s:%d", c.BindAddress, c.APIPort)
+
+	if !c.TLS.Enabled {
+		return net.Listen("tcp", address)
+	}
+
+	serverCert, err := tls.X509KeyPair([]byte(c.TLS.Certificate), []byte(c.TLS.PrivateKey))
+	if err != nil {
+		return nil, err
+	}
+
+	tlsConfig, err := tlsconfig.Build(
+		tlsconfig.WithInternalServiceDefaults(),
+		tlsconfig.WithIdentity(serverCert),
+	).Server()
+	if err != nil {
+		return nil, fmt.Errorf("generating tls config: %w", err)
+	}
+
+	return tls.Listen("tcp", address, tlsConfig)
 }
 
 func NewConfig(osArgs []string) (*Config, error) {

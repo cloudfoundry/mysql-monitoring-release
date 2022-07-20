@@ -81,4 +81,9 @@ Switchboard:
   Username: "<%= proxy_username %>"
   Password: "<%= proxy_password %>"
 SkipSSLValidation: <%= p('cf.skip_ssl_validation') %>
+BindAddress: "127.0.0.1"
 APIPort: <%= p('mysql-monitoring.replication-canary.api_port') %>
+TLS:
+  Enabled: <%= p('mysql-monitoring.replication-canary.tls.enabled') %>
+  Certificate: <%= JSON.generate(p('mysql-monitoring.replication-canary.tls.certificate')) %>
+  PrivateKey: <%= JSON.generate(p('mysql-monitoring.replication-canary.tls.private_key')) %>
