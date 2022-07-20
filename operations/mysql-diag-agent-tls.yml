@@ -6,6 +6,7 @@
     ca: ((mysql-diag-agent-tls.ca))
     certificate: ((mysql-diag-agent-tls.certificate))
     private_key: ((mysql-diag-agent-tls.private_key))
+    server_name: mysql-diag-agent
 
 - type: replace
   path: /variables/name=mysql-diag-agent-tls?

@@ -1,15 +1,18 @@
 package config
 
 import (
+	"crypto/x509"
 	"database/sql"
-	"io/ioutil"
-
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 
-	"github.com/cloudfoundry/mysql-diag/msg"
+	"code.cloudfoundry.org/tlsconfig"
 	_ "github.com/go-sql-driver/mysql"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
+
+	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type Config struct {
@@ -22,7 +25,6 @@ type CanaryConfig struct {
 	Password string `yaml:"password"`
 	ApiPort  uint   `yaml:"api_port"`
 }
-
 type MysqlConfig struct {
 	Username  string           `yaml:"username"`
 	Password  string           `yaml:"password"`
@@ -31,19 +33,29 @@ type MysqlConfig struct {
 	Threshold *ThresholdConfig `yaml:"threshold"`
 	Nodes     []MysqlNode      `yaml:"nodes"`
 }
+
 type AgentConfig struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	Port     uint   `yaml:"port"`
+	TLS      TLS    `yaml:"tls"`
 }
+
 type MysqlNode struct {
 	Host string `yaml:"host"`
 	Name string `yaml:"name"`
 	UUID string `yaml:"uuid"`
 }
+
 type ThresholdConfig struct {
 	DiskUsedWarningPercent       uint `yaml:"disk_used_warning_percent"`
 	DiskInodesUsedWarningPercent uint `yaml:"disk_inodes_used_warning_percent"`
+}
+
+type TLS struct {
+	Enabled    bool   `yaml:"enabled"`
+	CA         string `yaml:"ca"`
+	ServerName string `yaml:"server_name"`
 }
 
 func (mysqlConfig *MysqlConfig) ConnectionString(node MysqlNode) string {
@@ -58,6 +70,27 @@ func (mysqlConfig *MysqlConfig) Connection(node MysqlNode) *sql.DB {
 	}
 
 	return conn
+}
+
+func (tls *TLS) HTTPClient() *http.Client {
+	httpClient := &http.Client{}
+
+	if tls.Enabled {
+		certPool := x509.NewCertPool()
+		certPool.AppendCertsFromPEM([]byte(tls.CA))
+
+		// This call will never fail with an error given the current options
+		// If different options are used in the future, we should check the error
+		tlsClientConfig, _ := tlsconfig.Build(
+			tlsconfig.WithInternalServiceDefaults(),
+		).Client(
+			tlsconfig.WithAuthority(certPool),
+			tlsconfig.WithServerName(tls.ServerName),
+		)
+		httpClient.Transport = &http.Transport{TLSClientConfig: tlsClientConfig}
+	}
+
+	return httpClient
 }
 
 func (c *Config) HostsWithLogs() []string {

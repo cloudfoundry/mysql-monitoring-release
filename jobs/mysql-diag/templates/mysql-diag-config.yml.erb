@@ -15,6 +15,11 @@ config = {
       username: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.username'),
       password: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.password'),
       port: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.port'),
+      tls: {
+        enabled: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.tls.enabled'),
+        ca: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.tls.ca'),
+        server_name: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.tls.server_name'),
+      },
     },
     threshold: {
       disk_used_warning_percent: 80,
@@ -32,5 +37,4 @@ config = {
 
 # JSON is valid yaml
 JSON.pretty_generate(config)
-
 %>

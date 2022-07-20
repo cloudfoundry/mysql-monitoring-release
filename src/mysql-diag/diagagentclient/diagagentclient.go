@@ -2,8 +2,10 @@ package diagagentclient
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
+	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/hattery"
 )
 
@@ -20,34 +22,37 @@ type InfoResponse struct {
 }
 
 type DiagAgentClient struct {
-	host     string
-	port     uint
-	username string
-	password string
+	username   string
+	password   string
+	useTLS     bool
+	httpClient *http.Client
 }
 
-func NewDiagAgentClient(host string, port uint, username string, password string) *DiagAgentClient {
+func NewDiagAgentClient(agent config.AgentConfig) *DiagAgentClient {
 	return &DiagAgentClient{
-		host:     host,
-		port:     port,
-		username: username,
-		password: password,
+		username:   agent.Username,
+		password:   agent.Password,
+		httpClient: agent.TLS.HTTPClient(),
+		useTLS:     agent.TLS.Enabled,
 	}
 }
 
-func (c *DiagAgentClient) Info() (*InfoResponse, error) {
-	url := constructURL(c.host, c.port)
+func (c *DiagAgentClient) Info(address string, useTLS bool) (*InfoResponse, error) {
+	url := fmt.Sprintf("http://%s/api/v1/info", address)
+	if useTLS {
+		url = fmt.Sprintf("https://%s/api/v1/info", address)
+	}
 
 	var info InfoResponse
 
-	err := hattery.Url(url).Timeout(time.Second*10).BasicAuth(c.username, c.password).Fetch(&info)
+	err := hattery.Url(url).
+		Timeout(time.Second*10).
+		BasicAuth(c.username, c.password).
+		Client(c.httpClient).
+		Fetch(&info)
 	if err != nil {
 		return nil, err
 	}
 
 	return &info, nil
-}
-
-func constructURL(host string, port uint) string {
-	return fmt.Sprintf("http://%s:%d/api/v1/info", host, port)
 }

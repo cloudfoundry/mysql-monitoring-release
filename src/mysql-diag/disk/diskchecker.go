@@ -99,8 +99,9 @@ func getDisks(mysqlConfig config.MysqlConfig) []NodeDiskInfo {
 			intro := fmt.Sprintf("Checking disk status of %s/%s at %s... ", n.Name, n.UUID, n.Host)
 			fmt.Println(intro)
 
-			client := diagagentclient.NewDiagAgentClient(n.Host, mysqlConfig.Agent.Port, mysqlConfig.Agent.Username, mysqlConfig.Agent.Password)
-			info, err := client.Info()
+			client := diagagentclient.NewDiagAgentClient(*mysqlConfig.Agent)
+			address := fmt.Sprintf("%s:%d", n.Host, mysqlConfig.Agent.Port)
+			info, err := client.Info(address, mysqlConfig.Agent.TLS.Enabled)
 			if err != nil {
 				msg.PrintfErrorIntro(intro, "%v", err)
 			} else {

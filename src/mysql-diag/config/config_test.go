@@ -63,7 +63,12 @@ var _ = Describe("config", func() {
 				"agent": {
 					"port": %d,
 				 	"username": "%s",
-					"password": "%s"
+					"password": "%s",
+					"tls": {
+						"enabled": true,
+						"ca": "pem-encoded-authority",
+						"server_name": "expected-mysql-diag-agent-identity"
+					}
 				},
 				"threshold": {
 					"disk_used_warning_percent": %d,
@@ -136,6 +141,9 @@ var _ = Describe("config", func() {
 		Expect(c.Mysql.Agent.Port).To(Equal(agentPort))
 		Expect(c.Mysql.Agent.Username).To(Equal(agentUsername))
 		Expect(c.Mysql.Agent.Password).To(Equal(agentPassword))
+		Expect(c.Mysql.Agent.TLS.Enabled).To(BeTrue())
+		Expect(c.Mysql.Agent.TLS.CA).To(Equal("pem-encoded-authority"))
+		Expect(c.Mysql.Agent.TLS.ServerName).To(Equal("expected-mysql-diag-agent-identity"))
 		Expect(c.Mysql.Threshold.DiskUsedWarningPercent).To(Equal(diskUsedWarningPercent))
 		Expect(c.Mysql.Threshold.DiskInodesUsedWarningPercent).To(Equal(diskInodesUsedWarningPercent))
 		Expect(len(c.Mysql.Nodes)).To(Equal(1))

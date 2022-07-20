@@ -16,6 +16,9 @@ provides:
   - mysql-monitoring.mysql-diag-agent.port
   - mysql-monitoring.mysql-diag-agent.username
   - mysql-monitoring.mysql-diag-agent.password
+  - mysql-monitoring.mysql-diag-agent.tls.enabled
+  - mysql-monitoring.mysql-diag-agent.tls.ca
+  - mysql-monitoring.mysql-diag-agent.tls.server_name
 
 properties:
   mysql-monitoring.mysql-diag-agent.port:
@@ -43,4 +46,8 @@ properties:
 
   mysql-monitoring.mysql-diag-agent.tls.private_key:
     description: PEM-encoded key for securing TLS communication to mysql-diag-agent
+    default: ""
+
+  mysql-monitoring.mysql-diag-agent.tls.server_name:
+    description: ServerName is used to advertise the expected hostname on the mysql-diag-agent certificate
     default: ""
