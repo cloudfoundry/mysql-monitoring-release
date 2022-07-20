@@ -1,0 +1,17 @@
+<%-
+  if !['rfc3339', 'unix-epoch'].include?(p('logging.format.timestamp'))
+  raise "'#{p('logging.format.timestamp')}' is not a valid timestamp format for the property 'logging.format.timestamp'." +
+  " Valid options are: 'rfc3339' and 'unix-epoch'."
+  end
+-%>
+---
+processes:
+- name: replication-canary
+  executable: /var/vcap/packages/replication-canary/bin/replication-canary
+  args:
+  - -configPath=/var/vcap/jobs/replication-canary/config/replication-canary.yml
+  - "-logLevel=debug"
+  - -timeFormat=<%= p("logging.format.timestamp") %>
+  limits:
+    open_files: 1048576
+  ephemeral_disk: true

@@ -28,7 +28,6 @@ var _ = Describe("Config", func() {
 	Describe("Validate", func() {
 		BeforeEach(func() {
 			configuration = `{
-				"PidFile": fakePath,
 				"Canary":{
 					"Database": "fake_database",
 					"Username": "fake_username",

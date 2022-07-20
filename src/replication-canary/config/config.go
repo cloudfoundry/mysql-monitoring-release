@@ -13,7 +13,6 @@ import (
 )
 
 type Config struct {
-	PidFile           string `yaml:"PidFile" validate:"nonzero"`
 	Logger            lager.Logger
 	MySQL             MySQL         `yaml:"MySQL" validate:"nonzero"`
 	Canary            Canary        `yaml:"Canary" validate:"nonzero"`

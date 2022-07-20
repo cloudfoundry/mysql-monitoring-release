@@ -1,19 +1,16 @@
 package main
 
 import (
-	"os"
-
-	"io/ioutil"
-	"strconv"
-	"time"
-
 	"fmt"
 	"net/http"
+	"os"
+	"time"
 
 	"code.cloudfoundry.org/clock"
 	"code.cloudfoundry.org/lager"
 	"code.cloudfoundry.org/uaa-go-client"
-	uaa_config "code.cloudfoundry.org/uaa-go-client/config"
+	uaaconfig "code.cloudfoundry.org/uaa-go-client/config"
+
 	"github.com/cloudfoundry/replication-canary/alert"
 	"github.com/cloudfoundry/replication-canary/canary"
 	"github.com/cloudfoundry/replication-canary/clientcreator"
@@ -57,15 +54,6 @@ func main() {
 		})
 	}
 
-	pidfile, err := os.Create(appConfig.PidFile)
-	if err != nil {
-		logger.Fatal("Failed to create a file", err)
-	}
-
-	if err := ioutil.WriteFile(pidfile.Name(), []byte(strconv.Itoa(os.Getpid())), 0644); err != nil {
-		panic(err)
-	}
-
 	logger.Info("Starting replication canary with configuration", lager.Data{
 		"mysql": appConfig.MySQL,
 	})
@@ -78,7 +66,7 @@ func main() {
 		DebugWrapper{logger},
 	)
 
-	adminUaaConfig := &uaa_config.Config{
+	adminUaaConfig := &uaaconfig.Config{
 		ClientName:       appConfig.Notifications.AdminClientUsername,
 		ClientSecret:     appConfig.Notifications.AdminClientSecret,
 		UaaEndpoint:      "https://" + appConfig.Notifications.UAADomain,
@@ -99,7 +87,7 @@ func main() {
 		logger.Fatal("Failed to register UAA client", err)
 	}
 
-	uaaConfig := &uaa_config.Config{
+	uaaConfig := &uaaconfig.Config{
 		ClientName:       appConfig.Notifications.ClientUsername,
 		ClientSecret:     appConfig.Notifications.ClientSecret,
 		UaaEndpoint:      "https://" + appConfig.Notifications.UAADomain,
