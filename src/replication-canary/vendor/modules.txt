@@ -6,6 +6,9 @@ code.cloudfoundry.org/lager
 code.cloudfoundry.org/lager/lagerctx
 code.cloudfoundry.org/lager/lagerflags
 code.cloudfoundry.org/lager/lagertest
+# code.cloudfoundry.org/tlsconfig v0.0.0-20220621140725-0e6fbd869921
+code.cloudfoundry.org/tlsconfig
+code.cloudfoundry.org/tlsconfig/certtest
 # code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d
 code.cloudfoundry.org/trace-logger
 # code.cloudfoundry.org/uaa-go-client v0.0.0-20180330171353-56db3a97d446
@@ -79,6 +82,8 @@ github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
 # github.com/pivotal-cf-experimental/service-config v0.0.0-20160129003516-b1dc94de6ada
 github.com/pivotal-cf-experimental/service-config
+# github.com/square/certstrap v1.2.0
+github.com/square/certstrap/pkix
 # golang.org/x/mod v0.3.0
 golang.org/x/mod/module
 golang.org/x/mod/semver
