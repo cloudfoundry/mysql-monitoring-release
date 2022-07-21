@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"time"
 
-	"code.cloudfoundry.org/lager"
 	"fmt"
+
+	"code.cloudfoundry.org/lager"
 )
 
 type Client struct {

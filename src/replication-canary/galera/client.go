@@ -1,9 +1,11 @@
 package galera
 
 import (
-	"code.cloudfoundry.org/lager"
 	"database/sql"
 	"errors"
+
+	"code.cloudfoundry.org/lager"
+
 	"github.com/cloudfoundry/replication-canary/models"
 )
 

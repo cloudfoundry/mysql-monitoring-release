@@ -9,7 +9,7 @@ import (
 
 	"code.cloudfoundry.org/lager/lagerflags"
 	"code.cloudfoundry.org/tlsconfig"
-	"github.com/pivotal-cf-experimental/service-config"
+	service_config "github.com/pivotal-cf-experimental/service-config"
 	"gopkg.in/validator.v2"
 
 	"code.cloudfoundry.org/lager"

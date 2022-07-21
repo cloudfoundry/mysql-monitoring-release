@@ -1,12 +1,13 @@
 package clientcreator
 
 import (
-	"code.cloudfoundry.org/uaa-go-client"
+	uaagoclient "code.cloudfoundry.org/uaa-go-client"
 	"code.cloudfoundry.org/uaa-go-client/schema"
-	canary_config "github.com/cloudfoundry/replication-canary/config"
+
+	canaryconfig "github.com/cloudfoundry/replication-canary/config"
 )
 
-func CreateClient(adminUaaClient uaa_go_client.Client, config *canary_config.Config) error {
+func CreateClient(adminUaaClient uaagoclient.Client, config *canaryconfig.Config) error {
 	newUaaClient := &schema.OauthClient{
 		ClientId:             config.Notifications.ClientUsername,
 		Name:                 "Mysql Monitoring",
@@ -20,7 +21,7 @@ func CreateClient(adminUaaClient uaa_go_client.Client, config *canary_config.Con
 	}
 
 	_, err := adminUaaClient.RegisterOauthClient(newUaaClient)
-	if err != nil && err != uaa_go_client.ErrClientAlreadyExists {
+	if err != nil && err != uaagoclient.ErrClientAlreadyExists {
 		return err
 	}
 	return nil

@@ -9,7 +9,7 @@ import (
 	"code.cloudfoundry.org/clock"
 	"code.cloudfoundry.org/lager"
 
-	"code.cloudfoundry.org/uaa-go-client"
+	uaa_go_client "code.cloudfoundry.org/uaa-go-client"
 	uaa_config "code.cloudfoundry.org/uaa-go-client/config"
 	"code.cloudfoundry.org/uaa-go-client/schema"
 	"github.com/cloudfoundry/replication-canary/notifications-client/notificationemailer"

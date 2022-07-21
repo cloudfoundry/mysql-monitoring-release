@@ -4,10 +4,11 @@ import (
 	. "github.com/cloudfoundry/replication-canary/alert"
 
 	"errors"
+	"time"
+
 	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"time"
 )
 
 var _ = Describe("AggregateAlerter", func() {

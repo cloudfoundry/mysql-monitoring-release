@@ -2,7 +2,7 @@ package integration_test
 
 import (
 	"github.com/cloudfoundry/replication-canary/notifications-client/notificationemailer"
-	"github.com/nu7hatch/gouuid"
+	uuid "github.com/nu7hatch/gouuid"
 
 	"fmt"
 	"os"
@@ -15,7 +15,7 @@ import (
 
 	"code.cloudfoundry.org/clock/fakeclock"
 	"code.cloudfoundry.org/lager"
-	"code.cloudfoundry.org/uaa-go-client"
+	uaa_go_client "code.cloudfoundry.org/uaa-go-client"
 	"code.cloudfoundry.org/uaa-go-client/config"
 	"github.com/cloudfoundry/replication-canary/notifications-client/notificationemailer/integration/mailinator"
 	. "github.com/onsi/ginkgo"

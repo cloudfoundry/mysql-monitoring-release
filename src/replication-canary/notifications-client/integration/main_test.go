@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/cloudfoundry/replication-canary/notifications-client/notificationemailer/integration/mailinator"
-	"github.com/nu7hatch/gouuid"
+	uuid "github.com/nu7hatch/gouuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"

@@ -1,16 +1,18 @@
 package galera_test
 
 import (
-	"code.cloudfoundry.org/lager"
-	"code.cloudfoundry.org/lager/lagertest"
 	"database/sql"
 	"errors"
+
+	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/lager/lagertest"
 	"github.com/DATA-DOG/go-sqlmock"
-	. "github.com/cloudfoundry/replication-canary/galera"
-	"github.com/cloudfoundry/replication-canary/models"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
+
+	. "github.com/cloudfoundry/replication-canary/galera"
+	"github.com/cloudfoundry/replication-canary/models"
 )
 
 var _ = Describe("Client", func() {

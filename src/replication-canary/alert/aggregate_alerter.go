@@ -1,8 +1,9 @@
 package alert
 
 import (
-	"github.com/cloudfoundry/multierror"
 	"time"
+
+	"github.com/cloudfoundry/multierror"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Alerter
