@@ -21,10 +21,9 @@
         host: /var/vcap/sys/run/pxc-mysql/mysqld.sock
         password: ((mysql_metrics_password))
         tls:
-          ca: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.ca))"
-          cert: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.certificate))"
-          key: "((/((bosh_director_name))/cf/loggregator_agent_metrics_tls.private_key))"
-
+          ca: "((/((bosh_director_name))/cf/loggregator_tls_agent.ca))"
+          cert: "((/((bosh_director_name))/cf/loggregator_tls_agent.certificate))"
+          key: "((/((bosh_director_name))/cf/loggregator_tls_agent.private_key))"
 
 - type: replace
   path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/name=metrics_db?
