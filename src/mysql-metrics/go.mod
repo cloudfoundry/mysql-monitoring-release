@@ -8,7 +8,7 @@ require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	code.cloudfoundry.org/rfc5424 v0.0.0-20170822183049-769e2ed6887e // indirect
 	github.com/DATA-DOG/go-sqlmock v1.3.0
-	github.com/go-sql-driver/mysql v1.4.1
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.3.5 // indirect
 	github.com/hashicorp/errwrap v0.0.0-20180715044906-d6c0cd880357 // indirect
@@ -19,7 +19,6 @@ require (
 	github.com/onsi/gomega v1.9.0
 	golang.org/x/text v0.3.3 // indirect
 	golang.org/x/tools v0.0.0-20200715195738-4cea89713c0f // indirect
-	google.golang.org/appengine v1.1.0 // indirect
 	google.golang.org/genproto v0.0.0-20180731170733-daca94659cb5 // indirect
 	google.golang.org/grpc v1.14.0 // indirect
 	gopkg.in/fsnotify/fsnotify.v1 v1.4.7 // indirect

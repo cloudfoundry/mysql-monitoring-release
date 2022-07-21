@@ -10,7 +10,7 @@ code.cloudfoundry.org/lager/lagerflags
 code.cloudfoundry.org/rfc5424
 # github.com/DATA-DOG/go-sqlmock v1.3.0
 github.com/DATA-DOG/go-sqlmock
-# github.com/go-sql-driver/mysql v1.4.1
+# github.com/go-sql-driver/mysql v1.6.0
 github.com/go-sql-driver/mysql
 # github.com/golang/protobuf v1.3.5
 github.com/golang/protobuf/proto
@@ -126,8 +126,6 @@ golang.org/x/tools/internal/typesinternal
 # golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
-# google.golang.org/appengine v1.1.0
-google.golang.org/appengine/cloudsql
 # google.golang.org/genproto v0.0.0-20180731170733-daca94659cb5
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.14.0
