@@ -74,6 +74,7 @@ func (c *ConnectionFactory) Conns() ([]*models.NamedConnection, error) {
 			AllowNativePasswords: true,
 			CheckConnLiveness:    true,
 			MaxAllowedPacket:     4194304,
+			TLSConfig:            "preferred",
 		}
 
 		conn, err := c.OpenConn(cfg.FormatDSN())

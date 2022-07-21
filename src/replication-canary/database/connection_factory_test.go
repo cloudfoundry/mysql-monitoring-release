@@ -5,16 +5,13 @@ import (
 	"errors"
 
 	"code.cloudfoundry.org/lager/lagertest"
-
 	"github.com/DATA-DOG/go-sqlmock"
-
-	. "github.com/cloudfoundry/replication-canary/database"
-	"github.com/cloudfoundry/replication-canary/database/databasefakes"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
 	"github.com/cloudfoundry/replication-canary/config"
+	. "github.com/cloudfoundry/replication-canary/database"
+	"github.com/cloudfoundry/replication-canary/database/databasefakes"
 )
 
 var _ = Describe("Connection Factory", func() {
@@ -31,8 +28,8 @@ var _ = Describe("Connection Factory", func() {
 
 	BeforeEach(func() {
 		dsns = []string{
-			"fake_username:fake_password@tcp(192.0.2.20:3306)/fake_db",
-			"fake_username:fake_password@tcp(192.0.2.2:3306)/fake_db",
+			"fake_username:fake_password@tcp(192.0.2.20:3306)/fake_db?tls=preferred",
+			"fake_username:fake_password@tcp(192.0.2.2:3306)/fake_db?tls=preferred",
 		}
 		fakeSwitchboardClient = &databasefakes.FakeSwitchboardClient{}
 		fakeSwitchboardClients = []SwitchboardClient{fakeSwitchboardClient}

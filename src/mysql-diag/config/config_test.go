@@ -189,7 +189,7 @@ var _ = Describe("config", func() {
 
 	Describe("ConnectionString", func() {
 		It("builds a mysql connection string", func() {
-			Expect(mysqlConfig.ConnectionString(node)).To(Equal("someuser:somepassword@tcp(nowhere.example.com:3306)/?timeout=10s"))
+			Expect(mysqlConfig.ConnectionString(node)).To(Equal("someuser:somepassword@tcp(nowhere.example.com:3306)/?timeout=10s&tls=preferred"))
 		})
 	})
 

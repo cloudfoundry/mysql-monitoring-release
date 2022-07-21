@@ -5,11 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"time"
-
-	"syscall"
-
 	"path/filepath"
+	"syscall"
+	"time"
 
 	"code.cloudfoundry.org/lager/lagerflags"
 
@@ -22,7 +20,7 @@ import (
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics_computer"
 
-	loggregator "code.cloudfoundry.org/go-loggregator"
+	"code.cloudfoundry.org/go-loggregator"
 	"code.cloudfoundry.org/lager"
 )
 
@@ -137,9 +135,9 @@ func Connection(config *config.Config) *sql.DB {
 	var dsn string
 
 	if filepath.IsAbs(config.Host) {
-		dsn = fmt.Sprintf("%s:%s@unix(%s)/", config.Username, config.Password, config.Host)
+		dsn = fmt.Sprintf("%s:%s@unix(%s)/?tls=preferred", config.Username, config.Password, config.Host)
 	} else {
-		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/", config.Username, config.Password, config.Host, 3306)
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/?tls=preferred", config.Username, config.Password, config.Host, 3306)
 	}
 
 	conn, err := sql.Open("mysql", dsn)

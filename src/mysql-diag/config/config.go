@@ -61,7 +61,7 @@ type TLS struct {
 }
 
 func (mysqlConfig *MysqlConfig) ConnectionString(node MysqlNode) string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/?timeout=10s", mysqlConfig.Username, mysqlConfig.Password, node.Host, mysqlConfig.Port)
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/?timeout=10s&tls=preferred", mysqlConfig.Username, mysqlConfig.Password, node.Host, mysqlConfig.Port)
 }
 
 func (mysqlConfig *MysqlConfig) Connection(node MysqlNode) *sql.DB {
