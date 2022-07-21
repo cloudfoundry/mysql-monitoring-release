@@ -1,17 +1,15 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
 	"code.cloudfoundry.org/lager"
 
-	"database/sql"
-
 	"github.com/cloudfoundry/replication-canary/config"
 	"github.com/cloudfoundry/replication-canary/models"
-
-	"errors"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -68,11 +66,14 @@ func (c *ConnectionFactory) Conns() ([]*models.NamedConnection, error) {
 	var conns []*models.NamedConnection
 	for _, ip := range c.clusterIPs {
 		cfg := &mysql.Config{
-			User:   c.canaryUsername,
-			Passwd: c.canaryPassword,
-			DBName: c.canaryDatabase,
-			Net:    "tcp",
-			Addr:   fmt.Sprintf("%s:%d", ip, c.port),
+			User:                 c.canaryUsername,
+			Passwd:               c.canaryPassword,
+			DBName:               c.canaryDatabase,
+			Net:                  "tcp",
+			Addr:                 fmt.Sprintf("%s:%d", ip, c.port),
+			AllowNativePasswords: true,
+			CheckConnLiveness:    true,
+			MaxAllowedPacket:     4194304,
 		}
 
 		conn, err := c.OpenConn(cfg.FormatDSN())

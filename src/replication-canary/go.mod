@@ -12,7 +12,7 @@ require (
 	github.com/cloudfoundry/multierror v0.0.0-20160301183015-6bb1731c7a73
 	github.com/dgrijalva/jwt-go v2.7.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
-	github.com/go-sql-driver/mysql v1.2.1-0.20160602001021-3654d25ec346
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/imdario/mergo v0.0.0-20160517064435-50d4dbd4eb0e // indirect
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.2.2

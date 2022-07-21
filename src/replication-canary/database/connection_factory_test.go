@@ -1,19 +1,20 @@
 package database_test
 
 import (
+	"database/sql"
 	"errors"
 
 	"code.cloudfoundry.org/lager/lagertest"
 
-	"database/sql"
-
 	"github.com/DATA-DOG/go-sqlmock"
+
 	. "github.com/cloudfoundry/replication-canary/database"
 	"github.com/cloudfoundry/replication-canary/database/databasefakes"
 
-	"github.com/cloudfoundry/replication-canary/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/replication-canary/config"
 )
 
 var _ = Describe("Connection Factory", func() {

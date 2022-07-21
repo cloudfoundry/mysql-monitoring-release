@@ -23,7 +23,7 @@ github.com/cloudfoundry/multierror
 github.com/dgrijalva/jwt-go
 # github.com/fsnotify/fsnotify v1.5.4
 github.com/fsnotify/fsnotify
-# github.com/go-sql-driver/mysql v1.2.1-0.20160602001021-3654d25ec346
+# github.com/go-sql-driver/mysql v1.6.0
 github.com/go-sql-driver/mysql
 # github.com/golang/protobuf v1.4.2
 github.com/golang/protobuf/proto
