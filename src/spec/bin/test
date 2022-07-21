@@ -20,6 +20,6 @@ pushd "${base_dir}" > /dev/null
     -randomizeAllSpecs \
     -randomizeSuites \
     -slowSpecThreshold="${SLOW_SPEC_THRESHOLD}" \
-    -skipPackage="metrics,indicator-protocol" \
+    -skipPackage="metrics,indicator-protocol,mysql-diag" \
     "$@"
 popd > /dev/null
