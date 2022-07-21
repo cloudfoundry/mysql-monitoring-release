@@ -102,13 +102,13 @@ var _ = Describe("config", func() {
 
 	Context("when TLS is enabled", func() {
 		BeforeEach(func() {
-			m := map[string]any{
+			m := map[string]interface{}{
 				"Port":               port,
 				"Username":           username,
 				"Password":           password,
 				"PersistentDiskPath": persistentDiskPath,
 				"EphemeralDiskPath":  ephemeralDiskPath,
-				"TLS": map[string]any{
+				"TLS": map[string]interface{}{
 					"Enabled":     true,
 					"Certificate": "some-pem-certificate",
 					"PrivateKey":  "some-pem-private-key",
