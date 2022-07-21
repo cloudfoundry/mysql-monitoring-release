@@ -7,7 +7,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.4.0
 	github.com/cloudfoundry/bytefmt v0.0.0-20160918231612-b12c1522f4cb
 	github.com/fatih/color v1.1.1-0.20161025120501-bf82308e8c85
-	github.com/go-sql-driver/mysql v1.3.0
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.10.1
