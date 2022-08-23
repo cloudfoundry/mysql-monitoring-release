@@ -3,11 +3,11 @@ name: mysql-metrics
 
 templates:
   mysql-metrics-config.yml.erb: config/mysql-metrics-config.yml
-  mysql-metrics_ctl.sh.erb: bin/mysql-metrics_ctl
   loggregator-ca.erb: certs/loggregator-ca.pem
   loggregator-client-cert.erb: certs/loggregator-client-cert.pem
   loggregator-client-key.erb: certs/loggregator-client-key.pem
   indicators.yml.erb: config/indicators.yml
+  bpm.yml.erb: config/bpm.yml
 
 packages:
 - mysql-metrics

@@ -1,0 +1,9 @@
+processes:
+- name: mysql-metrics
+  executable: /var/vcap/packages/mysql-metrics/bin/mysql-metrics
+  args:
+  - -c=/var/vcap/jobs/mysql-metrics/config/mysql-metrics-config.yml
+<%- if p("mysql-metrics.log_metrics_to_disk") -%>
+  - -l=/var/vcap/sys/log/mysql-metrics/mysql-metrics.log
+<%- end -%>
+  - -timeFormat=<%= p("logging.format.timestamp") %>
