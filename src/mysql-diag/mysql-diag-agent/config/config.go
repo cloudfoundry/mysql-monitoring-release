@@ -11,7 +11,6 @@ import (
 )
 
 type Config struct {
-	PidFile            string `yaml:"PidFile" validate:"nonzero"`
 	BindAddress        string `yaml:"BindAddress"`
 	Port               uint   `yaml:"Port"`
 	Username           string `yaml:"Username"`

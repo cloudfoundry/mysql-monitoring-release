@@ -1,0 +1,6 @@
+---
+processes:
+- name: mysql-diag-agent
+  executable: /var/vcap/packages/mysql-diag/bin/mysql-diag-agent
+  args:
+  - -c=/var/vcap/jobs/mysql-diag-agent/config/mysql-diag-agent.yml

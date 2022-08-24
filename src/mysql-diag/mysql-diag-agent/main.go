@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"strconv"
 
 	"github.com/cloudfoundry/mysql-diag/mysql-diag-agent/config"
 	"github.com/cloudfoundry/mysql-diag/mysql-diag-agent/disk"
@@ -29,13 +26,6 @@ func main() {
 	c, err := config.LoadFromFile(*configFilepath)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	pidfile, err := os.Create(c.PidFile)
-	if err != nil {
-		log.Fatal("Failed to create pidfile: ", err)
-	} else {
-		ioutil.WriteFile(pidfile.Name(), []byte(strconv.Itoa(os.Getpid())), 0644)
 	}
 
 	infoHandler := func(w http.ResponseWriter, req *http.Request) {

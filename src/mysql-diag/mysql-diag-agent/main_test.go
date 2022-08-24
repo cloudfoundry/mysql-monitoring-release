@@ -40,10 +40,8 @@ var _ = Describe("mysql diag agent", func() {
 		password = "bar"
 
 		configFilepath := filepath.Join(tempDir, "config.yml")
-		pidFilepath := filepath.Join(tempDir, "mysql-diag-agent-pidfile")
 
 		c := config.Config{
-			PidFile:            pidFilepath,
 			Port:               port,
 			Username:           username,
 			Password:           password,
