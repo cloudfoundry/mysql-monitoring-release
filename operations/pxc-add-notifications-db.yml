@@ -1,0 +1,6 @@
+- type: replace
+  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/-
+  value:
+    name: notifications_db
+    username: notifications-user
+    password: notifications-password
