@@ -7,3 +7,7 @@ processes:
   - -l=/var/vcap/sys/log/mysql-metrics/mysql-metrics.log
 <%- end -%>
   - -timeFormat=<%= p("logging.format.timestamp") %>
+  additional_volumes:
+  - path: /var/vcap/store
+    mount_only: true
+    writable: false
