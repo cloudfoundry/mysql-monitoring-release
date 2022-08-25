@@ -4,3 +4,7 @@ processes:
   executable: /var/vcap/packages/mysql-diag/bin/mysql-diag-agent
   args:
   - -c=/var/vcap/jobs/mysql-diag-agent/config/mysql-diag-agent.yml
+  additional_volumes:
+  - path: /var/vcap/store
+    mount_only: true
+    writable: false
