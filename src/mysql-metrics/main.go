@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"syscall"
 	"time"
 
@@ -134,11 +133,7 @@ func main() {
 func Connection(config *config.Config) *sql.DB {
 	var dsn string
 
-	if filepath.IsAbs(config.Host) {
-		dsn = fmt.Sprintf("%s:%s@unix(%s)/?tls=preferred", config.Username, config.Password, config.Host)
-	} else {
-		dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/?tls=preferred", config.Username, config.Password, config.Host, 3306)
-	}
+	dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/?tls=preferred", config.Username, config.Password, config.Host, config.Port)
 
 	conn, err := sql.Open("mysql", dsn)
 	if err != nil {

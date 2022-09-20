@@ -18,6 +18,7 @@ var _ = Describe("Config", func() {
 		configFilepath            string
 		tempDir                   string
 		host                      string
+		port                      int
 		password                  string
 		username                  string
 		instanceId                string
@@ -41,6 +42,7 @@ var _ = Describe("Config", func() {
 	Describe("with a fully formed, correct yaml file", func() {
 		BeforeEach(func() {
 			host = "localhost"
+			port = 5678
 			username = "user"
 			password = "secret"
 			sourceId = "p-mysql"
@@ -63,6 +65,7 @@ var _ = Describe("Config", func() {
 			configString := fmt.Sprintf(`{
 				"instance_id":"%s",
 				"host":"%s",
+				"port":%d,
 				"username":"%s",
 				"password":"%s",
 				"metrics_frequency":%d,
@@ -76,7 +79,7 @@ var _ = Describe("Config", func() {
 				"emit_backup_metrics":%t,
 				"heartbeat_database":"%s",
 				"heartbeat_table":"%s"
-			}`, instanceId, host, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, emitBackupMetrics, heartbeatDatabase, heartbeatTable)
+			}`, instanceId, host, port, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, emitBackupMetrics, heartbeatDatabase, heartbeatTable)
 
 			err = ioutil.WriteFile(configFilepath, []byte(configString), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
@@ -95,6 +98,7 @@ var _ = Describe("Config", func() {
 			Expect(config).NotTo(BeNil())
 			Expect(config.InstanceID).To(Equal(instanceId))
 			Expect(config.Host).To(Equal(host))
+			Expect(config.Port).To(Equal(5678))
 			Expect(config.Username).To(Equal(username))
 			Expect(config.Password).To(Equal(password))
 			Expect(config.MetricsFrequency).To(Equal(metricFrequency))

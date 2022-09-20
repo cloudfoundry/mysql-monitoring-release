@@ -49,6 +49,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 		It("renders properties into JSON/Yaml", func() {
 			Expect(templateOutput).NotTo(ContainSubstring("UnknownProperty"))
 			Expect(templateOutput).To(ContainSubstring(`"host": "host"`))
+			Expect(templateOutput).To(ContainSubstring(`"port": 1234`))
 			Expect(templateOutput).To(ContainSubstring(`"username": "username"`))
 			Expect(templateOutput).To(ContainSubstring(`"password": "password"`))
 			Expect(templateOutput).To(ContainSubstring(`"metrics_frequency": 30`))
@@ -66,6 +67,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 			templateContext.Properties = map[string]interface{}{
 				"mysql-metrics": map[string]interface{}{
 					"host":                            "host2",
+					"port":                            4321,
 					"password":                        "password2",
 					"username":                        "username2",
 					"metrics_frequency":               31,
@@ -212,6 +214,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 		templateContext.Properties = map[string]interface{}{
 			"mysql-metrics": map[string]interface{}{
 				"host":                            "host",
+				"port":                            1234,
 				"password":                        "password",
 				"username":                        "username",
 				"metrics_frequency":               30,
