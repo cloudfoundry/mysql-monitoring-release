@@ -1,35 +1,49 @@
 #!/bin/bash
-set -ex
 
-my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-base_dir="$( cd "${my_dir}/.." && pwd )"
-test_helpers_dir="$( cd "$(git -C "${my_dir}" rev-parse --show-toplevel)/src/test-helpers" && pwd )"
-source ${test_helpers_dir}/linter.sh
+set -o errexit -o xtrace
 
-# Needed for disk metrics; may need to create manually if permission denied
-mkdir -p /var/vcap/store
-mkdir -p /var/vcap/data
+base_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+topdir=$(git -C "${base_dir}" rev-parse --show-toplevel)
+source "${topdir}/src/test-helpers/linter.sh"
 
-if [ "$(uname)" == "Darwin" ]; then
-  if [[ ! -d /proc ]]; then
-    echo -e "\033[31mPlease create '/proc' directory, writable without root, before running ${BASH_SOURCE[0]}\033[m"
-    exit 1
-  fi
-  echo "cpu 0 0 0 1000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" > /proc/stat
+run_in_docker() {
+  docker run \
+    --mount=type=tmpfs,destination=/var/vcap/store \
+    --mount=type=tmpfs,destination=/var/vcap/data \
+    --volume=/var/run/docker.sock:/var/run/docker.sock \
+    --volume="${topdir}:/workspace" \
+    --workdir=/workspace/src/mysql-metrics \
+    --network=host \
+    --interactive --tty \
+    cloudfoundry/cf-mysql-ci "$@"
+}
+
+ginkgo=(
+  ginkgo
+  -p
+  -r
+  -race
+  -failOnPending
+  -randomizeAllSpecs
+  -randomizeSuites
+  "${ginkgo_args[@]}"
+)
+
+if [[ -n $UNIT ]]; then
+  ginkgo+=("-skipPackage=integration_test")
+elif [[ -n $INTEGRATION ]]; then
+  ginkgo+=("integration_test")
 fi
 
-pushd "${base_dir}" > /dev/null
-  lint_golang
-  bin/regenerate-fakes
+if [[ $(uname) == Darwin ]]; then
+  ginkgo=("run_in_docker" "${ginkgo[@]}")
+else
+  # Needed for disk metrics; may need to create manually if permission denied
+  mkdir -p /var/vcap/store
+  mkdir -p /var/vcap/data
+fi
 
-  if [[ -n $UNIT ]]; then
-    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites -skipPackage="integration_test" \
-      "$@"
-  elif [[ -n $INTEGRATION ]]; then
-    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites integration_test \
-     "$@"
-  else
-    ginkgo -p -r -race -failOnPending -randomizeAllSpecs -randomizeSuites \
-     "$@"
-  fi
-popd > /dev/null
+echo "Running: ${ginkgo[*]}"
+cd "${base_dir}"
+"${ginkgo[@]}"
+cd -

@@ -2,14 +2,13 @@ package integration_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"time"
-
-	"encoding/json"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -18,6 +17,7 @@ import (
 
 type MetricsConfig struct {
 	Host                      string `json:"host"`
+	Port                      int    `json:"port"`
 	Username                  string `json:"username"`
 	Password                  string `json:"password"`
 	MetricsFrequency          int    `json:"metrics_frequency"`
@@ -38,7 +38,6 @@ var _ = Describe("mysql-metrics", func() {
 		tempDir         string
 		password        string
 		username        string
-		socket          string
 		err             error
 		session         *gexec.Session
 		metricFrequency int
@@ -46,34 +45,20 @@ var _ = Describe("mysql-metrics", func() {
 	)
 
 	BeforeEach(func() {
-		var unsetVars []string
-		if env, ok := os.LookupEnv("MYSQL_USER"); ok {
-			username = env
-		} else {
-			unsetVars = append(unsetVars, "MYSQL_USER")
-		}
-		if env, ok := os.LookupEnv("MYSQL_PASSWORD"); ok {
-			password = env
-		} else {
-			unsetVars = append(unsetVars, "MYSQL_PASSWORD")
-		}
-		if env, ok := os.LookupEnv("MYSQL_SOCKET"); ok {
-			socket = env
-		} else {
-			socket = "/tmp/mysql.sock"
-		}
-
-		if len(unsetVars) > 0 {
-			panic(fmt.Sprintf("Missing required environment variables: %s", unsetVars))
-		}
+		username = "root"
+		password = ""
 
 		metricFrequency = 1
-		tempDir, err = ioutil.TempDir("", "")
+		tempDir, err = os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
 		configFilepath = filepath.Join(tempDir, "metric-config.yml")
 
+		port, err := strconv.Atoi(mysqlPort)
+		Expect(err).NotTo(HaveOccurred())
+
 		config = &MetricsConfig{
 			Host:                      "localhost",
+			Port:                      port,
 			Username:                  username,
 			Password:                  password,
 			MetricsFrequency:          metricFrequency,
@@ -94,7 +79,7 @@ var _ = Describe("mysql-metrics", func() {
 		configBytes, err := json.Marshal(config)
 		Expect(err).NotTo(HaveOccurred())
 
-		err = ioutil.WriteFile(configFilepath, configBytes, os.ModePerm)
+		err = os.WriteFile(configFilepath, configBytes, os.ModePerm)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -126,15 +111,15 @@ var _ = Describe("mysql-metrics", func() {
 
 	Describe("when logging is enabled", func() {
 		It("emits multiple log entries", func() {
-			logFile, err := ioutil.TempFile(tempDir, "metrics_via_tcp_loopback_")
+			logFile, err := os.CreateTemp(tempDir, "metrics_via_tcp_loopback_")
 			Expect(err).NotTo(HaveOccurred())
-			logFile.Close()
+			_ = logFile.Close()
 			logFilePath := logFile.Name()
 
 			runMainWithArgs("-l", logFilePath)
 			Consistently(session.ExitCode, time.Duration(metricFrequency)*time.Second).Should(Equal(-1))
 
-			contents, err := ioutil.ReadFile(logFilePath)
+			contents, err := os.ReadFile(logFilePath)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(contents).NotTo(BeEmpty())
 
@@ -145,33 +130,11 @@ var _ = Describe("mysql-metrics", func() {
 			Expect(firstLineCount).Should(BeNumerically(">", 0))
 
 			Consistently(session.ExitCode, time.Duration(metricFrequency)*time.Second).Should(Equal(-1))
-			contents, err = ioutil.ReadFile(logFilePath)
+			contents, err = os.ReadFile(logFilePath)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(contents).NotTo(BeEmpty())
 			newLineCount := bytes.Count(contents, []byte("\n"))
 			Expect(newLineCount).Should(BeNumerically(">", firstLineCount))
-		})
-
-		Context("when configured with a unix socket", func() {
-			BeforeEach(func() {
-				config.Host = socket
-			})
-
-			It("successfully emits log entries", func() {
-				logFile, err := ioutil.TempFile(tempDir, "metrics_via_unix_socket_")
-				Expect(err).NotTo(HaveOccurred())
-				logFile.Close()
-
-				logFilePath := logFile.Name()
-				runMainWithArgs("-l", logFilePath)
-				Consistently(session.ExitCode, time.Duration(metricFrequency)*time.Second).Should(Equal(-1))
-
-				contents, err := ioutil.ReadFile(logFilePath)
-				Expect(err).NotTo(HaveOccurred())
-				Expect(contents).NotTo(BeEmpty())
-
-				Expect(string(contents)).To(ContainSubstring("innodb/buffer_pool_pages_free"))
-			})
 		})
 
 		It("logs that it has metrics", func() {
@@ -179,23 +142,23 @@ var _ = Describe("mysql-metrics", func() {
 			runMainWithArgs("-l", logFilePath)
 			Consistently(session.ExitCode, time.Duration(metricFrequency*5)*time.Second).Should(Equal(-1))
 
-			contents, err := ioutil.ReadFile(logFilePath)
+			contents, err := os.ReadFile(logFilePath)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(contents).NotTo(BeEmpty())
 
 			contentsAsString := fmt.Sprintf("%s", contents)
 			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_used_percent\",\"value\":\\d+"))
-			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_used\",\"value\":\\d{2,}"))
-			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_free\",\"value\":\\d{2,}"))
+			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_used\",\"value\":\\d+"))
+			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_free\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_inodes_used_percent\",\"value\":\\d+"))
-			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_inodes_used\",\"value\":\\d{2,}"))
-			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_inodes_free\",\"value\":\\d{2,}"))
+			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_inodes_used\",\"value\":\\d+"))
+			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_inodes_free\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_used_percent\",\"value\":\\d+"))
-			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_used\",\"value\":\\d{2,}"))
-			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_free\",\"value\":\\d{2,}"))
+			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_used\",\"value\":\\d+"))
+			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_free\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_inodes_used_percent\",\"value\":\\d+"))
-			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_inodes_used\",\"value\":\\d{2,}"))
-			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_inodes_free\",\"value\":\\d{2,}"))
+			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_inodes_used\",\"value\":\\d+"))
+			Expect(contentsAsString).To(MatchRegexp("system/ephemeral_disk_inodes_free\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("performance/queries\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("performance/queries_delta\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("performance/cpu_utilization_percent"))
@@ -210,7 +173,7 @@ var _ = Describe("mysql-metrics", func() {
 			runMainWithArgs("-l", logFilePath)
 
 			Consistently(session.ExitCode, time.Duration(metricFrequency)*time.Second).Should(Equal(-1))
-			contents, err := ioutil.ReadFile(logFilePath)
+			contents, err := os.ReadFile(logFilePath)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(contents).NotTo(BeEmpty())
 			contentsAsString := fmt.Sprintf("%s", contents)

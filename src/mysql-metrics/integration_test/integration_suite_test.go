@@ -1,19 +1,23 @@
 package integration_test
 
 import (
+	"database/sql"
 	"fmt"
-	"time"
+	"strings"
+	"testing"
 
+	_ "github.com/go-sql-driver/mysql"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-
-	"testing"
+	"github.com/ory/dockertest/v3"
 )
 
 var (
-	metricsBinPath    string
-	executableTimeout = 5 * time.Second
+	metricsBinPath string
+	pool           *dockertest.Pool
+	resource       *dockertest.Resource
+	mysqlPort      string
 )
 
 func TestMysqlMetrics(t *testing.T) {
@@ -21,7 +25,7 @@ func TestMysqlMetrics(t *testing.T) {
 	RunSpecs(t, "Integration Suite")
 }
 
-var _ = BeforeSuite(func() {
+var _ = SynchronizedBeforeSuite(func() []byte {
 	By("Compiling binary")
 	var err error
 	metricsBinPath, err = gexec.Build("github.com/cloudfoundry/mysql-metrics", "-race")
@@ -29,8 +33,29 @@ var _ = BeforeSuite(func() {
 		fmt.Println(err.Error())
 	}
 	Expect(err).ShouldNot(HaveOccurred())
+
+	pool, err = dockertest.NewPool("")
+	Expect(err).NotTo(HaveOccurred())
+
+	resource, err = pool.RunWithOptions(&dockertest.RunOptions{
+		Repository: "percona/percona-server",
+		Tag:        "8.0",
+		Env:        []string{"MYSQL_ALLOW_EMPTY_PASSWORD=1"},
+	})
+	Expect(err).NotTo(HaveOccurred())
+
+	db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(localhost:%s)/", resource.GetPort("3306/tcp")))
+	Expect(err).NotTo(HaveOccurred())
+	Expect(pool.Retry(db.Ping)).To(Succeed())
+	return []byte(resource.GetPort("3306/tcp") + "\t" + metricsBinPath)
+}, func(data []byte) {
+	info := strings.Fields(string(data))
+
+	mysqlPort = info[0]
+	metricsBinPath = info[1]
 })
 
-var _ = AfterSuite(func() {
+var _ = SynchronizedAfterSuite(func() {}, func() {
 	gexec.CleanupBuildArtifacts()
+	Expect(pool.Purge(resource)).To(Succeed())
 })
