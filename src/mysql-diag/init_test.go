@@ -1,13 +1,12 @@
 package main_test
 
 import (
+	"testing"
 	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
-
-	"testing"
 )
 
 const (
@@ -28,6 +27,8 @@ var _ = BeforeSuite(func() {
 	var err error
 	mysqlDiagBinPath, err = gexec.Build("github.com/cloudfoundry/mysql-diag", "-race")
 	Expect(err).ShouldNot(HaveOccurred())
+
+	SetDefaultEventuallyTimeout(10 * time.Second)
 })
 
 var _ = AfterSuite(func() {
