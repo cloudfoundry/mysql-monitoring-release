@@ -2,7 +2,6 @@ package config_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -56,13 +55,14 @@ var _ = Describe("Config", func() {
 			heartbeatDatabase = "someDatabase"
 			heartbeatTable = "someTable"
 
-			tempDir, err := ioutil.TempDir("", "")
+			tempDir, err := os.MkdirTemp("", "")
 			Expect(err).NotTo(HaveOccurred())
 
 			configFilepath = filepath.Join(tempDir, "metric-config.yml")
 			configString := fmt.Sprintf(`{
 				"instance_id":"%s",
 				"host":"%s",
+				"port":6033,
 				"username":"%s",
 				"password":"%s",
 				"metrics_frequency":%d,
@@ -78,7 +78,7 @@ var _ = Describe("Config", func() {
 				"heartbeat_table":"%s"
 			}`, instanceId, host, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, emitBackupMetrics, heartbeatDatabase, heartbeatTable)
 
-			err = ioutil.WriteFile(configFilepath, []byte(configString), os.ModePerm)
+			err = os.WriteFile(configFilepath, []byte(configString), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -95,6 +95,7 @@ var _ = Describe("Config", func() {
 			Expect(config).NotTo(BeNil())
 			Expect(config.InstanceID).To(Equal(instanceId))
 			Expect(config.Host).To(Equal(host))
+			Expect(config.Port).To(Equal(6033))
 			Expect(config.Username).To(Equal(username))
 			Expect(config.Password).To(Equal(password))
 			Expect(config.MetricsFrequency).To(Equal(metricFrequency))
@@ -114,12 +115,12 @@ var _ = Describe("Config", func() {
 	Describe("when the yaml file is not fully formed", func() {
 		BeforeEach(func() {
 			configString := `"field1value1"}`
-			tempDir, err := ioutil.TempDir("", "")
+			tempDir, err := os.MkdirTemp("", "")
 			Expect(err).NotTo(HaveOccurred())
 
 			configFilepath = filepath.Join(tempDir, "metric-config.yml")
 
-			err = ioutil.WriteFile(configFilepath, []byte(configString), os.ModePerm)
+			err = os.WriteFile(configFilepath, []byte(configString), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 		})
 

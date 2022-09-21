@@ -2,14 +2,11 @@ package templates_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"os"
 	"os/exec"
-	"path/filepath"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 var _ = Describe("Indicators", func() {
@@ -46,24 +43,13 @@ var _ = Describe("Indicators", func() {
 	}
 
 	var renderTemplate = func(context *TemplateContext) string {
-		templateContextFile, err := ioutil.TempFile("", "template-context.json")
-		Expect(err).NotTo(HaveOccurred())
-		contextPath := templateContextFile.Name()
-
 		templateContextJson, err := json.Marshal(context)
 		Expect(err).NotTo(HaveOccurred())
-		_, err = templateContextFile.Write(templateContextJson)
-		Expect(err).NotTo(HaveOccurred())
-
-		defer templateContextFile.Close()
-
-		dir, err := os.Getwd()
-		Expect(err).NotTo(HaveOccurred())
-
-		templateDir := filepath.Join(dir, "../../../jobs/mysql-metrics/templates")
-		templatePath := filepath.Join(templateDir, "indicators.yml.erb")
-
-		bytes, err := exec.Command("./template", templatePath, contextPath).CombinedOutput()
+		bytes, err := exec.Command("./template",
+			"--job=mysql-metrics",
+			"--template=config/indicators.yml",
+			"--context="+string(templateContextJson),
+		).CombinedOutput()
 		Expect(err).NotTo(HaveOccurred())
 		return string(bytes)
 	}

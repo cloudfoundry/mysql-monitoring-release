@@ -1,14 +1,15 @@
 package config
 
 import (
-	"io/ioutil"
+	"os"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
 	MetricsFrequency          int    `yaml:"metrics_frequency"`
 	Host                      string `yaml:"host"`
+	Port                      int    `yaml:"port"`
 	Password                  string `yaml:"password"`
 	Username                  string `yaml:"username"`
 	InstanceID                string `yaml:"instance_id"`
@@ -28,13 +29,13 @@ type Config struct {
 	LoggregatorClientKeyPath  string `yaml:"loggregator_client_key_path"`
 }
 
-func LoadFromFile(filepath string, object interface{}) error {
-	contents, err := ioutil.ReadFile(filepath)
+func LoadFromFile(filepath string, cfg *Config) error {
+	contents, err := os.ReadFile(filepath)
 	if err != nil {
 		return err
 	}
 
-	if err = yaml.Unmarshal(contents, object); err != nil {
+	if err = yaml.Unmarshal(contents, cfg); err != nil {
 		return err
 	}
 

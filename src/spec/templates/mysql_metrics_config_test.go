@@ -2,80 +2,113 @@ package templates_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"os"
+	"io"
 	"os/exec"
-	"path/filepath"
+	"strings"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gstruct"
+	"gopkg.in/yaml.v2"
 )
 
 var _ = Describe("MysqlMetricsConfig", func() {
 	var (
-		templateContextFile *os.File
-		templateContext     *TemplateContext
-
-		contextPath  string
-		templatePath string
-
-		templateOutput string
-
-		renderTemplate              func(context *TemplateContext)
-		buildDefaultTemplateContext func()
+		templateContext *TemplateContext
+		templateOutput  string
+		templateErr     error
 	)
 
+	renderTemplate := func(context *TemplateContext) (templateOutput string, err error) {
+		templateContextJson, err := json.Marshal(context)
+		if err != nil {
+			return "", err
+		}
+
+		var output strings.Builder
+		cmd := exec.Command("./template",
+			"--job=mysql-metrics", "--template=config/mysql-metrics-config.yml", "--context="+string(templateContextJson),
+		)
+		cmd.Stdout = &output
+		cmd.Stderr = io.MultiWriter(&output, GinkgoWriter)
+		err = cmd.Run()
+		return output.String(), err
+	}
+
+	buildDefaultTemplateContext := func() {
+		templateContext = &TemplateContext{}
+		templateContext.Networks = map[string]interface{}{}
+		templateContext.Links = map[string]interface{}{
+			"mysql": map[string]interface{}{
+				"properties": map[string]interface{}{},
+				"instances": []map[string]interface{}{
+					{
+						"address": "mysql link address",
+					},
+				},
+			},
+		}
+		templateContext.Properties = map[string]interface{}{}
+	}
+
 	BeforeEach(func() {
-		var err error
-
-		templateContextFile, err = ioutil.TempFile("", "template-context.json")
-		Expect(err).NotTo(HaveOccurred())
-		contextPath = templateContextFile.Name()
-
 		buildDefaultTemplateContext()
-
-		dir, err := os.Getwd()
-		Expect(err).NotTo(HaveOccurred())
-
-		templateDir := filepath.Join(dir, "../../../jobs/mysql-metrics/templates")
-		templatePath = filepath.Join(templateDir, "mysql-metrics-config.yml.erb")
 	})
 
 	JustBeforeEach(func() {
-		renderTemplate(templateContext)
+		templateOutput, templateErr = renderTemplate(templateContext)
 	})
 
 	Context("when required properties are present", func() {
-		It("renders properties into JSON/Yaml", func() {
-			Expect(templateOutput).NotTo(ContainSubstring("UnknownProperty"))
-			Expect(templateOutput).To(ContainSubstring(`"host": "host"`))
-			Expect(templateOutput).To(ContainSubstring(`"username": "username"`))
-			Expect(templateOutput).To(ContainSubstring(`"password": "password"`))
-			Expect(templateOutput).To(ContainSubstring(`"metrics_frequency": 30`))
-			Expect(templateOutput).To(ContainSubstring(`"source_id": "source1"`))
-			Expect(templateOutput).To(ContainSubstring(`"origin": "origin1"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_broker_metrics": "false"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_disk_metrics": "false"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_cpu_metrics": "false"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_mysql_metrics": "true"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_leader_follower_metrics": "false"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_galera_metrics": "true"`))
-			Expect(templateOutput).To(ContainSubstring(`"heartbeat_database": "heartbeat"`))
-			Expect(templateOutput).To(ContainSubstring(`"heartbeat_table": "table"`))
+		BeforeEach(func() {
+			templateContext.Properties["mysql-metrics"] = map[string]interface{}{
+				"host":     "required-host",
+				"password": "required-password",
+			}
+		})
 
+		It("renders default properties into JSON/Yaml", func() {
+			var cfg map[string]any
+			Expect(yaml.Unmarshal([]byte(templateOutput), &cfg)).To(Succeed())
+			Expect(cfg).To(gstruct.MatchAllKeys(gstruct.Keys{
+				"host":                         Equal("required-host"),
+				"port":                         Equal(3306),
+				"username":                     Equal("mysql-metrics"),
+				"password":                     Equal("required-password"),
+				"metrics_frequency":            Equal(30),
+				"source_id":                    Equal("p-mysql"),
+				"origin":                       Equal("p-mysql"),
+				"emit_backup_metrics":          Equal(false),
+				"emit_broker_metrics":          Equal(false),
+				"emit_disk_metrics":            Equal(true),
+				"emit_cpu_metrics":             Equal(true),
+				"emit_mysql_metrics":           Equal(true),
+				"emit_leader_follower_metrics": Equal(false),
+				"emit_galera_metrics":          Equal(true),
+				"heartbeat_database":           Equal("replication_monitoring"),
+				"heartbeat_table":              Equal("heartbeat"),
+				"loggregator_ca_path":          Equal("/var/vcap/jobs/mysql-metrics/certs/loggregator-ca.pem"),
+				"loggregator_client_key_path":  Equal("/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem"),
+				"loggregator_client_cert_path": Equal("/var/vcap/jobs/mysql-metrics/certs/loggregator-client-cert.pem"),
+				"instance_id":                  Equal("xxxxxx-xxxxxxxx-xxxxx"),
+			}))
+		})
+
+		It("renders user provided properties from the job spec", func() {
 			templateContext.Properties = map[string]interface{}{
 				"mysql-metrics": map[string]interface{}{
 					"host":                            "host2",
+					"port":                            6033,
 					"password":                        "password2",
 					"username":                        "username2",
 					"metrics_frequency":               31,
-					"broker_metrics_enabled":          "true",
-					"disk_metrics_enabled":            "true",
-					"cpu_metrics_enabled":             "true",
-					"mysql_metrics_enabled":           "false",
-					"backup_metrics_enabled":          "false",
-					"leader_follower_metrics_enabled": "true",
-					"galera_metrics_enabled":          "false",
+					"broker_metrics_enabled":          true,
+					"disk_metrics_enabled":            true,
+					"cpu_metrics_enabled":             true,
+					"mysql_metrics_enabled":           false,
+					"backup_metrics_enabled":          true,
+					"leader_follower_metrics_enabled": true,
+					"galera_metrics_enabled":          false,
 					"heartbeat_database":              "heartbeat2",
 					"heartbeat_table":                 "table2",
 					"minimum_metrics_frequency":       11,
@@ -84,34 +117,39 @@ var _ = Describe("MysqlMetricsConfig", func() {
 				},
 			}
 
-			var err error
-			templateContextFile, err = os.Create(contextPath)
-			Expect(err).NotTo(HaveOccurred())
+			templateOutput, templateErr = renderTemplate(templateContext)
+			Expect(templateErr).NotTo(HaveOccurred())
 
-			renderTemplate(templateContext)
-
-			Expect(templateOutput).NotTo(ContainSubstring("UnknownProperty"))
-			Expect(templateOutput).To(ContainSubstring(`"host": "host2"`))
-			Expect(templateOutput).To(ContainSubstring(`"username": "username2"`))
-			Expect(templateOutput).To(ContainSubstring(`"password": "password2"`))
-			Expect(templateOutput).To(ContainSubstring(`"metrics_frequency": 31`))
-			Expect(templateOutput).To(ContainSubstring(`"source_id": "source1"`))
-			Expect(templateOutput).To(ContainSubstring(`"origin": "origin2"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_broker_metrics": "true"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_disk_metrics": "true"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_mysql_metrics": "false"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_leader_follower_metrics": "true"`))
-			Expect(templateOutput).To(ContainSubstring(`"emit_galera_metrics": "false"`))
-			Expect(templateOutput).To(ContainSubstring(`"heartbeat_database": "heartbeat2"`))
-			Expect(templateOutput).To(ContainSubstring(`"heartbeat_table": "table2"`))
+			var cfg map[string]any
+			Expect(yaml.Unmarshal([]byte(templateOutput), &cfg)).To(Succeed())
+			Expect(cfg).To(gstruct.MatchAllKeys(gstruct.Keys{
+				"host":                         Equal("host2"),
+				"port":                         Equal(6033),
+				"username":                     Equal("username2"),
+				"password":                     Equal("password2"),
+				"metrics_frequency":            Equal(31),
+				"source_id":                    Equal("source1"),
+				"origin":                       Equal("origin2"),
+				"emit_backup_metrics":          Equal(true),
+				"emit_broker_metrics":          Equal(true),
+				"emit_disk_metrics":            Equal(true),
+				"emit_cpu_metrics":             Equal(true),
+				"emit_mysql_metrics":           Equal(false),
+				"emit_leader_follower_metrics": Equal(true),
+				"emit_galera_metrics":          Equal(false),
+				"heartbeat_database":           Equal("heartbeat2"),
+				"heartbeat_table":              Equal("table2"),
+				"loggregator_ca_path":          Equal("/var/vcap/jobs/mysql-metrics/certs/loggregator-ca.pem"),
+				"loggregator_client_key_path":  Equal("/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem"),
+				"loggregator_client_cert_path": Equal("/var/vcap/jobs/mysql-metrics/certs/loggregator-client-cert.pem"),
+				"instance_id":                  Equal("xxxxxx-xxxxxxxx-xxxxx"),
+			}))
 		})
 	})
 
 	Context("when password is not present as a property", func() {
 		BeforeEach(func() {
-			metricsMap := templateContext.Properties["mysql-metrics"].(map[string]interface{})
-			delete(metricsMap, "password")
-			templateContext.Properties["mysql-metrics"] = metricsMap
+			templateContext.Properties["mysql-metrics"] = make(map[string]interface{})
 		})
 
 		Context("when a broker link is available", func() {
@@ -142,8 +180,9 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 	Context("when host is not present as a property", func() {
 		BeforeEach(func() {
-			metricsMap := templateContext.Properties["mysql-metrics"].(map[string]interface{})
-			delete(metricsMap, "host")
+			templateContext.Properties["mysql-metrics"] = map[string]interface{}{
+				"password": "required-password",
+			}
 		})
 
 		Context("when proxy is available as a link", func() {
@@ -187,60 +226,15 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 	Context("when the metrics frequency is too often", func() {
 		BeforeEach(func() {
-			metricsMap := templateContext.Properties["mysql-metrics"].(map[string]interface{})
-			metricsMap["metrics_frequency"] = 1
+			templateContext.Properties["mysql-metrics"] = map[string]interface{}{
+				"password":          "required-password",
+				"metrics_frequency": 1,
+			}
 		})
 
 		It("raises an exception attempting to render", func() {
+			Expect(templateErr).To(HaveOccurred())
 			Expect(templateOutput).To(ContainSubstring("collecting metrics at this rate is not advised"))
 		})
 	})
-
-	buildDefaultTemplateContext = func() {
-		templateContext = &TemplateContext{}
-		templateContext.Networks = map[string]interface{}{}
-		templateContext.Links = map[string]interface{}{
-			"mysql": map[string]interface{}{
-				"properties": map[string]interface{}{},
-				"instances": []map[string]interface{}{
-					{
-						"address": "mysql link address",
-					},
-				},
-			},
-		}
-		templateContext.Properties = map[string]interface{}{
-			"mysql-metrics": map[string]interface{}{
-				"host":                            "host",
-				"password":                        "password",
-				"username":                        "username",
-				"metrics_frequency":               30,
-				"source_id":                       "source1",
-				"origin":                          "origin1",
-				"broker_metrics_enabled":          "false",
-				"disk_metrics_enabled":            "false",
-				"cpu_metrics_enabled":             "false",
-				"mysql_metrics_enabled":           "true",
-				"backup_metrics_enabled":          "true",
-				"leader_follower_metrics_enabled": "false",
-				"galera_metrics_enabled":          "true",
-				"heartbeat_database":              "heartbeat",
-				"heartbeat_table":                 "table",
-				"minimum_metrics_frequency":       10,
-			},
-		}
-	}
-
-	renderTemplate = func(context *TemplateContext) {
-		templateContextJson, err := json.Marshal(context)
-		Expect(err).NotTo(HaveOccurred())
-		_, err = templateContextFile.Write(templateContextJson)
-		Expect(err).NotTo(HaveOccurred())
-
-		defer templateContextFile.Close()
-
-		bytes, err := exec.Command("./template", templatePath, contextPath).CombinedOutput()
-		Expect(err).NotTo(HaveOccurred())
-		templateOutput = string(bytes)
-	}
 })

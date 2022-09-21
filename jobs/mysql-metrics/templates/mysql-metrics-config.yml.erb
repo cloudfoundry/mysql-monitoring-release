@@ -30,9 +30,9 @@ end
 config = {
   instance_id: spec.id,
   host: db_host,
+  port: p('mysql-metrics.port'),
   username: p('mysql-metrics.username'),
   password: db_password,
-  pidfile: '/var/vcap/sys/run/mysql-metrics/mysql-metrics.pid',
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
   origin: p('mysql-metrics.origin'),
   source_id: p('mysql-metrics.source_id'),

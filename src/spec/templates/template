@@ -1,8 +1,37 @@
-#!/bin/sh
+#!/usr/bin/env ruby
 
-template_path=$1
-context_path=$2
+require 'bosh/template/test'
+require 'erb'
+require 'json'
+require 'optparse'
+require 'ostruct'
 
-bosh-template $template_path --context "$(cat $context_path)" 2>&1
+def main
 
-exit 0
+  options = OpenStruct.new("context" => "{}", "job" => "mysql-metrics", "template" => "config/mysql-metrics-config.yml")
+  OptionParser.new do |opt|
+    opt.on('--job JOB') { |o| options[:job] = o }
+    opt.on('--template TEMPLATE') { |o| options[:template] = o }
+    opt.on('--context CONTEXT') { |o| options[:context] = o }
+  end.parse!
+
+  ctx = JSON.parse(options.context)
+
+  links = ctx.fetch("links", {}).map do |name, spec|
+    Bosh::Template::Test::Link.new(
+      name: name,
+      instances: spec["instances"].map { |i| Bosh::Template::Test::LinkInstance.new(address: i["address"]) },
+      properties: spec.fetch("properties", {}),
+    )
+  end
+
+  topdir = File.join(File.dirname(__FILE__), '../../..')
+  template = Bosh::Template::Test::ReleaseDir.new(topdir)
+                                             .job(options.job).template(options.template)
+
+  puts template.render(ctx.fetch("properties", {}), consumes: links)
+end
+
+if __FILE__ == $0
+  main
+end
