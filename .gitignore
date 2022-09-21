@@ -19,6 +19,6 @@ releases/**/*.tgz
 #*
 /bin
 out/
-pkg/
+/pkg
 *.iml
 .manifests
