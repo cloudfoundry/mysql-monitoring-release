@@ -1,16 +1,15 @@
 package integration_test
 
 import (
+	"database/sql"
+	"fmt"
+	"testing"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"database/sql"
-
 	_ "github.com/go-sql-driver/mysql"
-
-	"fmt"
-	"os"
-	"testing"
+	"github.com/ory/dockertest/v3"
 )
 
 func TestIntegration(t *testing.T) {
@@ -25,17 +24,31 @@ var (
 
 	databaseName string
 	databaseDSN  string
+
+	pool     *dockertest.Pool
+	resource *dockertest.Resource
 )
 
-var _ = SynchronizedBeforeSuite(func() []byte { return nil }, func(data []byte) {
-	if env, ok := os.LookupEnv("MYSQL_USER"); ok {
-		databaseUser = env
-	}
-	if env, ok := os.LookupEnv("MYSQL_PASSWORD"); ok {
-		databasePassword = env
-	}
+var _ = SynchronizedBeforeSuite(func() []byte {
+	var err error
+	pool, err = dockertest.NewPool("")
+	Expect(err).NotTo(HaveOccurred())
 
-	baseDSN = databaseUser + ":" + databasePassword + "@/"
+	resource, err = pool.RunWithOptions(&dockertest.RunOptions{
+		Repository: "percona/percona-server",
+		Tag:        "8.0",
+		Env:        []string{"MYSQL_ALLOW_EMPTY_PASSWORD=1"},
+	})
+	Expect(err).NotTo(HaveOccurred())
+
+	db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(localhost:%s)/", resource.GetPort("3306/tcp")))
+	Expect(err).NotTo(HaveOccurred())
+	Expect(pool.Retry(db.Ping)).To(Succeed())
+
+	return []byte(resource.GetPort("3306/tcp"))
+}, func(data []byte) {
+
+	baseDSN = fmt.Sprintf("root@tcp(localhost:%s)/", string(data))
 
 	db, err := sql.Open("mysql", baseDSN)
 	Expect(err).NotTo(HaveOccurred())
