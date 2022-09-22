@@ -59,6 +59,8 @@ builds:
     version: 8.20.0
   a71d63dc-919c-404b-b460-ae39e984ce3a:
     version: "6"
+  af117b93-8134-4cc3-49cd-e98f8a107b7d:
+    version: 9.19.0
   afb2277e-b38d-41c2-9c33-31486835d3b3:
     version: 8.1.0
   b1d9eb17-8038-4a20-43f5-b8fa80320daf:
