@@ -13,11 +13,11 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	trace "code.cloudfoundry.org/trace-logger"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v4"
 
-	"code.cloudfoundry.org/clock"
 	"code.cloudfoundry.org/lager"
 
 	"code.cloudfoundry.org/uaa-go-client/config"
@@ -41,7 +41,7 @@ type Client interface {
 }
 
 type UaaClient struct {
-	clock            clock.Clock
+	clock            clock
 	config           *config.Config
 	client           *http.Client
 	cachedToken      *schema.Token
@@ -57,8 +57,14 @@ type OpenIDConfig struct {
 	Issuer string `json:"issuer"`
 }
 
-func NewClient(logger lager.Logger, cfg *config.Config, clock clock.Clock) (Client, error) {
+type clock interface {
+	Now() time.Time
+	Sleep(d time.Duration)
+}
+
+func NewClient(logger lager.Logger, cfg *config.Config, clock clock) (Client, error) {
 	logger.Session("uaa-client")
+
 	var (
 		client *http.Client
 		err    error
@@ -309,12 +315,13 @@ func (u *UaaClient) DecodeToken(uaaToken string, desiredPermissions ...string) e
 		return err
 	}
 
-	var token *jwt.Token
-	var uaaKey string
-	forceUaaKeyFetch := false
+	var (
+		token            *jwt.Token
+		uaaKey           string
+		forceUaaKeyFetch bool
+	)
 
 	for i := 0; i < 2; i++ {
-
 		uaaKey, err = u.getUaaTokenKey(logger, forceUaaKeyFetch)
 
 		if err == nil {
@@ -325,7 +332,13 @@ func (u *UaaClient) DecodeToken(uaaToken string, desiredPermissions ...string) e
 				if !u.isValidIssuer(t) {
 					return nil, errors.New("invalid issuer")
 				}
-				return []byte(uaaKey), nil
+
+				pubKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(uaaKey))
+				if err != nil {
+					return nil, err
+				}
+
+				return pubKey, nil
 			})
 
 			if err != nil {
@@ -333,6 +346,11 @@ func (u *UaaClient) DecodeToken(uaaToken string, desiredPermissions ...string) e
 				if matchesError(err, jwt.ValidationErrorSignatureInvalid) {
 					forceUaaKeyFetch = true
 					continue
+				}
+				if matchesError(err, jwt.ValidationErrorIssuedAt) {
+					logger.Info("decode-token-ignoring-issued-at-validation")
+					err = nil
+					break
 				}
 			}
 		}
@@ -345,8 +363,10 @@ func (u *UaaClient) DecodeToken(uaaToken string, desiredPermissions ...string) e
 	}
 
 	hasPermission := false
-	permissions := token.Claims["scope"]
-
+	var permissions interface{}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		permissions = claims["scope"]
+	}
 	a := permissions.([]interface{})
 
 	for _, permission := range a {
@@ -373,8 +393,9 @@ func (u *UaaClient) isValidIssuer(token *jwt.Token) bool {
 			return false
 		}
 	}
-	if value, ok := token.Claims["iss"]; ok {
-		return value == u.issuer
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		return claims.VerifyIssuer(u.issuer, true)
 	}
 	return false
 }
@@ -415,7 +436,7 @@ func (u *UaaClient) RegisterOauthClient(oauthClient *schema.OauthClient) (*schem
 		return nil, ErrClientAlreadyExists
 	}
 
-	if response.StatusCode != http.StatusOK {
+	if response.StatusCode != http.StatusCreated {
 		return nil, err
 	}
 

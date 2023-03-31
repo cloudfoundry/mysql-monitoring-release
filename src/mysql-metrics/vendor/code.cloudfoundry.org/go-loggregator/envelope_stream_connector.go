@@ -25,7 +25,8 @@ type EnvelopeStreamConnector struct {
 	bufferSize int
 	alerter    func(int)
 
-	log Logger
+	log         Logger
+	dialOptions []grpc.DialOption
 }
 
 // NewEnvelopeStreamConnector creates a new EnvelopeStreamConnector. Its TLS
@@ -61,6 +62,14 @@ func WithEnvelopeStreamLogger(l Logger) EnvelopeStreamOption {
 	}
 }
 
+// WithEnvelopeStreamConnectorDialOptions allows for configuration of
+// grpc dial options.
+func WithEnvelopeStreamConnectorDialOptions(opts ...grpc.DialOption) EnvelopeStreamOption {
+	return func(c *EnvelopeStreamConnector) {
+		c.dialOptions = opts
+	}
+}
+
 // WithEnvelopeStreamBuffer enables the EnvelopeStream to read more quickly
 // from the stream. It puts each envelope in a buffer that overwrites data if
 // it is not being drained quick enough. If the buffer drops data, the
@@ -81,7 +90,7 @@ type EnvelopeStream func() []*loggregator_v2.Envelope
 // underlying gRPC stream dies, it attempts to reconnect until the context
 // is done.
 func (c *EnvelopeStreamConnector) Stream(ctx context.Context, req *loggregator_v2.EgressBatchRequest) EnvelopeStream {
-	s := newStream(ctx, c.addr, req, c.tlsConf, c.log)
+	s := newStream(ctx, c.addr, req, c.tlsConf, c.dialOptions, c.log)
 	if c.alerter != nil || c.bufferSize > 0 {
 		d := NewOneToOneEnvelopeBatch(
 			c.bufferSize,
@@ -119,17 +128,28 @@ func newStream(
 	addr string,
 	req *loggregator_v2.EgressBatchRequest,
 	c *tls.Config,
+	opts []grpc.DialOption,
 	log Logger,
 ) *stream {
+	opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(c)))
 	conn, err := grpc.Dial(
 		addr,
-		grpc.WithTransportCredentials(credentials.NewTLS(c)),
+		opts...,
 	)
 	if err != nil {
 		// This error occurs on invalid configuration. And more notably,
 		// it does NOT occur if the server is not up.
-		panic("Invalid gRPC dial configuration: " + err.Error())
+		log.Panicf("invalid gRPC dial configuration: %s", err)
 	}
+
+	// Protect against a go-routine leak. gRPC will keep a go-routine active
+	// within the connection to keep the connectin alive. We have to close
+	// this or the go-routine leaks. This is untested. We had trouble exposing
+	// the underlying connectin was still active.
+	go func() {
+		<-ctx.Done()
+		conn.Close()
+	}()
 
 	client := loggregator_v2.NewEgressClient(conn)
 
