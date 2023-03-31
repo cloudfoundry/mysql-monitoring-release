@@ -69,6 +69,7 @@ func WithAddr(addr string) IngressOption {
 // Logger declares the minimal logging interface used within the v2 client
 type Logger interface {
 	Printf(string, ...interface{})
+	Panicf(string, ...interface{})
 }
 
 // WithLogger allows for the configuration of a logger.
@@ -156,6 +157,7 @@ type protoEditor interface {
 	SetLogToStdout()
 	SetGaugeValue(name string, value float64, unit string)
 	SetDelta(d uint64)
+	SetTotal(t uint64)
 	SetTag(name, value string)
 }
 
@@ -312,6 +314,21 @@ func WithDelta(d uint64) EmitCounterOption {
 	}
 }
 
+// WithTotal is an option that sets the total for a counter.
+func WithTotal(t uint64) EmitCounterOption {
+	return func(m proto.Message) {
+		switch e := m.(type) {
+		case *loggregator_v2.Envelope:
+			e.GetCounter().Total = t
+			e.GetCounter().Delta = 0
+		case protoEditor:
+			e.SetTotal(t)
+		default:
+			panic(fmt.Sprintf("unsupported Message type: %T", m))
+		}
+	}
+}
+
 // WithCounterAppInfo configures an envelope with both the app ID and index.
 // Exists for backward compatability. If possible, use WithCounterSourceInfo
 // instead.
@@ -406,6 +423,22 @@ func (c *IngressClient) EmitTimer(name string, start, stop time.Time, opts ...Em
 // EmitEventOption is the option type passed into EmitEvent.
 type EmitEventOption func(proto.Message)
 
+// WithEventSourceInfo configures an envelope with both the source and instance
+// IDs.
+func WithEventSourceInfo(sourceID, instanceID string) EmitEventOption {
+	return func(m proto.Message) {
+		switch e := m.(type) {
+		case *loggregator_v2.Envelope:
+			e.SourceId = sourceID
+			e.InstanceId = instanceID
+		case protoEditor:
+			e.SetSourceInfo(sourceID, instanceID)
+		default:
+			panic(fmt.Sprintf("unsupported Message type: %T", m))
+		}
+	}
+}
+
 // EmitEvent sends an Event envelope.
 func (c *IngressClient) EmitEvent(ctx context.Context, title, body string, opts ...EmitEventOption) error {
 	e := &loggregator_v2.Envelope{
@@ -434,6 +467,11 @@ func (c *IngressClient) EmitEvent(ctx context.Context, title, body string, opts 
 	return err
 }
 
+// Emit sends an envelope. It will sent within a batch.
+func (c *IngressClient) Emit(e *loggregator_v2.Envelope) {
+	c.envelopes <- e
+}
+
 // CloseSend will flush the envelope buffers and close the stream to the
 // ingress server. This method will block until the buffers are flushed.
 func (c *IngressClient) CloseSend() error {
@@ -453,9 +491,13 @@ func (c *IngressClient) startSender() {
 		case env, ok := <-c.envelopes:
 			if !ok {
 				if len(batch) > 0 {
-					c.closeErrors <- c.flush(batch)
+					err := c.flush(batch)
+					c.closeAndRecv()
+					c.closeErrors <- err
+					return
 				}
 
+				c.closeAndRecv()
 				c.closeErrors <- nil
 
 				return
@@ -479,6 +521,13 @@ func (c *IngressClient) startSender() {
 			t.Reset(c.batchFlushInterval)
 		}
 	}
+}
+
+func (c *IngressClient) closeAndRecv() {
+	if c.sender == nil {
+		return
+	}
+	c.sender.CloseAndRecv()
 }
 
 func (c *IngressClient) flush(batch []*loggregator_v2.Envelope) error {
