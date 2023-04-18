@@ -1,0 +1,8 @@
+- type: replace
+  path: /instance_groups/name=mysql/jobs/name=mysql-metrics?
+  value:
+    name: mysql-metrics
+    release: mysql-monitoring
+    properties:
+      mysql-metrics:
+        port: "6033"
