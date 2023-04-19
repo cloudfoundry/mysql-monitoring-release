@@ -30,7 +30,7 @@ end
 config = {
   instance_id: spec.id,
   host: db_host,
-  port: p('mysql-metrics.port'),
+  port: link('mysql').p('port'),
   username: p('mysql-metrics.username'),
   password: db_password,
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
