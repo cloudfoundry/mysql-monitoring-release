@@ -28,8 +28,8 @@ var _ = Describe("Metrics are received", func() {
 
 	It("has unique wsrep_local_index values for each node", func() {
 		workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
-			session := cf.Cf("tail", "-f", "p-mysql")
-			Eventually(session, 50*time.Second).Should(SatisfyAll(
+			session := cf.Cf("tail", "-f", "p-mysql", "--name-filter=/p-mysql/galera/wsrep_local_index")
+			Eventually(session, 40*time.Second).Should(SatisfyAll(
 				gbytes.Say("mysql/galera/wsrep_local_index:0"),
 				gbytes.Say("mysql/galera/wsrep_local_index:1"),
 				gbytes.Say("mysql/galera/wsrep_local_index:2"),
