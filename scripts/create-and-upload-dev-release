@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -eo pipefail
+
+echo "## Creating and uploading mysql-monitoring-release"
+bosh create-release --timestamp-version --sha2 --force && bosh upload-release
