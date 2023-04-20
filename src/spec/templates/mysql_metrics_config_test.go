@@ -100,7 +100,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 			templateContext.Properties = map[string]interface{}{
 				"mysql-metrics": map[string]interface{}{
 					"host":                            "host2",
-					"port":                            6033,
+					"port":                            5555,
 					"password":                        "password2",
 					"username":                        "username2",
 					"metrics_frequency":               31,
@@ -126,7 +126,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 			Expect(yaml.Unmarshal([]byte(templateOutput), &cfg)).To(Succeed())
 			Expect(cfg).To(gstruct.MatchAllKeys(gstruct.Keys{
 				"host":                         Equal("host2"),
-				"port":                         Equal(9191),
+				"port":                         Equal(5555),
 				"username":                     Equal("username2"),
 				"password":                     Equal("password2"),
 				"metrics_frequency":            Equal(31),

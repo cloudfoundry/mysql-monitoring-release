@@ -14,6 +14,13 @@ end.else do # when running on the broker
   end
 end
 
+db_port = nil
+if_p('mysql-metrics.port') do |port|
+  db_port = port
+end.else do
+  db_port = link('mysql').p('port')
+end
+
 db_password = nil
 if_p('mysql-metrics.password') do |password| # this property should be present when running on mysql node but not on broker
   db_password = password
@@ -30,7 +37,7 @@ end
 config = {
   instance_id: spec.id,
   host: db_host,
-  port: link('mysql').p('port'),
+  port: db_port,
   username: p('mysql-metrics.username'),
   password: db_password,
   metrics_frequency: p('mysql-metrics.metrics_frequency'),
