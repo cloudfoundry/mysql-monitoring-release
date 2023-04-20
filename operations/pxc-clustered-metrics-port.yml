@@ -1,3 +1,0 @@
-- type: replace
-  path: /instance_groups/name=mysql/jobs/name=mysql-metrics/properties/mysql-metrics?/port?
-  value: 6033
