@@ -9,14 +9,12 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gstruct"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var _ = Describe("MysqlMetricsConfig", func() {
 	var (
 		templateContext *TemplateContext
-		templateOutput  string
-		templateErr     error
 	)
 
 	renderTemplate := func(context *TemplateContext) (templateOutput string, err error) {
@@ -27,7 +25,9 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 		var output strings.Builder
 		cmd := exec.Command("./template",
-			"--job=mysql-metrics", "--template=config/mysql-metrics-config.yml", "--context="+string(templateContextJson),
+			"--job=mysql-metrics",
+			"--template=config/mysql-metrics-config.yml",
+			"--context="+string(templateContextJson),
 		)
 		cmd.Stdout = &output
 		cmd.Stderr = io.MultiWriter(&output, GinkgoWriter)
@@ -50,15 +50,11 @@ var _ = Describe("MysqlMetricsConfig", func() {
 				},
 			},
 		}
-		templateContext.Properties = map[string]interface{}{}
+		templateContext.Properties = map[string]any{}
 	}
 
 	BeforeEach(func() {
 		buildDefaultTemplateContext()
-	})
-
-	JustBeforeEach(func() {
-		templateOutput, templateErr = renderTemplate(templateContext)
 	})
 
 	Context("when required properties are present", func() {
@@ -70,6 +66,9 @@ var _ = Describe("MysqlMetricsConfig", func() {
 		})
 
 		It("renders default properties into JSON/Yaml", func() {
+			templateOutput, templateErr := renderTemplate(templateContext)
+			Expect(templateErr).NotTo(HaveOccurred())
+
 			var cfg map[string]any
 			Expect(yaml.Unmarshal([]byte(templateOutput), &cfg)).To(Succeed())
 			Expect(cfg).To(gstruct.MatchAllKeys(gstruct.Keys{
@@ -119,7 +118,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 				},
 			}
 
-			templateOutput, templateErr = renderTemplate(templateContext)
+			templateOutput, templateErr := renderTemplate(templateContext)
 			Expect(templateErr).NotTo(HaveOccurred())
 
 			var cfg map[string]any
@@ -154,75 +153,59 @@ var _ = Describe("MysqlMetricsConfig", func() {
 			templateContext.Properties["mysql-metrics"] = make(map[string]interface{})
 		})
 
-		Context("when a broker link is available", func() {
-			BeforeEach(func() {
-				templateContext.Links["broker"] = map[string]interface{}{
-					"properties": map[string]interface{}{
-						"cf_mysql": map[string]interface{}{
-							"broker": map[string]interface{}{
-								"db_password": "password from link",
-							},
-						},
-					},
-					"instances": []map[string]interface{}{{}},
-				}
-			})
-
-			It("renders the password from the broker link", func() {
-				Expect(templateOutput).To(ContainSubstring(`"password": "password from link"`))
-			})
-		})
-
-		Context("when there is no broker link available", func() {
-			It("raises an exception attempting to render", func() {
-				Expect(templateOutput).To(ContainSubstring("Password is required"))
-			})
+		It("raises an exception attempting to render", func() {
+			templateOutput, templateErr := renderTemplate(templateContext)
+			Expect(templateErr).To(HaveOccurred())
+			Expect(templateOutput).To(ContainSubstring("Password is required"))
 		})
 	})
 
-	Context("when host is not present as a property", func() {
+	Context("when mysql-metrics.port is not provided", func() {
+		BeforeEach(func() {
+			templateContext.Properties = map[string]any{
+				"mysql-metrics": map[string]any{"password": "required-db-password"},
+			}
+
+			templateContext.Links = map[string]any{
+				"mysql": map[string]any{
+					"instances": []map[string]any{
+						{
+							"address": "mysql link address",
+						},
+					},
+					"properties": map[string]any{
+						"port": 12345,
+					},
+				},
+			}
+		})
+
+		It("defaults to the port configured in the mysql link", func() {
+			templateOutput, templateErr := renderTemplate(templateContext)
+			Expect(templateErr).NotTo(HaveOccurred())
+
+			var cfg map[string]any
+			Expect(yaml.Unmarshal([]byte(templateOutput), &cfg)).To(Succeed())
+
+			Expect(cfg).To(HaveKeyWithValue("port", 12345))
+		})
+	})
+
+	Context("when mysql-metrics.host is not provided", func() {
 		BeforeEach(func() {
 			templateContext.Properties["mysql-metrics"] = map[string]interface{}{
 				"password": "required-password",
 			}
 		})
 
-		Context("when proxy is available as a link", func() {
-			Context("when there are >0 proxies", func() {
-				BeforeEach(func() {
-					templateContext.Links["proxy"] = map[string]interface{}{
-						"properties": map[string]interface{}{},
-						"instances": []map[string]interface{}{
-							{
-								"address": "proxy link address",
-							},
-						},
-					}
-				})
+		It("defaults to the loopback address", func() {
+			templateOutput, templateErr := renderTemplate(templateContext)
+			Expect(templateErr).NotTo(HaveOccurred())
 
-				It("renders the host as the IP of the first proxy", func() {
-					Expect(templateOutput).To(ContainSubstring(`"host": "proxy link address"`))
-				})
-			})
+			var cfg map[string]any
+			Expect(yaml.Unmarshal([]byte(templateOutput), &cfg)).To(Succeed())
 
-			Context("when there are 0 proxies", func() {
-				BeforeEach(func() {
-					templateContext.Links["proxy"] = map[string]interface{}{
-						"properties": map[string]interface{}{},
-						"instances":  []map[string]interface{}{},
-					}
-				})
-
-				It("renders the host as the IP of the first mysql instance", func() {
-					Expect(templateOutput).To(ContainSubstring(`"host": "mysql link address"`))
-				})
-			})
-		})
-
-		Context("when there is no proxy link", func() {
-			It("renders the host as the IP of the first mysql instance", func() {
-				Expect(templateOutput).To(ContainSubstring(`"host": "mysql link address"`))
-			})
+			Expect(cfg).To(HaveKeyWithValue("host", "127.0.0.1"))
 		})
 	})
 
@@ -235,6 +218,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 		})
 
 		It("raises an exception attempting to render", func() {
+			templateOutput, templateErr := renderTemplate(templateContext)
 			Expect(templateErr).To(HaveOccurred())
 			Expect(templateOutput).To(ContainSubstring("collecting metrics at this rate is not advised"))
 		})

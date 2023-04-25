@@ -1,67 +1,37 @@
 <%=
-
-db_host = nil
-if_p('mysql-metrics.host') do |host| # this property should be present when running on mysql node but not on broker
-  db_host = host
-end.else do # when running on the broker
-  if_link('proxy') do |proxy| # when there is a proxy
-    if proxy.instances.any?
-      db_host = proxy.instances.first.address
-    end
-  end
-  if db_host.nil? # if no proxy link exists, or proxy link exists but there are 0 instances of proxy
-    db_host = link('mysql').instances.first.address
-  end
-end
-
-db_port = nil
-if_p('mysql-metrics.port') do |port|
-  db_port = port
-end.else do
-  db_port = link('mysql').p('port')
-end
-
-db_password = nil
-if_p('mysql-metrics.password') do |password| # this property should be present when running on mysql node but not on broker
-  db_password = password
-end.else do
-  if_link('broker') do |broker_link|
-    db_password = broker_link.p('cf_mysql.broker.db_password')
-  end
-end
+db_host = p('mysql-metrics.host', '127.0.0.1')
+db_port = p('mysql-metrics.port', link('mysql').p('port'))
+db_password = p('mysql-metrics.password', nil)
 
 if db_password.nil?
   raise 'Password is required, either by directly setting the property or supplying the link'
 end
 
-config = {
-  instance_id: spec.id,
-  host: db_host,
-  port: db_port,
-  username: p('mysql-metrics.username'),
-  password: db_password,
-  metrics_frequency: p('mysql-metrics.metrics_frequency'),
-  origin: p('mysql-metrics.origin'),
-  source_id: p('mysql-metrics.source_id'),
-  emit_broker_metrics: p('mysql-metrics.broker_metrics_enabled'),
-  emit_disk_metrics: p('mysql-metrics.disk_metrics_enabled'),
-  emit_cpu_metrics: p('mysql-metrics.cpu_metrics_enabled'),
-  emit_mysql_metrics: p('mysql-metrics.mysql_metrics_enabled'),
-  emit_leader_follower_metrics: p('mysql-metrics.leader_follower_metrics_enabled'),
-  emit_galera_metrics: p('mysql-metrics.galera_metrics_enabled'),
-  emit_backup_metrics: p('mysql-metrics.backup_metrics_enabled'),
-  heartbeat_database: p('mysql-metrics.heartbeat_database'),
-  heartbeat_table: p('mysql-metrics.heartbeat_table'),
-  loggregator_ca_path: '/var/vcap/jobs/mysql-metrics/certs/loggregator-ca.pem',
-  loggregator_client_cert_path: '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-cert.pem',
-  loggregator_client_key_path: '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem'
-}
-if config[:metrics_frequency] < p('mysql-metrics.minimum_metrics_frequency')
+if p('mysql-metrics.metrics_frequency') < p('mysql-metrics.minimum_metrics_frequency')
   raise 'metrics_frequency < minimum_metrics_frequency: collecting metrics at this rate is not advised'
 end
 
-# JSON is valid yaml
-JSON.pretty_generate(config)
-
+{
+  "instance_id"                  => spec.id,
+  "host"                         => db_host,
+  "port"                         => db_port,
+  "username"                     => p('mysql-metrics.username'),
+  "password"                     => db_password,
+  "metrics_frequency"            => p('mysql-metrics.metrics_frequency'),
+  "origin"                       => p('mysql-metrics.origin'),
+  "source_id"                    => p('mysql-metrics.source_id'),
+  "emit_broker_metrics"          => p('mysql-metrics.broker_metrics_enabled'),
+  "emit_disk_metrics"            => p('mysql-metrics.disk_metrics_enabled'),
+  "emit_cpu_metrics"             => p('mysql-metrics.cpu_metrics_enabled'),
+  "emit_mysql_metrics"           => p('mysql-metrics.mysql_metrics_enabled'),
+  "emit_leader_follower_metrics" => p('mysql-metrics.leader_follower_metrics_enabled'),
+  "emit_galera_metrics"          => p('mysql-metrics.galera_metrics_enabled'),
+  "emit_backup_metrics"          => p('mysql-metrics.backup_metrics_enabled'),
+  "heartbeat_database"           => p('mysql-metrics.heartbeat_database'),
+  "heartbeat_table"              => p('mysql-metrics.heartbeat_table'),
+  "loggregator_ca_path"          => '/var/vcap/jobs/mysql-metrics/certs/loggregator-ca.pem',
+  "loggregator_client_cert_path" => '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-cert.pem',
+  "loggregator_client_key_path"  => '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem'
+}.to_yaml
 %>
 
