@@ -65,17 +65,13 @@ func (c *ConnectionFactory) Conns() ([]*models.NamedConnection, error) {
 
 	var conns []*models.NamedConnection
 	for _, ip := range c.clusterIPs {
-		cfg := &mysql.Config{
-			User:                 c.canaryUsername,
-			Passwd:               c.canaryPassword,
-			DBName:               c.canaryDatabase,
-			Net:                  "tcp",
-			Addr:                 fmt.Sprintf("%s:%d", ip, c.port),
-			AllowNativePasswords: true,
-			CheckConnLiveness:    true,
-			MaxAllowedPacket:     4194304,
-			TLSConfig:            "preferred",
-		}
+		cfg := mysql.NewConfig()
+		cfg.User = c.canaryUsername
+		cfg.Passwd = c.canaryPassword
+		cfg.DBName = c.canaryDatabase
+		cfg.Net = "tcp"
+		cfg.Addr = fmt.Sprintf("%s:%d", ip, c.port)
+		cfg.TLSConfig = "preferred"
 
 		conn, err := c.OpenConn(cfg.FormatDSN())
 		conns = append(conns, &models.NamedConnection{
