@@ -19,7 +19,6 @@
     release: mysql-monitoring
     properties:
       mysql-metrics:
-        host: "127.0.0.1"
         password: ((mysql_metrics_password))
         tls:
           ca: "((/((bosh_director_name))/cf/loggregator_tls_agent.ca))"

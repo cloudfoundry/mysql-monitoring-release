@@ -18,7 +18,6 @@
     release: mysql-monitoring
     properties:
       mysql-metrics:
-        host: localhost
         password: ((mysql_metrics_password))
         tls:
           ca: ((loggregator_tls_agent.ca))
