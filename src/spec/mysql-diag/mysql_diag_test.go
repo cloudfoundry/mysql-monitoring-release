@@ -6,7 +6,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
-	"github.com/pivotal/mysql-test-utils/testhelpers"
+
+	"github.com/cloudfoundry/mysql-monitoring-release/spec/testhelpers"
 )
 
 var _ = Describe("MySQLDiag", func() {

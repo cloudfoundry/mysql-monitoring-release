@@ -12,7 +12,8 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
-	"github.com/pivotal/mysql-test-utils/testhelpers"
+
+	"github.com/cloudfoundry/mysql-monitoring-release/spec/testhelpers"
 )
 
 var _ = Describe("Metrics are received", func() {
