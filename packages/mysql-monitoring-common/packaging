@@ -1,3 +1,0 @@
-set -e
-
-cp -a mysql-monitoring-common/* ${BOSH_INSTALL_TARGET}

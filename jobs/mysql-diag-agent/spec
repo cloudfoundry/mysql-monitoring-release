@@ -7,7 +7,6 @@ templates:
 
 packages:
 - mysql-diag
-- mysql-monitoring-common
 
 provides:
 - name: mysql-diag-agent
