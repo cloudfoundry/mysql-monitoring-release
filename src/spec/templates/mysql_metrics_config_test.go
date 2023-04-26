@@ -37,13 +37,13 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 	buildDefaultTemplateContext := func() {
 		templateContext = &TemplateContext{}
-		templateContext.Networks = map[string]interface{}{}
-		templateContext.Links = map[string]interface{}{
-			"mysql": map[string]interface{}{
-				"properties": map[string]interface{}{
+		templateContext.Networks = map[string]any{}
+		templateContext.Links = map[string]any{
+			"mysql": map[string]any{
+				"properties": map[string]any{
 					"port": 9191,
 				},
-				"instances": []map[string]interface{}{
+				"instances": []map[string]any{
 					{
 						"address": "mysql link address",
 					},
@@ -59,7 +59,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 	Context("when required properties are present", func() {
 		BeforeEach(func() {
-			templateContext.Properties["mysql-metrics"] = map[string]interface{}{
+			templateContext.Properties["mysql-metrics"] = map[string]any{
 				"host":     "required-host",
 				"password": "required-password",
 			}
@@ -96,8 +96,8 @@ var _ = Describe("MysqlMetricsConfig", func() {
 		})
 
 		It("renders user provided properties from the job spec", func() {
-			templateContext.Properties = map[string]interface{}{
-				"mysql-metrics": map[string]interface{}{
+			templateContext.Properties = map[string]any{
+				"mysql-metrics": map[string]any{
 					"host":                            "host2",
 					"port":                            5555,
 					"password":                        "password2",
@@ -150,7 +150,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 	Context("when password is not present as a property", func() {
 		BeforeEach(func() {
-			templateContext.Properties["mysql-metrics"] = make(map[string]interface{})
+			templateContext.Properties["mysql-metrics"] = make(map[string]any)
 		})
 
 		It("raises an exception attempting to render", func() {
@@ -193,7 +193,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 	Context("when mysql-metrics.host is not provided", func() {
 		BeforeEach(func() {
-			templateContext.Properties["mysql-metrics"] = map[string]interface{}{
+			templateContext.Properties["mysql-metrics"] = map[string]any{
 				"password": "required-password",
 			}
 		})
@@ -211,7 +211,7 @@ var _ = Describe("MysqlMetricsConfig", func() {
 
 	Context("when the metrics frequency is too often", func() {
 		BeforeEach(func() {
-			templateContext.Properties["mysql-metrics"] = map[string]interface{}{
+			templateContext.Properties["mysql-metrics"] = map[string]any{
 				"password":          "required-password",
 				"metrics_frequency": 1,
 			}
