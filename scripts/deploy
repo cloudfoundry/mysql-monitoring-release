@@ -8,9 +8,11 @@ topdir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 cd "${topdir}" || exit 1
 
+: "${cf_deployment:=cf}"
+
 director_name=$(bosh curl /info | jq -r .name)
 
-bosh --non-interactive --deployment=pxc deploy \
+bosh --non-interactive --deployment=pxc deploy --no-redact \
   ../pxc-release/pxc-deployment.yml \
   -o ../pxc-release/operations/use-clustered.yml \
   -o ../pxc-release/operations/minimal-mode.yml \
@@ -24,12 +26,15 @@ bosh --non-interactive --deployment=pxc deploy \
   -o operations/pxc-add-notifications-db.yml \
   -o operations/mysql-diag-agent-tls.yml \
   -o operations/replication-canary-tls.yml \
+  -o operations/add-loggregator-agents.yml \
   -o operations/dev-release.yml \
+  -v cf.deployment_name="${cf_deployment}" \
   -v proxy_route_suffix="proxy.${SYSTEM_DOMAIN}" \
   -v cf_skip_ssl_validation=true \
   -v mysql_monitoring_recipient_email=test@example.com \
   -v mysql_monitoring_cluster_identifier=pxc \
   -v mysql_monitoring_replication_canary_uaa_admin_client_secret="((/${director_name}/cf/uaa_admin_client_secret))" \
   -v bosh_director_name="${director_name}" \
+  -v loggregator_client_tls="/${director_name}/${cf_deployment}/loggregator_tls_agent" \
   -v pxc_version="${PXC_DEPLOY_VERSION:-latest}"
 
