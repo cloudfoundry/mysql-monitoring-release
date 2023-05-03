@@ -24,9 +24,10 @@ func (fake *FakeLogger) Error(arg1 string, arg2 error) {
 		arg1 string
 		arg2 error
 	}{arg1, arg2})
+	stub := fake.ErrorStub
 	fake.recordInvocation("Error", []interface{}{arg1, arg2})
 	fake.errorMutex.Unlock()
-	if fake.ErrorStub != nil {
+	if stub != nil {
 		fake.ErrorStub(arg1, arg2)
 	}
 }

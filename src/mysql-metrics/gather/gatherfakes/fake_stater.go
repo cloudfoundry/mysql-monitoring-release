@@ -37,15 +37,16 @@ func (fake *FakeStater) Stats(arg1 string) (uint64, uint64, uint64, uint64, erro
 	fake.statsArgsForCall = append(fake.statsArgsForCall, struct {
 		arg1 string
 	}{arg1})
+	stub := fake.StatsStub
+	fakeReturns := fake.statsReturns
 	fake.recordInvocation("Stats", []interface{}{arg1})
 	fake.statsMutex.Unlock()
-	if fake.StatsStub != nil {
-		return fake.StatsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3, ret.result4, ret.result5
 	}
-	fakeReturns := fake.statsReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3, fakeReturns.result4, fakeReturns.result5
 }
 

@@ -27,15 +27,16 @@ func (fake *FakeProcessor) Process() error {
 	ret, specificReturn := fake.processReturnsOnCall[len(fake.processArgsForCall)]
 	fake.processArgsForCall = append(fake.processArgsForCall, struct {
 	}{})
+	stub := fake.ProcessStub
+	fakeReturns := fake.processReturns
 	fake.recordInvocation("Process", []interface{}{})
 	fake.processMutex.Unlock()
-	if fake.ProcessStub != nil {
-		return fake.ProcessStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.processReturns
 	return fakeReturns.result1
 }
 

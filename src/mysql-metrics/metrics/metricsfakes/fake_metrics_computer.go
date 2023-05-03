@@ -118,15 +118,16 @@ func (fake *FakeMetricsComputer) ComputeAvailabilityMetric(arg1 bool) *metrics.M
 	fake.computeAvailabilityMetricArgsForCall = append(fake.computeAvailabilityMetricArgsForCall, struct {
 		arg1 bool
 	}{arg1})
+	stub := fake.ComputeAvailabilityMetricStub
+	fakeReturns := fake.computeAvailabilityMetricReturns
 	fake.recordInvocation("ComputeAvailabilityMetric", []interface{}{arg1})
 	fake.computeAvailabilityMetricMutex.Unlock()
-	if fake.ComputeAvailabilityMetricStub != nil {
-		return fake.ComputeAvailabilityMetricStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeAvailabilityMetricReturns
 	return fakeReturns.result1
 }
 
@@ -178,15 +179,16 @@ func (fake *FakeMetricsComputer) ComputeBackupMetric(arg1 time.Time) *metrics.Me
 	fake.computeBackupMetricArgsForCall = append(fake.computeBackupMetricArgsForCall, struct {
 		arg1 time.Time
 	}{arg1})
+	stub := fake.ComputeBackupMetricStub
+	fakeReturns := fake.computeBackupMetricReturns
 	fake.recordInvocation("ComputeBackupMetric", []interface{}{arg1})
 	fake.computeBackupMetricMutex.Unlock()
-	if fake.ComputeBackupMetricStub != nil {
-		return fake.ComputeBackupMetricStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeBackupMetricReturns
 	return fakeReturns.result1
 }
 
@@ -238,15 +240,16 @@ func (fake *FakeMetricsComputer) ComputeBrokerMetrics(arg1 map[string]string) []
 	fake.computeBrokerMetricsArgsForCall = append(fake.computeBrokerMetricsArgsForCall, struct {
 		arg1 map[string]string
 	}{arg1})
+	stub := fake.ComputeBrokerMetricsStub
+	fakeReturns := fake.computeBrokerMetricsReturns
 	fake.recordInvocation("ComputeBrokerMetrics", []interface{}{arg1})
 	fake.computeBrokerMetricsMutex.Unlock()
-	if fake.ComputeBrokerMetricsStub != nil {
-		return fake.ComputeBrokerMetricsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeBrokerMetricsReturns
 	return fakeReturns.result1
 }
 
@@ -298,15 +301,16 @@ func (fake *FakeMetricsComputer) ComputeCPUMetrics(arg1 map[string]string) []*me
 	fake.computeCPUMetricsArgsForCall = append(fake.computeCPUMetricsArgsForCall, struct {
 		arg1 map[string]string
 	}{arg1})
+	stub := fake.ComputeCPUMetricsStub
+	fakeReturns := fake.computeCPUMetricsReturns
 	fake.recordInvocation("ComputeCPUMetrics", []interface{}{arg1})
 	fake.computeCPUMetricsMutex.Unlock()
-	if fake.ComputeCPUMetricsStub != nil {
-		return fake.ComputeCPUMetricsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeCPUMetricsReturns
 	return fakeReturns.result1
 }
 
@@ -358,15 +362,16 @@ func (fake *FakeMetricsComputer) ComputeDiskMetrics(arg1 map[string]string) []*m
 	fake.computeDiskMetricsArgsForCall = append(fake.computeDiskMetricsArgsForCall, struct {
 		arg1 map[string]string
 	}{arg1})
+	stub := fake.ComputeDiskMetricsStub
+	fakeReturns := fake.computeDiskMetricsReturns
 	fake.recordInvocation("ComputeDiskMetrics", []interface{}{arg1})
 	fake.computeDiskMetricsMutex.Unlock()
-	if fake.ComputeDiskMetricsStub != nil {
-		return fake.ComputeDiskMetricsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeDiskMetricsReturns
 	return fakeReturns.result1
 }
 
@@ -418,15 +423,16 @@ func (fake *FakeMetricsComputer) ComputeGaleraMetrics(arg1 map[string]string) []
 	fake.computeGaleraMetricsArgsForCall = append(fake.computeGaleraMetricsArgsForCall, struct {
 		arg1 map[string]string
 	}{arg1})
+	stub := fake.ComputeGaleraMetricsStub
+	fakeReturns := fake.computeGaleraMetricsReturns
 	fake.recordInvocation("ComputeGaleraMetrics", []interface{}{arg1})
 	fake.computeGaleraMetricsMutex.Unlock()
-	if fake.ComputeGaleraMetricsStub != nil {
-		return fake.ComputeGaleraMetricsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeGaleraMetricsReturns
 	return fakeReturns.result1
 }
 
@@ -478,15 +484,16 @@ func (fake *FakeMetricsComputer) ComputeGlobalMetrics(arg1 map[string]string) []
 	fake.computeGlobalMetricsArgsForCall = append(fake.computeGlobalMetricsArgsForCall, struct {
 		arg1 map[string]string
 	}{arg1})
+	stub := fake.ComputeGlobalMetricsStub
+	fakeReturns := fake.computeGlobalMetricsReturns
 	fake.recordInvocation("ComputeGlobalMetrics", []interface{}{arg1})
 	fake.computeGlobalMetricsMutex.Unlock()
-	if fake.ComputeGlobalMetricsStub != nil {
-		return fake.ComputeGlobalMetricsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeGlobalMetricsReturns
 	return fakeReturns.result1
 }
 
@@ -538,15 +545,16 @@ func (fake *FakeMetricsComputer) ComputeIsFollowerMetric(arg1 bool) *metrics.Met
 	fake.computeIsFollowerMetricArgsForCall = append(fake.computeIsFollowerMetricArgsForCall, struct {
 		arg1 bool
 	}{arg1})
+	stub := fake.ComputeIsFollowerMetricStub
+	fakeReturns := fake.computeIsFollowerMetricReturns
 	fake.recordInvocation("ComputeIsFollowerMetric", []interface{}{arg1})
 	fake.computeIsFollowerMetricMutex.Unlock()
-	if fake.ComputeIsFollowerMetricStub != nil {
-		return fake.ComputeIsFollowerMetricStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeIsFollowerMetricReturns
 	return fakeReturns.result1
 }
 
@@ -598,15 +606,16 @@ func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetrics(arg1 map[string]st
 	fake.computeLeaderFollowerMetricsArgsForCall = append(fake.computeLeaderFollowerMetricsArgsForCall, struct {
 		arg1 map[string]string
 	}{arg1})
+	stub := fake.ComputeLeaderFollowerMetricsStub
+	fakeReturns := fake.computeLeaderFollowerMetricsReturns
 	fake.recordInvocation("ComputeLeaderFollowerMetrics", []interface{}{arg1})
 	fake.computeLeaderFollowerMetricsMutex.Unlock()
-	if fake.ComputeLeaderFollowerMetricsStub != nil {
-		return fake.ComputeLeaderFollowerMetricsStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.computeLeaderFollowerMetricsReturns
 	return fakeReturns.result1
 }
 

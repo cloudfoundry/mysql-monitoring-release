@@ -29,15 +29,16 @@ func (fake *FakeCpuStater) GetPercentage() (int, error) {
 	ret, specificReturn := fake.getPercentageReturnsOnCall[len(fake.getPercentageArgsForCall)]
 	fake.getPercentageArgsForCall = append(fake.getPercentageArgsForCall, struct {
 	}{})
+	stub := fake.GetPercentageStub
+	fakeReturns := fake.getPercentageReturns
 	fake.recordInvocation("GetPercentage", []interface{}{})
 	fake.getPercentageMutex.Unlock()
-	if fake.GetPercentageStub != nil {
-		return fake.GetPercentageStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.getPercentageReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 

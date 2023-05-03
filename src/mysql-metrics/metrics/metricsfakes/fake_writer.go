@@ -34,15 +34,16 @@ func (fake *FakeWriter) Write(arg1 []*metrics.Metric) error {
 	fake.writeArgsForCall = append(fake.writeArgsForCall, struct {
 		arg1 []*metrics.Metric
 	}{arg1Copy})
+	stub := fake.WriteStub
+	fakeReturns := fake.writeReturns
 	fake.recordInvocation("Write", []interface{}{arg1Copy})
 	fake.writeMutex.Unlock()
-	if fake.WriteStub != nil {
-		return fake.WriteStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.writeReturns
 	return fakeReturns.result1
 }
 

@@ -116,15 +116,16 @@ func (fake *FakeGatherer) BrokerStats() (map[string]string, error) {
 	ret, specificReturn := fake.brokerStatsReturnsOnCall[len(fake.brokerStatsArgsForCall)]
 	fake.brokerStatsArgsForCall = append(fake.brokerStatsArgsForCall, struct {
 	}{})
+	stub := fake.BrokerStatsStub
+	fakeReturns := fake.brokerStatsReturns
 	fake.recordInvocation("BrokerStats", []interface{}{})
 	fake.brokerStatsMutex.Unlock()
-	if fake.BrokerStatsStub != nil {
-		return fake.BrokerStatsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.brokerStatsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -171,15 +172,16 @@ func (fake *FakeGatherer) CPUStats() (map[string]string, error) {
 	ret, specificReturn := fake.cPUStatsReturnsOnCall[len(fake.cPUStatsArgsForCall)]
 	fake.cPUStatsArgsForCall = append(fake.cPUStatsArgsForCall, struct {
 	}{})
+	stub := fake.CPUStatsStub
+	fakeReturns := fake.cPUStatsReturns
 	fake.recordInvocation("CPUStats", []interface{}{})
 	fake.cPUStatsMutex.Unlock()
-	if fake.CPUStatsStub != nil {
-		return fake.CPUStatsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.cPUStatsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -226,15 +228,16 @@ func (fake *FakeGatherer) DatabaseMetadata() (map[string]string, map[string]stri
 	ret, specificReturn := fake.databaseMetadataReturnsOnCall[len(fake.databaseMetadataArgsForCall)]
 	fake.databaseMetadataArgsForCall = append(fake.databaseMetadataArgsForCall, struct {
 	}{})
+	stub := fake.DatabaseMetadataStub
+	fakeReturns := fake.databaseMetadataReturns
 	fake.recordInvocation("DatabaseMetadata", []interface{}{})
 	fake.databaseMetadataMutex.Unlock()
-	if fake.DatabaseMetadataStub != nil {
-		return fake.DatabaseMetadataStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.databaseMetadataReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -284,15 +287,16 @@ func (fake *FakeGatherer) DiskStats() (map[string]string, error) {
 	ret, specificReturn := fake.diskStatsReturnsOnCall[len(fake.diskStatsArgsForCall)]
 	fake.diskStatsArgsForCall = append(fake.diskStatsArgsForCall, struct {
 	}{})
+	stub := fake.DiskStatsStub
+	fakeReturns := fake.diskStatsReturns
 	fake.recordInvocation("DiskStats", []interface{}{})
 	fake.diskStatsMutex.Unlock()
-	if fake.DiskStatsStub != nil {
-		return fake.DiskStatsStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.diskStatsReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -339,15 +343,16 @@ func (fake *FakeGatherer) FindLastBackupTimestamp() (time.Time, error) {
 	ret, specificReturn := fake.findLastBackupTimestampReturnsOnCall[len(fake.findLastBackupTimestampArgsForCall)]
 	fake.findLastBackupTimestampArgsForCall = append(fake.findLastBackupTimestampArgsForCall, struct {
 	}{})
+	stub := fake.FindLastBackupTimestampStub
+	fakeReturns := fake.findLastBackupTimestampReturns
 	fake.recordInvocation("FindLastBackupTimestamp", []interface{}{})
 	fake.findLastBackupTimestampMutex.Unlock()
-	if fake.FindLastBackupTimestampStub != nil {
-		return fake.FindLastBackupTimestampStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.findLastBackupTimestampReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -394,15 +399,16 @@ func (fake *FakeGatherer) FollowerMetadata() (map[string]string, map[string]stri
 	ret, specificReturn := fake.followerMetadataReturnsOnCall[len(fake.followerMetadataArgsForCall)]
 	fake.followerMetadataArgsForCall = append(fake.followerMetadataArgsForCall, struct {
 	}{})
+	stub := fake.FollowerMetadataStub
+	fakeReturns := fake.followerMetadataReturns
 	fake.recordInvocation("FollowerMetadata", []interface{}{})
 	fake.followerMetadataMutex.Unlock()
-	if fake.FollowerMetadataStub != nil {
-		return fake.FollowerMetadataStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.followerMetadataReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -452,15 +458,16 @@ func (fake *FakeGatherer) IsDatabaseAvailable() bool {
 	ret, specificReturn := fake.isDatabaseAvailableReturnsOnCall[len(fake.isDatabaseAvailableArgsForCall)]
 	fake.isDatabaseAvailableArgsForCall = append(fake.isDatabaseAvailableArgsForCall, struct {
 	}{})
+	stub := fake.IsDatabaseAvailableStub
+	fakeReturns := fake.isDatabaseAvailableReturns
 	fake.recordInvocation("IsDatabaseAvailable", []interface{}{})
 	fake.isDatabaseAvailableMutex.Unlock()
-	if fake.IsDatabaseAvailableStub != nil {
-		return fake.IsDatabaseAvailableStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.isDatabaseAvailableReturns
 	return fakeReturns.result1
 }
 
@@ -504,15 +511,16 @@ func (fake *FakeGatherer) IsDatabaseFollower() (bool, error) {
 	ret, specificReturn := fake.isDatabaseFollowerReturnsOnCall[len(fake.isDatabaseFollowerArgsForCall)]
 	fake.isDatabaseFollowerArgsForCall = append(fake.isDatabaseFollowerArgsForCall, struct {
 	}{})
+	stub := fake.IsDatabaseFollowerStub
+	fakeReturns := fake.isDatabaseFollowerReturns
 	fake.recordInvocation("IsDatabaseFollower", []interface{}{})
 	fake.isDatabaseFollowerMutex.Unlock()
-	if fake.IsDatabaseFollowerStub != nil {
-		return fake.IsDatabaseFollowerStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.isDatabaseFollowerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 

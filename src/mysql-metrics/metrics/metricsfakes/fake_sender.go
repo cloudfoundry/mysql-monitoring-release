@@ -33,15 +33,16 @@ func (fake *FakeSender) SendValue(arg1 string, arg2 float64, arg3 string) error 
 		arg2 float64
 		arg3 string
 	}{arg1, arg2, arg3})
+	stub := fake.SendValueStub
+	fakeReturns := fake.sendValueReturns
 	fake.recordInvocation("SendValue", []interface{}{arg1, arg2, arg3})
 	fake.sendValueMutex.Unlock()
-	if fake.SendValueStub != nil {
-		return fake.SendValueStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.sendValueReturns
 	return fakeReturns.result1
 }
 

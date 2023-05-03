@@ -30,9 +30,10 @@ func (fake *FakeLogger) Debug(arg1 string, arg2 map[string]interface{}) {
 		arg1 string
 		arg2 map[string]interface{}
 	}{arg1, arg2})
+	stub := fake.DebugStub
 	fake.recordInvocation("Debug", []interface{}{arg1, arg2})
 	fake.debugMutex.Unlock()
-	if fake.DebugStub != nil {
+	if stub != nil {
 		fake.DebugStub(arg1, arg2)
 	}
 }
@@ -62,9 +63,10 @@ func (fake *FakeLogger) Error(arg1 string, arg2 error) {
 		arg1 string
 		arg2 error
 	}{arg1, arg2})
+	stub := fake.ErrorStub
 	fake.recordInvocation("Error", []interface{}{arg1, arg2})
 	fake.errorMutex.Unlock()
-	if fake.ErrorStub != nil {
+	if stub != nil {
 		fake.ErrorStub(arg1, arg2)
 	}
 }

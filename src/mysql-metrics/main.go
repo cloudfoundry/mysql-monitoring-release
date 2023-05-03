@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"code.cloudfoundry.org/lager/lagerflags"
+	"code.cloudfoundry.org/lager/v3/lagerflags"
 
 	"github.com/cloudfoundry/mysql-metrics/config"
 	"github.com/cloudfoundry/mysql-metrics/cpu"
@@ -19,8 +19,8 @@ import (
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics_computer"
 
-	"code.cloudfoundry.org/go-loggregator"
-	"code.cloudfoundry.org/lager"
+	"code.cloudfoundry.org/go-loggregator/v9"
+	"code.cloudfoundry.org/lager/v3"
 )
 
 const (

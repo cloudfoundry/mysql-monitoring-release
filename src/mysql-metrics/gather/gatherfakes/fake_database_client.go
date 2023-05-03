@@ -112,15 +112,16 @@ func (fake *FakeDatabaseClient) FindLastBackupTimestamp() (time.Time, error) {
 	ret, specificReturn := fake.findLastBackupTimestampReturnsOnCall[len(fake.findLastBackupTimestampArgsForCall)]
 	fake.findLastBackupTimestampArgsForCall = append(fake.findLastBackupTimestampArgsForCall, struct {
 	}{})
+	stub := fake.FindLastBackupTimestampStub
+	fakeReturns := fake.findLastBackupTimestampReturns
 	fake.recordInvocation("FindLastBackupTimestamp", []interface{}{})
 	fake.findLastBackupTimestampMutex.Unlock()
-	if fake.FindLastBackupTimestampStub != nil {
-		return fake.FindLastBackupTimestampStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.findLastBackupTimestampReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -167,15 +168,16 @@ func (fake *FakeDatabaseClient) HeartbeatStatus() (map[string]string, error) {
 	ret, specificReturn := fake.heartbeatStatusReturnsOnCall[len(fake.heartbeatStatusArgsForCall)]
 	fake.heartbeatStatusArgsForCall = append(fake.heartbeatStatusArgsForCall, struct {
 	}{})
+	stub := fake.HeartbeatStatusStub
+	fakeReturns := fake.heartbeatStatusReturns
 	fake.recordInvocation("HeartbeatStatus", []interface{}{})
 	fake.heartbeatStatusMutex.Unlock()
-	if fake.HeartbeatStatusStub != nil {
-		return fake.HeartbeatStatusStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.heartbeatStatusReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -222,15 +224,16 @@ func (fake *FakeDatabaseClient) IsAvailable() bool {
 	ret, specificReturn := fake.isAvailableReturnsOnCall[len(fake.isAvailableArgsForCall)]
 	fake.isAvailableArgsForCall = append(fake.isAvailableArgsForCall, struct {
 	}{})
+	stub := fake.IsAvailableStub
+	fakeReturns := fake.isAvailableReturns
 	fake.recordInvocation("IsAvailable", []interface{}{})
 	fake.isAvailableMutex.Unlock()
-	if fake.IsAvailableStub != nil {
-		return fake.IsAvailableStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.isAvailableReturns
 	return fakeReturns.result1
 }
 
@@ -274,15 +277,16 @@ func (fake *FakeDatabaseClient) IsFollower() (bool, error) {
 	ret, specificReturn := fake.isFollowerReturnsOnCall[len(fake.isFollowerArgsForCall)]
 	fake.isFollowerArgsForCall = append(fake.isFollowerArgsForCall, struct {
 	}{})
+	stub := fake.IsFollowerStub
+	fakeReturns := fake.isFollowerReturns
 	fake.recordInvocation("IsFollower", []interface{}{})
 	fake.isFollowerMutex.Unlock()
-	if fake.IsFollowerStub != nil {
-		return fake.IsFollowerStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.isFollowerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -329,15 +333,16 @@ func (fake *FakeDatabaseClient) ServicePlansDiskAllocated() (map[string]string, 
 	ret, specificReturn := fake.servicePlansDiskAllocatedReturnsOnCall[len(fake.servicePlansDiskAllocatedArgsForCall)]
 	fake.servicePlansDiskAllocatedArgsForCall = append(fake.servicePlansDiskAllocatedArgsForCall, struct {
 	}{})
+	stub := fake.ServicePlansDiskAllocatedStub
+	fakeReturns := fake.servicePlansDiskAllocatedReturns
 	fake.recordInvocation("ServicePlansDiskAllocated", []interface{}{})
 	fake.servicePlansDiskAllocatedMutex.Unlock()
-	if fake.ServicePlansDiskAllocatedStub != nil {
-		return fake.ServicePlansDiskAllocatedStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.servicePlansDiskAllocatedReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -384,15 +389,16 @@ func (fake *FakeDatabaseClient) ShowGlobalStatus() (map[string]string, error) {
 	ret, specificReturn := fake.showGlobalStatusReturnsOnCall[len(fake.showGlobalStatusArgsForCall)]
 	fake.showGlobalStatusArgsForCall = append(fake.showGlobalStatusArgsForCall, struct {
 	}{})
+	stub := fake.ShowGlobalStatusStub
+	fakeReturns := fake.showGlobalStatusReturns
 	fake.recordInvocation("ShowGlobalStatus", []interface{}{})
 	fake.showGlobalStatusMutex.Unlock()
-	if fake.ShowGlobalStatusStub != nil {
-		return fake.ShowGlobalStatusStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.showGlobalStatusReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -439,15 +445,16 @@ func (fake *FakeDatabaseClient) ShowGlobalVariables() (map[string]string, error)
 	ret, specificReturn := fake.showGlobalVariablesReturnsOnCall[len(fake.showGlobalVariablesArgsForCall)]
 	fake.showGlobalVariablesArgsForCall = append(fake.showGlobalVariablesArgsForCall, struct {
 	}{})
+	stub := fake.ShowGlobalVariablesStub
+	fakeReturns := fake.showGlobalVariablesReturns
 	fake.recordInvocation("ShowGlobalVariables", []interface{}{})
 	fake.showGlobalVariablesMutex.Unlock()
-	if fake.ShowGlobalVariablesStub != nil {
-		return fake.ShowGlobalVariablesStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.showGlobalVariablesReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -494,15 +501,16 @@ func (fake *FakeDatabaseClient) ShowSlaveStatus() (map[string]string, error) {
 	ret, specificReturn := fake.showSlaveStatusReturnsOnCall[len(fake.showSlaveStatusArgsForCall)]
 	fake.showSlaveStatusArgsForCall = append(fake.showSlaveStatusArgsForCall, struct {
 	}{})
+	stub := fake.ShowSlaveStatusStub
+	fakeReturns := fake.showSlaveStatusReturns
 	fake.recordInvocation("ShowSlaveStatus", []interface{}{})
 	fake.showSlaveStatusMutex.Unlock()
-	if fake.ShowSlaveStatusStub != nil {
-		return fake.ShowSlaveStatusStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.showSlaveStatusReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 

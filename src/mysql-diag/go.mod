@@ -3,9 +3,9 @@ module github.com/cloudfoundry/mysql-diag
 go 1.20
 
 require (
+	code.cloudfoundry.org/bytefmt v0.0.0-20230406175530-3579ae0680eb
 	code.cloudfoundry.org/tlsconfig v0.0.0-20230320190829-8f91c367795b
 	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/cloudfoundry/bytefmt v0.0.0-20160918231612-b12c1522f4cb
 	github.com/fatih/color v1.15.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/olekukonko/tablewriter v0.0.5
@@ -15,7 +15,6 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/bytefmt v0.0.0-20190819182555-854d396b647c // indirect
 	filippo.io/edwards25519 v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

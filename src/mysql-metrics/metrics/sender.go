@@ -1,7 +1,7 @@
 package metrics
 
 import (
-	"code.cloudfoundry.org/go-loggregator"
+	"code.cloudfoundry.org/go-loggregator/v9"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Sender
