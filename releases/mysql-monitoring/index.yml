@@ -17,6 +17,8 @@ builds:
     version: "3"
   2c9797d1-5fd3-497d-674b-bcd9bfe1e875:
     version: 9.23.0
+  2f88c596-6a27-430f-6b4c-9b59e1087685:
+    version: 10.2.0
   3ba67ea8-f1b1-4f9b-5506-837c61c6a7ba:
     version: 8.12.0
   40379abb-b712-48fa-4817-9a04e0d7faf4:
