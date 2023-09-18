@@ -8,7 +8,7 @@ require (
 	code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9
 	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/cloudfoundry/multierror v0.0.0-20230612154636-062338189a67
+	github.com/cloudfoundry/multierror v0.0.0-20230911185048-add4c8e88cda
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.7.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
