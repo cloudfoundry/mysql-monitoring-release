@@ -5,7 +5,7 @@ go 1.20
 require (
 	code.cloudfoundry.org/clock v1.1.0
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227
+	code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/cloudfoundry/multierror v0.0.0-20230911185048-add4c8e88cda

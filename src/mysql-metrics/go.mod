@@ -16,8 +16,8 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/go-diodes v0.0.0-20230922223555-7c20b8038d48 // indirect
-	code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227 // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20230925214244-7bdb41469dfb // indirect
+	code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
@@ -32,7 +32,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
-	github.com/google/pprof v0.0.0-20230912144702-c363fe2c2ed8 // indirect
+	github.com/google/pprof v0.0.0-20230926050212-f7f687d19a98 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect

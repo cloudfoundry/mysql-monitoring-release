@@ -1,4 +1,4 @@
-# code.cloudfoundry.org/go-diodes v0.0.0-20230922223555-7c20b8038d48
+# code.cloudfoundry.org/go-diodes v0.0.0-20230925214244-7bdb41469dfb
 ## explicit; go 1.18
 code.cloudfoundry.org/go-diodes
 # code.cloudfoundry.org/go-loggregator/v9 v9.0.8
@@ -10,7 +10,7 @@ code.cloudfoundry.org/go-loggregator/v9/rpc/loggregator_v2
 code.cloudfoundry.org/lager/v3
 code.cloudfoundry.org/lager/v3/internal/truncate
 code.cloudfoundry.org/lager/v3/lagerflags
-# code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227
+# code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25
 ## explicit; go 1.19
 code.cloudfoundry.org/tlsconfig
 # github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161
@@ -88,7 +88,7 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/pprof v0.0.0-20230912144702-c363fe2c2ed8
+# github.com/google/pprof v0.0.0-20230926050212-f7f687d19a98
 ## explicit; go 1.19
 github.com/google/pprof/profile
 # github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510

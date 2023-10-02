@@ -4,8 +4,8 @@ code.cloudfoundry.org/lager v2.0.0+incompatible h1:WZwDKDB2PLd/oL+USK4b4aEjUymIe
 code.cloudfoundry.org/lager v2.0.0+incompatible/go.mod h1:O2sS7gKP3HM2iemG+EnwvyNQK7pTSC6Foi4QiMp9sSk=
 code.cloudfoundry.org/multierror v0.0.0-20170123201326-dafed03eebc6 h1:FQ2hzil6fbEJL+aJvvktImjFvd3tjhKpl3nkBchaeWA=
 code.cloudfoundry.org/multierror v0.0.0-20170123201326-dafed03eebc6/go.mod h1:c+YiqRxUyZdHqUjTeibfQS6ElBOOLhKNh3NBfZ57HnI=
-code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227 h1:QYyb6Ur0Ys6FciDB3+8zCW3eVk7AxAs2++Foa5DAdt0=
-code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227/go.mod h1:C8SxvGRSutmgzV2FxH8Zwqz2Q8HsaAITQRQFKhlDzPw=
+code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25 h1:vfCOuqnZi86Jg1EXMWtdCb9ieko4hna/CLzI6ECTgFA=
+code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25/go.mod h1:C8SxvGRSutmgzV2FxH8Zwqz2Q8HsaAITQRQFKhlDzPw=
 code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d h1:1I5BueV2nNkvIV40CQ0JQgmD/ijouF0QlLLOz0KMkRo=
 code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d/go.mod h1:KAH6N5nwHViCZsOgmApk6nj8TDuqRGb9R06Hk461Uwc=
 code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9 h1:HEYv6MM2eSwJhwH426daZgC5BtZDtducSgwM6qJoqZ8=

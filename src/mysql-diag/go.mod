@@ -4,13 +4,13 @@ go 1.20
 
 require (
 	code.cloudfoundry.org/bytefmt v0.0.0-20230612151507-41ef4d1f67a4
-	code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227
+	code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/fatih/color v1.15.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.27.10
+	github.com/onsi/gomega v1.28.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 

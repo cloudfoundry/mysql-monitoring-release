@@ -10,7 +10,7 @@ code.cloudfoundry.org/lager/lagerflags
 code.cloudfoundry.org/lager/lagertest
 # code.cloudfoundry.org/multierror v0.0.0-20170123201326-dafed03eebc6
 ## explicit
-# code.cloudfoundry.org/tlsconfig v0.0.0-20230612153104-23c0622de227
+# code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25
 ## explicit; go 1.19
 code.cloudfoundry.org/tlsconfig
 code.cloudfoundry.org/tlsconfig/certtest
