@@ -1,28 +1,32 @@
 package alert_test
 
 import (
-	"code.cloudfoundry.org/lager/lagertest"
-	. "github.com/cloudfoundry/replication-canary/alert"
-
+	"bytes"
+	"errors"
+	"log/slog"
 	"time"
 
-	"errors"
-
+	. "github.com/cloudfoundry/replication-canary/alert"
 	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("SwitchboardAlerter", func() {
 	var (
-		testLogger *lagertest.TestLogger
-
+		testWriter            *bytes.Buffer
+		testLogger            *slog.Logger
 		alerter               *SwitchboardAlerter
 		fakeSwitchboardClient *alertfakes.FakeSwitchboardClient
 	)
 
 	BeforeEach(func() {
-		testLogger = lagertest.NewTestLogger("Switchboard alerter test")
+		testWriter = new(bytes.Buffer)
+		// need to set 'LevelDebug' because otherwise it uses the default of Info
+		testHandler := slog.NewJSONHandler(testWriter, &slog.HandlerOptions{Level: slog.LevelDebug})
+		testLogger = slog.New(testHandler)
+
 		fakeSwitchboardClient = new(alertfakes.FakeSwitchboardClient)
 
 		alerter = &SwitchboardAlerter{
@@ -46,13 +50,13 @@ var _ = Describe("SwitchboardAlerter", func() {
 
 			BeforeEach(func() {
 				expectedError = errors.New("some-traffic-enabling-error")
-
 				fakeSwitchboardClient.EnableClusterTrafficReturns(expectedError)
 			})
 
 			It("returns the error", func() {
 				err := alerter.NotUnhealthy(time.Now())
 
+				Expect(testWriter.String()).To(ContainSubstring("Switchboard alerter enabling traffic"))
 				Expect(err).To(Equal(expectedError))
 			})
 		})
@@ -66,6 +70,7 @@ var _ = Describe("SwitchboardAlerter", func() {
 				err := alerter.NotUnhealthy(time.Now())
 				Expect(err).NotTo(HaveOccurred())
 
+				Expect(testWriter.String()).To(ContainSubstring("Switchboard alerter configured to no-op"))
 				Expect(fakeSwitchboardClient.EnableClusterTrafficCallCount()).To(Equal(0))
 				Expect(fakeSwitchboardClient.DisableClusterTrafficCallCount()).To(Equal(0))
 			})
@@ -77,6 +82,7 @@ var _ = Describe("SwitchboardAlerter", func() {
 			err := alerter.Unhealthy(time.Now())
 			Expect(err).NotTo(HaveOccurred())
 
+			Expect(testWriter.String()).To(ContainSubstring("Switchboard alerter disabling traffic"))
 			Expect(fakeSwitchboardClient.DisableClusterTrafficCallCount()).To(Equal(1))
 		})
 
@@ -94,6 +100,7 @@ var _ = Describe("SwitchboardAlerter", func() {
 			It("returns the error", func() {
 				err := alerter.Unhealthy(time.Now())
 
+				Expect(testWriter.String()).To(ContainSubstring("Switchboard alerter disabling traffic"))
 				Expect(err).To(Equal(expectedError))
 			})
 		})
@@ -107,6 +114,7 @@ var _ = Describe("SwitchboardAlerter", func() {
 				err := alerter.Unhealthy(time.Now())
 				Expect(err).NotTo(HaveOccurred())
 
+				Expect(testWriter.String()).To(ContainSubstring("Switchboard alerter configured to no-op"))
 				Expect(fakeSwitchboardClient.EnableClusterTrafficCallCount()).To(Equal(0))
 				Expect(fakeSwitchboardClient.DisableClusterTrafficCallCount()).To(Equal(0))
 			})
