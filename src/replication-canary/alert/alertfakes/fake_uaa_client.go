@@ -82,15 +82,16 @@ func (fake *FakeUAAClient) DecodeToken(arg1 string, arg2 ...string) error {
 		arg1 string
 		arg2 []string
 	}{arg1, arg2})
+	stub := fake.DecodeTokenStub
+	fakeReturns := fake.decodeTokenReturns
 	fake.recordInvocation("DecodeToken", []interface{}{arg1, arg2})
 	fake.decodeTokenMutex.Unlock()
-	if fake.DecodeTokenStub != nil {
-		return fake.DecodeTokenStub(arg1, arg2...)
+	if stub != nil {
+		return stub(arg1, arg2...)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.decodeTokenReturns
 	return fakeReturns.result1
 }
 
@@ -141,15 +142,16 @@ func (fake *FakeUAAClient) FetchIssuer() (string, error) {
 	ret, specificReturn := fake.fetchIssuerReturnsOnCall[len(fake.fetchIssuerArgsForCall)]
 	fake.fetchIssuerArgsForCall = append(fake.fetchIssuerArgsForCall, struct {
 	}{})
+	stub := fake.FetchIssuerStub
+	fakeReturns := fake.fetchIssuerReturns
 	fake.recordInvocation("FetchIssuer", []interface{}{})
 	fake.fetchIssuerMutex.Unlock()
-	if fake.FetchIssuerStub != nil {
-		return fake.FetchIssuerStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.fetchIssuerReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -196,15 +198,16 @@ func (fake *FakeUAAClient) FetchKey() (string, error) {
 	ret, specificReturn := fake.fetchKeyReturnsOnCall[len(fake.fetchKeyArgsForCall)]
 	fake.fetchKeyArgsForCall = append(fake.fetchKeyArgsForCall, struct {
 	}{})
+	stub := fake.FetchKeyStub
+	fakeReturns := fake.fetchKeyReturns
 	fake.recordInvocation("FetchKey", []interface{}{})
 	fake.fetchKeyMutex.Unlock()
-	if fake.FetchKeyStub != nil {
-		return fake.FetchKeyStub()
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.fetchKeyReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -252,15 +255,16 @@ func (fake *FakeUAAClient) FetchToken(arg1 bool) (*schema.Token, error) {
 	fake.fetchTokenArgsForCall = append(fake.fetchTokenArgsForCall, struct {
 		arg1 bool
 	}{arg1})
+	stub := fake.FetchTokenStub
+	fakeReturns := fake.fetchTokenReturns
 	fake.recordInvocation("FetchToken", []interface{}{arg1})
 	fake.fetchTokenMutex.Unlock()
-	if fake.FetchTokenStub != nil {
-		return fake.FetchTokenStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.fetchTokenReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 
@@ -315,15 +319,16 @@ func (fake *FakeUAAClient) RegisterOauthClient(arg1 *schema.OauthClient) (*schem
 	fake.registerOauthClientArgsForCall = append(fake.registerOauthClientArgsForCall, struct {
 		arg1 *schema.OauthClient
 	}{arg1})
+	stub := fake.RegisterOauthClientStub
+	fakeReturns := fake.registerOauthClientReturns
 	fake.recordInvocation("RegisterOauthClient", []interface{}{arg1})
 	fake.registerOauthClientMutex.Unlock()
-	if fake.RegisterOauthClientStub != nil {
-		return fake.RegisterOauthClientStub(arg1)
+	if stub != nil {
+		return stub(arg1)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
 	}
-	fakeReturns := fake.registerOauthClientReturns
 	return fakeReturns.result1, fakeReturns.result2
 }
 

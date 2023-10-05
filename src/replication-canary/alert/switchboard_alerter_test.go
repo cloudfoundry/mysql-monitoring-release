@@ -16,7 +16,6 @@ import (
 var _ = Describe("SwitchboardAlerter", func() {
 	var (
 		testWriter            *bytes.Buffer
-		testLogger            *slog.Logger
 		alerter               *SwitchboardAlerter
 		fakeSwitchboardClient *alertfakes.FakeSwitchboardClient
 	)
@@ -25,7 +24,7 @@ var _ = Describe("SwitchboardAlerter", func() {
 		testWriter = new(bytes.Buffer)
 		// need to set 'LevelDebug' because otherwise it uses the default of Info
 		testHandler := slog.NewJSONHandler(testWriter, &slog.HandlerOptions{Level: slog.LevelDebug})
-		testLogger = slog.New(testHandler)
+		testLogger := slog.New(testHandler)
 
 		fakeSwitchboardClient = new(alertfakes.FakeSwitchboardClient)
 

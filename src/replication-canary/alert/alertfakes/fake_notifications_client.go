@@ -37,15 +37,16 @@ func (fake *FakeNotificationsClient) Email(arg1 string, arg2 string, arg3 string
 		arg4 string
 		arg5 string
 	}{arg1, arg2, arg3, arg4, arg5})
+	stub := fake.EmailStub
+	fakeReturns := fake.emailReturns
 	fake.recordInvocation("Email", []interface{}{arg1, arg2, arg3, arg4, arg5})
 	fake.emailMutex.Unlock()
-	if fake.EmailStub != nil {
-		return fake.EmailStub(arg1, arg2, arg3, arg4, arg5)
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4, arg5)
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.emailReturns
 	return fakeReturns.result1
 }
 

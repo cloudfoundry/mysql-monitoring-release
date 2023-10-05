@@ -3,16 +3,14 @@ package alertfakes
 
 import (
 	"sync"
-	"time"
 
 	"github.com/cloudfoundry/replication-canary/alert"
 )
 
 type FakeAlerter struct {
-	NotUnhealthyStub        func(time.Time) error
+	NotUnhealthyStub        func() error
 	notUnhealthyMutex       sync.RWMutex
 	notUnhealthyArgsForCall []struct {
-		arg1 time.Time
 	}
 	notUnhealthyReturns struct {
 		result1 error
@@ -20,10 +18,9 @@ type FakeAlerter struct {
 	notUnhealthyReturnsOnCall map[int]struct {
 		result1 error
 	}
-	UnhealthyStub        func(time.Time) error
+	UnhealthyStub        func() error
 	unhealthyMutex       sync.RWMutex
 	unhealthyArgsForCall []struct {
-		arg1 time.Time
 	}
 	unhealthyReturns struct {
 		result1 error
@@ -35,21 +32,21 @@ type FakeAlerter struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeAlerter) NotUnhealthy(arg1 time.Time) error {
+func (fake *FakeAlerter) NotUnhealthy() error {
 	fake.notUnhealthyMutex.Lock()
 	ret, specificReturn := fake.notUnhealthyReturnsOnCall[len(fake.notUnhealthyArgsForCall)]
 	fake.notUnhealthyArgsForCall = append(fake.notUnhealthyArgsForCall, struct {
-		arg1 time.Time
-	}{arg1})
-	fake.recordInvocation("NotUnhealthy", []interface{}{arg1})
+	}{})
+	stub := fake.NotUnhealthyStub
+	fakeReturns := fake.notUnhealthyReturns
+	fake.recordInvocation("NotUnhealthy", []interface{}{})
 	fake.notUnhealthyMutex.Unlock()
-	if fake.NotUnhealthyStub != nil {
-		return fake.NotUnhealthyStub(arg1)
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.notUnhealthyReturns
 	return fakeReturns.result1
 }
 
@@ -59,17 +56,10 @@ func (fake *FakeAlerter) NotUnhealthyCallCount() int {
 	return len(fake.notUnhealthyArgsForCall)
 }
 
-func (fake *FakeAlerter) NotUnhealthyCalls(stub func(time.Time) error) {
+func (fake *FakeAlerter) NotUnhealthyCalls(stub func() error) {
 	fake.notUnhealthyMutex.Lock()
 	defer fake.notUnhealthyMutex.Unlock()
 	fake.NotUnhealthyStub = stub
-}
-
-func (fake *FakeAlerter) NotUnhealthyArgsForCall(i int) time.Time {
-	fake.notUnhealthyMutex.RLock()
-	defer fake.notUnhealthyMutex.RUnlock()
-	argsForCall := fake.notUnhealthyArgsForCall[i]
-	return argsForCall.arg1
 }
 
 func (fake *FakeAlerter) NotUnhealthyReturns(result1 error) {
@@ -95,21 +85,21 @@ func (fake *FakeAlerter) NotUnhealthyReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeAlerter) Unhealthy(arg1 time.Time) error {
+func (fake *FakeAlerter) Unhealthy() error {
 	fake.unhealthyMutex.Lock()
 	ret, specificReturn := fake.unhealthyReturnsOnCall[len(fake.unhealthyArgsForCall)]
 	fake.unhealthyArgsForCall = append(fake.unhealthyArgsForCall, struct {
-		arg1 time.Time
-	}{arg1})
-	fake.recordInvocation("Unhealthy", []interface{}{arg1})
+	}{})
+	stub := fake.UnhealthyStub
+	fakeReturns := fake.unhealthyReturns
+	fake.recordInvocation("Unhealthy", []interface{}{})
 	fake.unhealthyMutex.Unlock()
-	if fake.UnhealthyStub != nil {
-		return fake.UnhealthyStub(arg1)
+	if stub != nil {
+		return stub()
 	}
 	if specificReturn {
 		return ret.result1
 	}
-	fakeReturns := fake.unhealthyReturns
 	return fakeReturns.result1
 }
 
@@ -119,17 +109,10 @@ func (fake *FakeAlerter) UnhealthyCallCount() int {
 	return len(fake.unhealthyArgsForCall)
 }
 
-func (fake *FakeAlerter) UnhealthyCalls(stub func(time.Time) error) {
+func (fake *FakeAlerter) UnhealthyCalls(stub func() error) {
 	fake.unhealthyMutex.Lock()
 	defer fake.unhealthyMutex.Unlock()
 	fake.UnhealthyStub = stub
-}
-
-func (fake *FakeAlerter) UnhealthyArgsForCall(i int) time.Time {
-	fake.unhealthyMutex.RLock()
-	defer fake.unhealthyMutex.RUnlock()
-	argsForCall := fake.unhealthyArgsForCall[i]
-	return argsForCall.arg1
 }
 
 func (fake *FakeAlerter) UnhealthyReturns(result1 error) {

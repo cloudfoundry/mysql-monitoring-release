@@ -1,22 +1,21 @@
 package alert_test
 
 import (
-	"code.cloudfoundry.org/lager/lagertest"
-	. "github.com/cloudfoundry/replication-canary/alert"
-
+	"bytes"
 	"errors"
-	"time"
+	"log/slog"
 
 	"code.cloudfoundry.org/uaa-go-client/schema"
+	. "github.com/cloudfoundry/replication-canary/alert"
 	"github.com/cloudfoundry/replication-canary/alert/alertfakes"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("EmailingAlerter", func() {
 	var (
-		testLogger *lagertest.TestLogger
-
+		testWriter              *bytes.Buffer
 		alerter                 *EmailingAlerter
 		fakeUAAClient           *alertfakes.FakeUAAClient
 		fakeNotificationsClient *alertfakes.FakeNotificationsClient
@@ -26,7 +25,11 @@ var _ = Describe("EmailingAlerter", func() {
 	)
 
 	BeforeEach(func() {
-		testLogger = lagertest.NewTestLogger("Emailing alerter test")
+		testWriter = new(bytes.Buffer)
+		// need to set 'LevelDebug' because otherwise it uses the default of Info
+		testHandler := slog.NewJSONHandler(testWriter, &slog.HandlerOptions{Level: slog.LevelDebug})
+		testLogger := slog.New(testHandler)
+
 		fakeUAAClient = new(alertfakes.FakeUAAClient)
 		fakeNotificationsClient = new(alertfakes.FakeNotificationsClient)
 		toAddress = "barbaz@example.com"
@@ -51,7 +54,7 @@ var _ = Describe("EmailingAlerter", func() {
 
 	Describe("NotUnhealthy", func() {
 		It("no-ops", func() {
-			err := alerter.NotUnhealthy(time.Now())
+			err := alerter.NotUnhealthy()
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(fakeUAAClient.FetchTokenCallCount()).To(Equal(0))
@@ -62,7 +65,7 @@ var _ = Describe("EmailingAlerter", func() {
 
 	Describe("Unhealthy", func() {
 		It("grabs a token from the UAAClient and sends an email with it", func() {
-			err := alerter.Unhealthy(time.Now())
+			err := alerter.Unhealthy()
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(fakeUAAClient.FetchTokenCallCount()).To(Equal(1))
@@ -74,7 +77,7 @@ var _ = Describe("EmailingAlerter", func() {
 		})
 
 		It("invokes email with correct arguments", func() {
-			err := alerter.Unhealthy(time.Now())
+			err := alerter.Unhealthy()
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(fakeNotificationsClient.EmailCallCount()).To(Equal(1))
@@ -100,7 +103,7 @@ var _ = Describe("EmailingAlerter", func() {
 			})
 
 			It("returns the error", func() {
-				err := alerter.Unhealthy(time.Now())
+				err := alerter.Unhealthy()
 
 				Expect(err).To(Equal(expectedError))
 			})
@@ -118,7 +121,7 @@ var _ = Describe("EmailingAlerter", func() {
 			})
 
 			It("returns the error", func() {
-				err := alerter.Unhealthy(time.Now())
+				err := alerter.Unhealthy()
 
 				Expect(err).To(Equal(expectedError))
 			})

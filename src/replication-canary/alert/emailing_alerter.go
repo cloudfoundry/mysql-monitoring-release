@@ -2,9 +2,7 @@ package alert
 
 import (
 	"fmt"
-	"time"
-
-	"code.cloudfoundry.org/lager"
+	"log/slog"
 
 	uaa_go_client "code.cloudfoundry.org/uaa-go-client"
 )
@@ -17,7 +15,7 @@ type NotificationsClient interface {
 }
 
 type EmailingAlerter struct {
-	Logger              lager.Logger
+	Logger              *slog.Logger
 	UAAClient           uaa_go_client.Client
 	NotificationsClient NotificationsClient
 	ToAddress           string
@@ -25,13 +23,13 @@ type EmailingAlerter struct {
 	ClusterIdentifier   string
 }
 
-func (a *EmailingAlerter) NotUnhealthy(now time.Time) error {
-	a.Logger.Debug("No action to take for email alerter", lager.Data{"now": now})
+func (a *EmailingAlerter) NotUnhealthy() error {
+	a.Logger.Debug("No action to take for email alerter")
 	return nil
 }
 
-func (a *EmailingAlerter) Unhealthy(now time.Time) error {
-	a.Logger.Debug("Email alerter fetching UAA client token", lager.Data{"now": now})
+func (a *EmailingAlerter) Unhealthy() error {
+	a.Logger.Debug("Email alerter fetching UAA client token")
 
 	forceUpdate := true
 	token, err := a.UAAClient.FetchToken(forceUpdate)
@@ -44,6 +42,6 @@ func (a *EmailingAlerter) Unhealthy(now time.Time) error {
 	html := "{alert-code 417}<br/>This is an e-mail to notify you that the MySQL service's replication canary has detected an unsafe cluster condition in which replication is not performing as expected across all nodes."
 	kindID := "p-mysql"
 
-	a.Logger.Debug("Email alerter sending email", lager.Data{"now": now})
+	a.Logger.Debug("Email alerter sending email")
 	return a.NotificationsClient.Email(token.AccessToken, to, subject, html, kindID)
 }

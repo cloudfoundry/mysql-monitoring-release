@@ -1,29 +1,23 @@
 package alert
 
 import (
-	"time"
-
-	"code.cloudfoundry.org/lager"
+	"log/slog"
 )
 
 type LoggingAlerter struct {
-	Logger lager.Logger
+	Logger *slog.Logger
 }
 
-func (a *LoggingAlerter) Unhealthy(timestamp time.Time) error {
-	a.Logger.Debug("Logging alerter logging unhealthy", lager.Data{"timestamp": timestamp})
-	a.Logger.Error("cluster is unhealthy", nil, lager.Data{
-		"timestamp": timestamp,
-	})
+func (a *LoggingAlerter) Unhealthy() error {
+	a.Logger.Debug("Logging alerter logging unhealthy")
+	a.Logger.Error("cluster is unhealthy")
 
 	return nil
 }
 
-func (a *LoggingAlerter) NotUnhealthy(timestamp time.Time) error {
-	a.Logger.Debug("Logging alerter logging not unhealthy", lager.Data{"timestamp": timestamp})
-	a.Logger.Info("cluster is not unhealthy", lager.Data{
-		"timestamp": timestamp,
-	})
+func (a *LoggingAlerter) NotUnhealthy() error {
+	a.Logger.Debug("Logging alerter logging not unhealthy")
+	a.Logger.Info("cluster is not unhealthy")
 
 	return nil
 }
