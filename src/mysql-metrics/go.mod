@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/go-diodes v0.0.0-20231002233754-2971bfc4fd5a // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20231014154842-5b7527df5289 // indirect
 	code.cloudfoundry.org/tlsconfig v0.0.0-20230929201433-6cd2b78aba25 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
@@ -50,12 +50,12 @@ require (
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	golang.org/x/mod v0.13.0 // indirect
-	golang.org/x/net v0.16.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/tools v0.14.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20231002182017-d307bd883b97 // indirect
-	google.golang.org/grpc v1.58.2 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231012201019-e917dd12ba7a // indirect
+	google.golang.org/grpc v1.58.3 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
