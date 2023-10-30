@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/cloudfoundry-incubator/cf-test-helpers v1.0.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.28.1
+	github.com/onsi/gomega v1.29.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
