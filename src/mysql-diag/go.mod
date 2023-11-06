@@ -6,7 +6,7 @@ require (
 	code.cloudfoundry.org/bytefmt v0.0.0-20231017140541-3b893ed0421b
 	code.cloudfoundry.org/tlsconfig v0.0.0-20231017135636-f0e44068c22f
 	github.com/DATA-DOG/go-sqlmock v1.5.0
-	github.com/fatih/color v1.15.0
+	github.com/fatih/color v1.16.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/ginkgo v1.16.5
@@ -31,8 +31,8 @@ require (
 	go.step.sm/crypto v0.36.1 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
