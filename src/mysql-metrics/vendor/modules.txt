@@ -1,4 +1,4 @@
-# code.cloudfoundry.org/go-diodes v0.0.0-20231102232033-2a479dfa9870
+# code.cloudfoundry.org/go-diodes v0.0.0-20231113191959-85adc333ee36
 ## explicit; go 1.18
 code.cloudfoundry.org/go-diodes
 # code.cloudfoundry.org/go-loggregator/v9 v9.0.8

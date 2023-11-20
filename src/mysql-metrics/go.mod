@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/go-diodes v0.0.0-20231102232033-2a479dfa9870 // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20231113191959-85adc333ee36 // indirect
 	code.cloudfoundry.org/tlsconfig v0.0.0-20231017135636-f0e44068c22f // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
