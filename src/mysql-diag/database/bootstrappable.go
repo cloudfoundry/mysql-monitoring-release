@@ -15,5 +15,5 @@ func DoWeNeedBootstrap(gs []*GaleraStatus) bool {
 }
 
 func isHealthy(status *GaleraStatus) bool {
-	return status != nil && (status.LocalState == "Synced" || status.LocalState == "Donor/Desynced") && !status.ReadOnly
+	return status != nil && (status.LocalState == "Synced" || status.LocalState == "Donor/Desynced")
 }

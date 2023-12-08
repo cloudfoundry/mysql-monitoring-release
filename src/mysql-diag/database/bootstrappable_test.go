@@ -1,9 +1,10 @@
 package database_test
 
 import (
-	. "github.com/cloudfoundry/mysql-diag/database"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	. "github.com/cloudfoundry/mysql-diag/database"
 )
 
 var _ = Describe("bootstrappable", func() {
@@ -47,10 +48,10 @@ var _ = Describe("bootstrappable", func() {
 		})
 	})
 	Context("all nodes Synced but readonly", func() {
-		It("is bootstrappable", func() {
+		It("does not need bootstrap with any Synced nodes", func() {
 			nodes := []*GaleraStatus{nodeSyncedReadOnly, nodeSyncedReadOnly, nodeSyncedReadOnly}
 			needed := DoWeNeedBootstrap(nodes)
-			Expect(needed).To(BeTrue())
+			Expect(needed).To(BeFalse())
 		})
 	})
 	Context("all nodes missing", func() {
@@ -61,17 +62,17 @@ var _ = Describe("bootstrappable", func() {
 		})
 	})
 	Context("some nodes Joiner, some nodes Synced but readonly", func() {
-		It("is bootstrappable", func() {
+		It("does not need bootstrap with any Synced nodes", func() {
 			nodes := []*GaleraStatus{nodeJoinerWritable, nodeSyncedReadOnly, nodeSyncedReadOnly}
 			needed := DoWeNeedBootstrap(nodes)
-			Expect(needed).To(BeTrue())
+			Expect(needed).To(BeFalse())
 		})
 	})
 	Context("some nodes Joiner, some nodes Synced but readonly, some nodes are missing", func() {
-		It("is bootstrappable", func() {
+		It("does not need bootstrap with any Synced nodes", func() {
 			nodes := []*GaleraStatus{nodeJoinerWritable, nodeSyncedReadOnly, nil}
 			needed := DoWeNeedBootstrap(nodes)
-			Expect(needed).To(BeTrue())
+			Expect(needed).To(BeFalse())
 		})
 	})
 })
