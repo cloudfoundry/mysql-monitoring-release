@@ -1,25 +1,33 @@
 package ui_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-
+	. "github.com/cloudfoundry/mysql-diag/config"
 	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
 	"github.com/cloudfoundry/mysql-diag/ui"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var (
-	isCanaryHealthy *bool
+	isCanaryHealthy bool
 	needsBootstrap  bool
 	diskSpaceIssues []DiskSpaceIssue
 	messages        []string
+	config          *Config
 )
 
 var _ = Describe("Reporter", func() {
 	BeforeEach(func() {
-		isCanaryHealthy = func(b bool) *bool { return &b }(true)
+		isCanaryHealthy = true
 		needsBootstrap = false
 		diskSpaceIssues = []DiskSpaceIssue{}
+
+		config = &Config{
+			Canary: nil,
+			Mysql: MysqlConfig{
+				Nodes: []MysqlNode{},
+			},
+		}
 	})
 
 	Context("when everything is healthy", func() {
@@ -28,7 +36,7 @@ var _ = Describe("Reporter", func() {
 				IsCanaryHealthy: isCanaryHealthy,
 				NeedsBootstrap:  needsBootstrap,
 				DiskSpaceIssues: diskSpaceIssues,
-			})
+			}, config)
 
 			Expect(messages).To(BeEmpty())
 		})
@@ -36,12 +44,12 @@ var _ = Describe("Reporter", func() {
 
 	Context("when canary is unhealthy", func() {
 		BeforeEach(func() {
-			isCanaryHealthy = func(b bool) *bool { return &b }(false)
+			isCanaryHealthy = false
 			messages = ui.Report(ui.ReporterParams{
 				IsCanaryHealthy: isCanaryHealthy,
 				NeedsBootstrap:  needsBootstrap,
 				DiskSpaceIssues: diskSpaceIssues,
-			})
+			}, config)
 		})
 
 		It("chirps", func() {
@@ -64,7 +72,7 @@ var _ = Describe("Reporter", func() {
 				IsCanaryHealthy: isCanaryHealthy,
 				NeedsBootstrap:  needsBootstrap,
 				DiskSpaceIssues: diskSpaceIssues,
-			})
+			}, config)
 		})
 
 		It("gives link to bootstrap instructions", func() {
@@ -96,7 +104,7 @@ var _ = Describe("Reporter", func() {
 				IsCanaryHealthy: isCanaryHealthy,
 				NeedsBootstrap:  needsBootstrap,
 				DiskSpaceIssues: diskSpaceIssues,
-			})
+			}, config)
 		})
 
 		It("renders a warning for the user", func() {
@@ -117,7 +125,7 @@ var _ = Describe("Reporter", func() {
 
 	Context("when everything is wrong", func() {
 		BeforeEach(func() {
-			isCanaryHealthy = func(b bool) *bool { return &b }(false)
+			isCanaryHealthy = false
 			needsBootstrap = true
 			diskSpaceIssues = []DiskSpaceIssue{
 				{
@@ -133,7 +141,7 @@ var _ = Describe("Reporter", func() {
 				IsCanaryHealthy: isCanaryHealthy,
 				NeedsBootstrap:  needsBootstrap,
 				DiskSpaceIssues: diskSpaceIssues,
-			})
+			}, config)
 		})
 
 		It("should not duplicate warning messages", func() {

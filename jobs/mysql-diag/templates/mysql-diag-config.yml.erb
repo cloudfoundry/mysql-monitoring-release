@@ -1,6 +1,17 @@
 <%=
 
 config = {
+  canary: {
+    # recycle the same username/pw for basic auth, keeps the number of credentials down
+    username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
+    password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
+    api_port: link('replication-canary').p('mysql-monitoring.replication-canary.api_port'),
+    tls: {
+      enabled: link('replication-canary').p('mysql-monitoring.replication-canary.tls.enabled'),
+      ca: link('replication-canary').p('mysql-monitoring.replication-canary.tls.ca'),
+      server_name: link('replication-canary').p('mysql-monitoring.replication-canary.tls.server_name'),
+    },
+  },
   mysql: {
     username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
     password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
@@ -28,20 +39,6 @@ config = {
     }
   }
 }
-
-if_link('replication-canary') do |canary|
-  config["canary"] = {
-    # recycle the same username/pw for basic auth, keeps the number of credentials down
-    username: canary.p('mysql-monitoring.replication-canary.canary_username'),
-    password: canary.p('mysql-monitoring.replication-canary.canary_password'),
-    api_port: canary.p('mysql-monitoring.replication-canary.api_port'),
-    tls: {
-      enabled: canary.p('mysql-monitoring.replication-canary.tls.enabled'),
-      ca: canary.p('mysql-monitoring.replication-canary.tls.ca'),
-      server_name: canary.p('mysql-monitoring.replication-canary.tls.server_name'),
-    },
-  }
-end
 
 # JSON is valid yaml
 JSON.pretty_generate(config)

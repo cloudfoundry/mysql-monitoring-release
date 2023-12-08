@@ -3,20 +3,21 @@ package ui
 import (
 	"fmt"
 
+	. "github.com/cloudfoundry/mysql-diag/config"
 	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
 	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type ReporterParams struct {
-	IsCanaryHealthy *bool
+	IsCanaryHealthy bool
 	NeedsBootstrap  bool
 	DiskSpaceIssues []DiskSpaceIssue
 }
 
-func Report(params ReporterParams) []string {
-	var messages []string
+func Report(params ReporterParams, config *Config) []string {
+	messages := []string{}
 
-	if params.IsCanaryHealthy != nil && !*params.IsCanaryHealthy {
+	if !params.IsCanaryHealthy {
 		messages = append(messages, msg.Alert("\n[CRITICAL] The replication process is unhealthy. Writes are disabled."))
 	}
 
@@ -24,13 +25,13 @@ func Report(params ReporterParams) []string {
 		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://docs.pivotal.io/p-mysql/bootstrapping.html"))
 	}
 
-	if params.IsCanaryHealthy != nil && !*params.IsCanaryHealthy || params.NeedsBootstrap {
+	if !params.IsCanaryHealthy || params.NeedsBootstrap {
 		messages = append(messages, msg.Alert("\n[CRITICAL] Run the download-logs command:")+`
 $ download-logs -o /tmp/output
 For full information about how to download and use the download-logs command see https://discuss.pivotal.io/hc/en-us/articles/221504408`)
 	}
 
-	if params.IsCanaryHealthy != nil && !*params.IsCanaryHealthy || params.NeedsBootstrap || len(params.DiskSpaceIssues) > 0 {
+	if !params.IsCanaryHealthy || params.NeedsBootstrap || len(params.DiskSpaceIssues) > 0 {
 		for _, diskSpaceIssue := range params.DiskSpaceIssues {
 			messages = append(messages, msg.Alert(fmt.Sprintf("\n[WARNING] %s disk usage is very high on node %s. Some fluctuation on the node currently serving "+
 				"transactions is normal, due to temporary table usage, but be aware that MySQL needs to have sufficient free space "+
