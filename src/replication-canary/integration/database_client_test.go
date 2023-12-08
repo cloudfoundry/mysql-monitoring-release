@@ -2,17 +2,15 @@ package integration_test
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"code.cloudfoundry.org/lager/lagertest"
-
 	_ "github.com/go-sql-driver/mysql"
-
-	"fmt"
-
-	"github.com/cloudfoundry/replication-canary/database"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/replication-canary/database"
 )
 
 var _ = Describe("Database", func() {
@@ -32,7 +30,7 @@ var _ = Describe("Database", func() {
 
 		sessionVariables := make(map[string]string)
 		sessionVariables["sql_log_off"] = "0"
-		client = database.NewClient(sessionVariables, testLogger)
+		client = database.NewClient(sessionVariables, 200*time.Millisecond, testLogger)
 	})
 
 	AfterEach(func() {

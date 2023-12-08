@@ -10,7 +10,7 @@ processes:
   executable: /var/vcap/packages/replication-canary/bin/replication-canary
   args:
   - -configPath=/var/vcap/jobs/replication-canary/config/replication-canary.yml
-  - "-logLevel=debug"
+  - "-logLevel=info"
   - -timeFormat=<%= p("logging.format.timestamp") %>
   limits:
     open_files: 1048576

@@ -2,9 +2,8 @@ package database
 
 import (
 	"database/sql"
-	"time"
-
 	"fmt"
+	"time"
 
 	"code.cloudfoundry.org/lager"
 )
@@ -12,16 +11,41 @@ import (
 type Client struct {
 	logger           lager.Logger
 	sessionVariables map[string]string
+	pollInterval     time.Duration
 }
 
-func NewClient(sessionVariables map[string]string, logger lager.Logger) *Client {
+func NewClient(sessionVariables map[string]string, pollInterval time.Duration, logger lager.Logger) *Client {
 	return &Client{
 		logger:           logger,
 		sessionVariables: sessionVariables,
+		pollInterval:     pollInterval,
 	}
 }
 
 func (c *Client) Setup(db *sql.DB) error {
+	ticker := time.NewTicker(c.pollInterval)
+	defer ticker.Stop()
+
+	c.logger.Info("waiting for database to become writable")
+	for {
+		<-ticker.C
+		var readOnly bool
+		if err := db.QueryRow(`SELECT @@global.read_only`).Scan(&readOnly); err != nil {
+			c.logger.Debug("unable to determine if database was writable", lager.Data{
+				"errorMessage": err.Error(),
+			})
+			continue
+		}
+
+		if readOnly {
+			c.logger.Debug("database is read-only; unable to setup")
+			continue
+		}
+
+		break
+	}
+	c.logger.Info("database is writable")
+
 	_, err := db.Exec("CREATE TABLE IF NOT EXISTS chirps (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, data VARCHAR(255) NOT NULL) ENGINE=InnoDB")
 	if err != nil {
 		c.logger.Debug("error creating table", lager.Data{

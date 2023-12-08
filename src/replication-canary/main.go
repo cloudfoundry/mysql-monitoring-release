@@ -148,7 +148,7 @@ func main() {
 	databaseSession := make(map[string]string)
 	databaseSession["wsrep_sync_wait"] = "1"
 
-	client := database.NewClient(databaseSession, logger)
+	client := database.NewClient(databaseSession, time.Duration(appConfig.PollFrequency)*time.Second, logger)
 	healthchecker := &galera.Client{
 		Logger: logger,
 	}
