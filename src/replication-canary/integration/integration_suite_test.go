@@ -54,7 +54,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 	Expect(err).NotTo(HaveOccurred())
 	defer db.Close()
 
-	databaseName = fmt.Sprintf("repcanaryintegration%d", GinkgoParallelNode())
+	databaseName = fmt.Sprintf("repcanaryintegration%d", GinkgoParallelProcess())
 
 	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + databaseName)
 	Expect(err).NotTo(HaveOccurred())

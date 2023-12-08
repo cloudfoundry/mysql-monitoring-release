@@ -3,14 +3,16 @@ package database_test
 import (
 	dsql "database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"code.cloudfoundry.org/lager/lagertest"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/cloudfoundry/replication-canary/database"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/replication-canary/database"
 )
 
 var _ = Describe("Client", func() {
@@ -29,10 +31,9 @@ var _ = Describe("Client", func() {
 
 	BeforeEach(func() {
 		testLogger = lagertest.NewTestLogger("database client test")
-
 		sessionVariables := make(map[string]string)
 		sessionVariables["wsrep_sync_wait"] = "1"
-		client = database.NewClient(sessionVariables, testLogger)
+		client = database.NewClient(sessionVariables, 200*time.Millisecond, testLogger)
 
 		timestamp = time.Now()
 	})
@@ -41,15 +42,83 @@ var _ = Describe("Client", func() {
 		It("sets up the table if it does not exist", func() {
 			db, mock, err := sqlmock.New()
 			Expect(err).NotTo(HaveOccurred())
-
 			defer db.Close()
 
+			mock.ExpectQuery(`SELECT @@global\.read_only`).
+				WillReturnRows(sqlmock.NewRows([]string{"read_only"}).
+					AddRow(0))
 			mock.ExpectExec(`CREATE TABLE IF NOT EXISTS chirps \(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, data VARCHAR\(255\) NOT NULL\) ENGINE=InnoDB`).WillReturnResult(sqlmock.NewResult(1, 1))
 
 			err = client.Setup(db)
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(mock.ExpectationsWereMet()).NotTo(HaveOccurred())
+		})
+
+		It("returns an error if the chirps table cannot be created", func() {
+			db, mock, err := sqlmock.New()
+			Expect(err).NotTo(HaveOccurred())
+			defer db.Close()
+
+			mock.ExpectQuery(`SELECT @@global\.read_only`).
+				WillReturnRows(sqlmock.NewRows([]string{"read_only"}).
+					AddRow(0))
+			mock.ExpectExec(`CREATE TABLE IF NOT EXISTS chirps \(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, data VARCHAR\(255\) NOT NULL\) ENGINE=InnoDB`).
+				WillReturnError(fmt.Errorf("some create table error"))
+
+			err = client.Setup(db)
+			Expect(err).To(MatchError(`some create table error`))
+
+			Expect(mock.ExpectationsWereMet()).NotTo(HaveOccurred())
+		})
+
+		When("database is initially read-only", func() {
+			It("queries in a loop until the database is writable", func() {
+				db, mock, err := sqlmock.New()
+				Expect(err).NotTo(HaveOccurred())
+				defer db.Close()
+
+				mock.ExpectQuery(`SELECT @@global\.read_only`).
+					WillReturnRows(sqlmock.NewRows([]string{"read_only"}).
+						AddRow(1))
+				mock.ExpectQuery(`SELECT @@global\.read_only`).
+					WillReturnRows(sqlmock.NewRows([]string{"read_only"}).
+						AddRow(1))
+				mock.ExpectQuery(`SELECT @@global\.read_only`).
+					WillReturnRows(sqlmock.NewRows([]string{"read_only"}).
+						AddRow(0))
+				mock.ExpectExec(`CREATE TABLE IF NOT EXISTS chirps \(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, data VARCHAR\(255\) NOT NULL\) ENGINE=InnoDB`).WillReturnResult(sqlmock.NewResult(1, 1))
+
+				err = client.Setup(db)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(mock.ExpectationsWereMet()).NotTo(HaveOccurred())
+			})
+		})
+
+		When("querying the database for read-only state initially fails but later succeeds", func() {
+			It("queries in a loop until the database is writable", func() {
+				db, mock, err := sqlmock.New()
+				Expect(err).NotTo(HaveOccurred())
+				defer db.Close()
+
+				mock.ExpectQuery(`SELECT @@global\.read_only`).
+					WillReturnError(fmt.Errorf("database not available error"))
+				mock.ExpectQuery(`SELECT @@global\.read_only`).
+					WillReturnError(fmt.Errorf("database not available error"))
+				mock.ExpectQuery(`SELECT @@global\.read_only`).
+					WillReturnRows(sqlmock.NewRows([]string{"read_only"}).
+						AddRow(1))
+				mock.ExpectQuery(`SELECT @@global\.read_only`).
+					WillReturnRows(sqlmock.NewRows([]string{"read_only"}).
+						AddRow(0))
+				mock.ExpectExec(`CREATE TABLE IF NOT EXISTS chirps \(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, data VARCHAR\(255\) NOT NULL\) ENGINE=InnoDB`).WillReturnResult(sqlmock.NewResult(1, 1))
+
+				err = client.Setup(db)
+				Expect(err).NotTo(HaveOccurred())
+
+				Expect(mock.ExpectationsWereMet()).NotTo(HaveOccurred())
+			})
 		})
 	})
 
@@ -64,6 +133,22 @@ var _ = Describe("Client", func() {
 
 			err = client.Write(db, timestamp)
 			Expect(err).NotTo(HaveOccurred())
+
+			Expect(mock.ExpectationsWereMet()).NotTo(HaveOccurred())
+		})
+
+		It("returns an error when a write fails", func() {
+			db, mock, err := sqlmock.New()
+			Expect(err).NotTo(HaveOccurred())
+
+			defer db.Close()
+
+			mock.ExpectExec(`INSERT INTO chirps \(data\)`).
+				WithArgs(timestamp.String()).
+				WillReturnError(fmt.Errorf("some write error"))
+
+			err = client.Write(db, timestamp)
+			Expect(err).To(MatchError("some write error"))
 
 			Expect(mock.ExpectationsWereMet()).NotTo(HaveOccurred())
 		})
@@ -96,6 +181,14 @@ var _ = Describe("Client", func() {
 
 			_, err = client.Check(db, timestamp)
 			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("returns an error when starting a transaction fails", func() {
+			mock.ExpectBegin().WillReturnError(fmt.Errorf("some start transaction failure"))
+
+			_, err := client.Check(db, timestamp)
+			Expect(err).To(MatchError("some start transaction failure"))
+
 		})
 
 		It("returns error if there's an error while setting the session variable", func() {
