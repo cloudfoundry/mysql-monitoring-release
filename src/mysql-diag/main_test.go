@@ -2,25 +2,25 @@ package main_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 
-	yaml "gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 
-	"github.com/cloudfoundry/mysql-diag/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"net/http"
+	"github.com/cloudfoundry/mysql-diag/config"
+
+	"github.com/onsi/gomega/gbytes"
+	"github.com/onsi/gomega/gexec"
+	"github.com/onsi/gomega/ghttp"
 
 	"github.com/cloudfoundry/mysql-diag/canaryclient"
 	"github.com/cloudfoundry/mysql-diag/diagagentclient"
 	"github.com/cloudfoundry/mysql-diag/testutil"
-	"github.com/onsi/gomega/gbytes"
-	"github.com/onsi/gomega/gexec"
-	"github.com/onsi/gomega/ghttp"
 )
 
 var _ = Describe("mysql-diag cli", func() {
@@ -62,7 +62,7 @@ var _ = Describe("mysql-diag cli", func() {
 		agentUsername = "agentfoo"
 		agentPassword = "agentbar"
 
-		tempDir, err := ioutil.TempDir("", "")
+		tempDir, err := os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
 
 		nodeName := "mysql"
@@ -252,7 +252,7 @@ var _ = Describe("mysql-diag cli", func() {
 
 		It("skips rep-canary check and disk check", func() {
 			session := runMainWithArgs()
-			Eventually(session.Out).Should(gbytes.Say("Canary not configured, skipping health check"))
+			Eventually(session.Out).ShouldNot(gbytes.Say("Checking canary status"))
 			Eventually(session.Out).Should(gbytes.Say("WSREP CLUSTER STATUS"))
 			Eventually(session.Out).Should(gbytes.Say("Agent not configured, skipping disk check"))
 		})
@@ -263,6 +263,6 @@ func writeAsYamlToFile(object interface{}, filepath string) {
 	b, err := yaml.Marshal(object)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = ioutil.WriteFile(filepath, b, os.ModePerm)
+	err = os.WriteFile(filepath, b, os.ModePerm)
 	Expect(err).NotTo(HaveOccurred())
 }

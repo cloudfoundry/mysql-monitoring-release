@@ -13,6 +13,7 @@ consumes:
   type: mysql
 - name: replication-canary
   type: db
+  optional: true
 - name: mysql-diag-agent
   type: agent
 

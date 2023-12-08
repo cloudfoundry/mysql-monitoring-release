@@ -81,28 +81,29 @@ func getClusterStatus(mysqlConfig config.MysqlConfig) []*nodeStatus {
 	return nodeStatuses
 }
 
-// Returns true if the canary is unhealthy. Otherwise it's either healthy or unknown.
-func checkCanary(config *config.CanaryConfig) bool {
+func pointer[T any](v T) *T {
+	return &v
+}
+
+// Returns false if the canary is unhealthy. true if healthy or unknown, nil if canary is disabled.
+func checkCanary(config *config.CanaryConfig) *bool {
 	if config == nil {
-		fmt.Println("Canary not configured, skipping health check")
-		return false
+		return nil
 	}
 
 	intro := "Checking canary status... "
-	fmt.Println(intro)
-
 	client := canaryclient.NewCanaryClient("127.0.0.1", config.ApiPort, *config)
 	healthy, err := client.Status()
 	if err != nil {
 		msg.PrintfErrorIntro(intro, "%v", err)
-		return false
+		return pointer(true)
 	} else {
 		if healthy {
 			fmt.Println(intro + msg.Happy("healthy"))
-			return false
+			return pointer(true)
 		} else {
 			fmt.Println(intro + msg.Alert("unhealthy"))
-			return true
+			return pointer(false)
 		}
 	}
 }
@@ -121,15 +122,11 @@ func main() {
 	}
 
 	printCurrentTime()
-	unhealthy := checkCanary(c.Canary)
-	needsBootstrap := checkClusterStatus(c.Mysql)
-	diskSpaceIssues := disk.CheckDiskStatus(c.Mysql)
-
 	messages := ui.Report(ui.ReporterParams{
-		IsCanaryHealthy: !unhealthy,
-		NeedsBootstrap:  needsBootstrap,
-		DiskSpaceIssues: diskSpaceIssues,
-	}, c)
+		IsCanaryHealthy: checkCanary(c.Canary),
+		NeedsBootstrap:  checkClusterStatus(c.Mysql),
+		DiskSpaceIssues: disk.CheckDiskStatus(c.Mysql),
+	})
 
 	for _, message := range messages {
 		fmt.Println(message)
