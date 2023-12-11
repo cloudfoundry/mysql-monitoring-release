@@ -7,7 +7,7 @@ require (
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	code.cloudfoundry.org/tlsconfig v0.0.0-20231017135636-f0e44068c22f
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9
-	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/cloudfoundry/multierror v0.0.0-20230911185048-add4c8e88cda
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.7.0
@@ -23,7 +23,7 @@ require (
 require (
 	code.cloudfoundry.org/multierror v0.0.0-20170123201326-dafed03eebc6 // indirect
 	code.cloudfoundry.org/trace-logger v0.0.0-20170119230301-107ef08a939d // indirect
-	filippo.io/edwards25519 v1.0.0 // indirect
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
@@ -54,7 +54,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
-	go.step.sm/crypto v0.38.0 // indirect
+	go.step.sm/crypto v0.39.0 // indirect
 	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.19.0 // indirect

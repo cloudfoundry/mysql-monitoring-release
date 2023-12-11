@@ -4,8 +4,8 @@ go 1.20
 
 require (
 	code.cloudfoundry.org/go-loggregator/v9 v9.0.8
-	code.cloudfoundry.org/lager/v3 v3.0.2
-	github.com/DATA-DOG/go-sqlmock v1.5.0
+	code.cloudfoundry.org/lager/v3 v3.0.3
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.7.0
@@ -32,7 +32,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/pprof v0.0.0-20231203200248-ad67f76aa53d // indirect
+	github.com/google/pprof v0.0.0-20231205033806-a5a03c77bf08 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect

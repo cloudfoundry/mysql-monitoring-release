@@ -5,7 +5,7 @@ go 1.20
 require (
 	code.cloudfoundry.org/bytefmt v0.0.0-20231017140541-3b893ed0421b
 	code.cloudfoundry.org/tlsconfig v0.0.0-20231017135636-f0e44068c22f
-	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/fatih/color v1.16.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/olekukonko/tablewriter v0.0.5
@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	filippo.io/edwards25519 v1.0.0 // indirect
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
@@ -28,7 +28,7 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/square/certstrap v1.3.0 // indirect
-	go.step.sm/crypto v0.38.0 // indirect
+	go.step.sm/crypto v0.39.0 // indirect
 	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
