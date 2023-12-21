@@ -2,9 +2,11 @@
 
 set -o errexit -o nounset -o pipefail
 
-RELEASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+RELEASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-gem install bosh-template
+cd "${RELEASE_DIR}"
+bundle install
+bundle exec rspec ./spec
 
 echo -e "\nTesting Release-Level Specs..."
 "${RELEASE_DIR}"/src/spec/bin/test "$@"

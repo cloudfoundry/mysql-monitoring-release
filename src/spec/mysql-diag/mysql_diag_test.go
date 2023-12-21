@@ -16,7 +16,7 @@ var _ = Describe("MySQLDiag", func() {
 		session := testhelpers.ExecuteBosh(args, 10*time.Second)
 		Expect(session.ExitCode()).To(BeZero())
 		Expect(session).To(SatisfyAll(
-			gbytes.Say(`Checking canary status\.\.\. .*healthy.*`),
+			gbytes.Say(`(Checking canary status\.\.\. .*healthy.*)|(Canary not configured)`),
 			gbytes.Say(`Synced\s+\|\s+Primary`),
 			gbytes.Say(`PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
 		))

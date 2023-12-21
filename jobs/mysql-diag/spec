@@ -13,7 +13,12 @@ consumes:
   type: mysql
 - name: replication-canary
   type: db
+  optional: true
 - name: mysql-diag-agent
   type: agent
 
-properties: {}
+properties:
+  db_username:
+    description: MySQL username to connect to cluster nodes
+  db_password:
+    description: MySQL password to connect to cluster nodes

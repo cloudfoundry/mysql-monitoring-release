@@ -1,21 +1,8 @@
 <%=
 
 config = {
-  canary: {
-    # recycle the same username/pw for basic auth, keeps the number of credentials down
-    username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
-    password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
-    api_port: link('replication-canary').p('mysql-monitoring.replication-canary.api_port'),
-    tls: {
-      enabled: link('replication-canary').p('mysql-monitoring.replication-canary.tls.enabled'),
-      ca: link('replication-canary').p('mysql-monitoring.replication-canary.tls.ca'),
-      server_name: link('replication-canary').p('mysql-monitoring.replication-canary.tls.server_name'),
-    },
-  },
   mysql: {
-    username: link('replication-canary').p('mysql-monitoring.replication-canary.canary_username'),
-    password: link('replication-canary').p('mysql-monitoring.replication-canary.canary_password'),
-    port: link('mysql').p(['port','cf_mysql.mysql.port']),
+    port: link('mysql').p(%w[port cf_mysql.mysql.port]),
     agent: {
       username: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.username'),
       password: link('mysql-diag-agent').p('mysql-monitoring.mysql-diag-agent.password'),
@@ -39,6 +26,32 @@ config = {
     }
   }
 }
+
+if_link('replication-canary') do |link|
+  config[:canary] = {
+    # recycle the same username/pw for basic auth, keeps the number of credentials down
+    username: link.p('mysql-monitoring.replication-canary.canary_username'),
+    password: link.p('mysql-monitoring.replication-canary.canary_password'),
+    api_port: link.p('mysql-monitoring.replication-canary.api_port'),
+    tls: {
+      enabled: link.p('mysql-monitoring.replication-canary.tls.enabled'),
+      ca: link.p('mysql-monitoring.replication-canary.tls.ca'),
+      server_name: link.p('mysql-monitoring.replication-canary.tls.server_name'),
+    },
+  }
+
+  config[:mysql][:username] = link.p('mysql-monitoring.replication-canary.canary_username')
+  config[:mysql][:password] = link.p('mysql-monitoring.replication-canary.canary_password')
+end
+
+if_p('db_username', 'db_password') do |db_username, db_password|
+  config[:mysql][:username] = db_username
+  config[:mysql][:password] = db_password
+end
+
+if config[:mysql][:username].nil? or config[:mysql][:password].nil?
+ raise 'No database credentials were configured. db_username and db_password properties must be specified for the mysql-diag job.'
+end
 
 # JSON is valid yaml
 JSON.pretty_generate(config)
