@@ -1,0 +1,22 @@
+---
+- path: /instance_groups/name=mysql-monitor?/jobs?/name=replication-canary?
+  type: remove
+
+- path: /instance_groups/name=mysql-monitor/jobs/name=mysql-diag?/properties?
+  type: replace
+  value:
+    db_username: mysql-diag
+    db_password: ((mysql_diag_db_password))
+
+- path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_users?/mysql-diag?
+  type: replace
+  value:
+    role: minimal
+    host: any
+    password: ((mysql_diag_db_password))
+
+- path: /variables/name=mysql_diag_db_password?
+  type: replace
+  value:
+    name: mysql_diag_db_password
+    type: password
