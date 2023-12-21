@@ -2,7 +2,7 @@ package disk_test
 
 import (
 	"github.com/cloudfoundry/mysql-diag/mysql-diag-agent/disk"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 

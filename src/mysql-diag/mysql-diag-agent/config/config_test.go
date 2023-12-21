@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 
 	"code.cloudfoundry.org/tlsconfig/certtest"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"gopkg.in/yaml.v2"
 

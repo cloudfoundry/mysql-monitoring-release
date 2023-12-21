@@ -1,24 +1,16 @@
 #!/bin/bash
 
-set -eu
+set -o errexit -o nounset -o pipefail
 
-# In seconds
-SLOW_SPEC_THRESHOLD="${SLOW_SPEC_THRESHOLD:-10}"
+pkg_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-base_dir="$( cd "${my_dir}/.." && pwd )"
-test_helpers_dir="$( cd "$(git -C "${my_dir}" rev-parse --show-toplevel)/src/test-helpers" && pwd )"
-source ${test_helpers_dir}/linter.sh
+cd "${pkg_dir}"
+go vet ./...
 
-pushd "${base_dir}" > /dev/null
-  lint_golang
-
-  CGO_ENABLED=1 ginkgo \
-    -r \
-    -race \
-    -p \
-    -randomizeAllSpecs \
-    -randomizeSuites \
-    -slowSpecThreshold="${SLOW_SPEC_THRESHOLD}" \
-    "$@"
-popd > /dev/null
+go run github.com/onsi/ginkgo/v2/ginkgo \
+  -r \
+  -race \
+  -p \
+  --randomize-all \
+  --randomize-suites \
+  "$@"
