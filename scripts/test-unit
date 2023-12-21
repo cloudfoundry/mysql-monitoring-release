@@ -1,27 +1,22 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -o errexit -o nounset -o pipefail
 
-MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# This script assumes that it lives one directory below the release directory.
-RELEASE_DIR="$( cd $MY_DIR/.. && pwd )"
-
-source ${RELEASE_DIR}/.envrc
+RELEASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
 gem install bosh-template
 
 echo -e "\nTesting Release-Level Specs..."
-${RELEASE_DIR}/src/spec/bin/test "$@"
+"${RELEASE_DIR}"/src/spec/bin/test "$@"
 
 echo -e "\nTesting Metrics..."
-${RELEASE_DIR}/src/mysql-metrics/bin/test "$@"
+"${RELEASE_DIR}"/src/mysql-metrics/bin/test "$@"
 
 echo -e "\nTesting Replication Canary..."
-${RELEASE_DIR}/src/replication-canary/bin/test "$@"
+"${RELEASE_DIR}"/src/replication-canary/bin/test "$@"
 
 echo -e "\nTesting Mysql-Diag..."
-${RELEASE_DIR}/src/mysql-diag/bin/test "$@"
+"${RELEASE_DIR}"/src/mysql-diag/bin/test "$@"
 
 echo -e "\nTesting Notifications Client..."
-${RELEASE_DIR}/src/replication-canary/notifications-client/bin/test "$@"
+"${RELEASE_DIR}"/src/replication-canary/notifications-client/bin/test "$@"
