@@ -40,7 +40,6 @@ func checkClusterStatus(mysqlConfig config.MysqlConfig) bool {
 	if database.DoWeNeedBootstrap(statuses) {
 		return true
 	} else {
-		fmt.Println("I don't think bootstrap is necessary")
 		return false
 	}
 }
@@ -57,15 +56,10 @@ func getClusterStatus(mysqlConfig config.MysqlConfig) []*nodeStatus {
 		n := n
 
 		go func() {
-			intro := fmt.Sprintf("Checking cluster status of %s/%s at %s... ", n.Name, n.UUID, n.Host)
-			fmt.Println(intro)
-
 			ac := database.NewDatabaseClient(mysqlConfig.Connection(n))
 			galeraStatus, err := ac.Status()
 			if err != nil {
-				msg.PrintfErrorIntro(intro, "%v", err)
-			} else {
-				fmt.Println(intro + "done")
+				msg.PrintfErrorIntro("", "error retrieving galera status: %v", err)
 			}
 
 			channel <- nodeStatus{node: n, status: galeraStatus}
