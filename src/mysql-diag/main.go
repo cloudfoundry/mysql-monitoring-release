@@ -75,7 +75,7 @@ func getClusterStatus(mysqlConfig config.MysqlConfig) []*nodeStatus {
 	return nodeStatuses
 }
 
-// Returns true if the canary is unhealthy. Otherwise it's either healthy or unknown.
+// Returns true if the canary is unhealthy. Otherwise, it's either healthy or unknown.
 func checkCanary(config *config.CanaryConfig) bool {
 	if config == nil {
 		fmt.Println("Canary not configured, skipping health check")
@@ -123,7 +123,7 @@ func main() {
 		IsCanaryHealthy: !unhealthy,
 		NeedsBootstrap:  needsBootstrap,
 		DiskSpaceIssues: diskSpaceIssues,
-	}, c)
+	})
 
 	for _, message := range messages {
 		fmt.Println(message)

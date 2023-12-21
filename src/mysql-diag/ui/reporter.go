@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 
-	. "github.com/cloudfoundry/mysql-diag/config"
 	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
 	"github.com/cloudfoundry/mysql-diag/msg"
 )
@@ -14,7 +13,7 @@ type ReporterParams struct {
 	DiskSpaceIssues []DiskSpaceIssue
 }
 
-func Report(params ReporterParams, config *Config) []string {
+func Report(params ReporterParams) []string {
 	messages := []string{}
 
 	if !params.IsCanaryHealthy {
