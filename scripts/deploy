@@ -36,5 +36,6 @@ bosh --non-interactive --deployment=pxc deploy --no-redact \
   -v mysql_monitoring_replication_canary_uaa_admin_client_secret="((/${director_name}/cf/uaa_admin_client_secret))" \
   -v bosh_director_name="${director_name}" \
   -v loggregator_client_tls="/${director_name}/${cf_deployment}/loggregator_tls_agent" \
-  -v pxc_version="${PXC_DEPLOY_VERSION:-latest}"
+  -v pxc_version="${PXC_DEPLOY_VERSION:-latest}" \
+  "$@"
 
