@@ -22,13 +22,13 @@ func Report(params ReporterParams, config *Config) []string {
 	}
 
 	if params.NeedsBootstrap {
-		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://docs.pivotal.io/p-mysql/bootstrapping.html"))
+		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://docs.vmware.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3.1/mysql-for-tas/bootstrapping.html"))
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap {
 		messages = append(messages, msg.Alert("\n[CRITICAL] Run the download-logs command:")+`
 $ download-logs -o /tmp/output
-For full information about how to download and use the download-logs command see https://discuss.pivotal.io/hc/en-us/articles/221504408`)
+For full information about how to download and use the download-logs command see https://community.pivotal.io/s/article/script-to-download-mysql-logs-for-pas-tile-ha-clusters?language=en_US`)
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap || len(params.DiskSpaceIssues) > 0 {

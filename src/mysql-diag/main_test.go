@@ -177,7 +177,7 @@ var _ = Describe("mysql-diag cli", func() {
 
 	It("tells us that we need bootstrap", func() {
 		session := runMainWithArgs()
-		Eventually(session.Out).Should(gbytes.Say("\\[CRITICAL\\] You must bootstrap the cluster. Follow these instructions: https://docs.pivotal.io/p-mysql/bootstrapping.html"))
+		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] You must bootstrap the cluster. Follow these instructions: https://docs\.vmware\.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3\.1/mysql-for-tas/bootstrapping\.html`))
 	})
 
 	It("tells us that the canary is unhealthy", func() {
@@ -201,9 +201,9 @@ var _ = Describe("mysql-diag cli", func() {
 
 	It("tells us the download-logs command", func() {
 		session := runMainWithArgs()
-		Eventually(session.Out).Should(gbytes.Say("\\[CRITICAL\\] Run the download-logs command:"))
-		Eventually(session.Out).Should(gbytes.Say("\\$ download-logs -o /tmp/output"))
-		Eventually(session.Out).Should(gbytes.Say("For full information about how to download and use the download-logs command see https://discuss.pivotal.io/hc/en-us/articles/221504408"))
+		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] Run the download-logs command:`))
+		Eventually(session.Out).Should(gbytes.Say(`\$ download-logs -o /tmp/output`))
+		Eventually(session.Out).Should(gbytes.Say(`For full information about how to download and use the download-logs command see https://community\.pivotal\.io/s/article/script-to-download-mysql-logs-for-pas-tile-ha-clusters\?language=en_US`))
 	})
 
 	It("warns us to not do silly things", func() {
