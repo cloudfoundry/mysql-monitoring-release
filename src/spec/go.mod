@@ -1,10 +1,12 @@
 module github.com/cloudfoundry/mysql-monitoring-release/spec
 
-go 1.20
+go 1.21
+
+toolchain go1.21.6
 
 require (
-	github.com/cloudfoundry/cf-test-helpers/v2 v2.8.0
-	github.com/onsi/ginkgo/v2 v2.13.2
+	github.com/cloudfoundry/cf-test-helpers/v2 v2.9.0
+	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/onsi/gomega v1.30.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -16,10 +18,10 @@ require (
 	github.com/google/pprof v0.0.0-20231229205709-960ae82b1e42 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
-	golang.org/x/net v0.19.0 // indirect
+	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	golang.org/x/tools v0.16.1 // indirect
+	golang.org/x/tools v0.17.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 )
