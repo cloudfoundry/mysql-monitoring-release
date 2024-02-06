@@ -24,8 +24,8 @@ github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiu
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/google/pprof v0.0.0-20240125082051-42cd04596328 h1:oI+lCI2DY1BsRrdzMJBhIMxBBdlZJl31YNQC11EiyvA=
-github.com/google/pprof v0.0.0-20240125082051-42cd04596328/go.mod h1:czg5+yv1E0ZGTi6S6vVK1mke0fV+FaUhNGcd6VRS9Ik=
+github.com/google/pprof v0.0.0-20240130152714-0ed6a68c8d9e h1:E+3PBMCXn0ma79O7iCrne0iUpKtZ7rIcZvoz+jNtNtw=
+github.com/google/pprof v0.0.0-20240130152714-0ed6a68c8d9e/go.mod h1:czg5+yv1E0ZGTi6S6vVK1mke0fV+FaUhNGcd6VRS9Ik=
 github.com/kisielk/sqlstruct v0.0.0-20201105191214-5f3e10d3ab46/go.mod h1:yyMNCyc/Ib3bDTKd379tNMpB/7/H5TjM2Y9QJ5THLbE=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
@@ -59,8 +59,8 @@ github.com/square/certstrap v1.3.0/go.mod h1:wGZo9eE1B7WX2GKBn0htJ+B3OuRl2UsdCFy
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
-go.step.sm/crypto v0.42.1 h1:OmwHm3GJO8S4VGWL3k4+I+Q4P/F2s+j8msvTyGnh1Vg=
-go.step.sm/crypto v0.42.1/go.mod h1:yNcTLFQBnYCA75fC5bklBoTAT7y0dRZsB1TkinB8JMs=
+go.step.sm/crypto v0.43.0 h1:siTS/iiqaX4qBUeTxVyag5I2rijuKOMDkXSnrKcei7s=
+go.step.sm/crypto v0.43.0/go.mod h1:iKrtuRbFlqimEG/+fWSu7kcZzl4Bd/+w5xkuqA5OSic=
 golang.org/x/crypto v0.18.0 h1:PGVlW0xEltQnzFZ55hkuX5+KLyrMYhHld1YHO4AKcdc=
 golang.org/x/crypto v0.18.0/go.mod h1:R0j02AL6hcrfOiy9T4ZYp/rcWeMxM3L6QYxlOuEG1mg=
 golang.org/x/net v0.20.0 h1:aCL9BSgETF1k+blQaYUBx9hJ9LOGP3gAVemcZlf1Kpo=
