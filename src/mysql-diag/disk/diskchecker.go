@@ -68,7 +68,7 @@ func CheckDiskStatus(mysqlConfig config.MysqlConfig) []DiskSpaceIssue {
 
 		for _, row := range rows {
 			n := row.Node
-			diskInfoTable.Add(n.Host, n.Name, n.UUID, row.Info)
+			diskInfoTable.Add(n.Name, n.UUID, row.Info)
 		}
 
 		diskInfoTable.Render()

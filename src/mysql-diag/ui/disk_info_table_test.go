@@ -3,10 +3,11 @@ package ui_test
 import (
 	"bytes"
 
-	"github.com/cloudfoundry/mysql-diag/diagagentclient"
-	"github.com/cloudfoundry/mysql-diag/ui"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/mysql-diag/diagagentclient"
+	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
 var _ = Describe("DiskInfoTable", func() {
@@ -16,7 +17,7 @@ var _ = Describe("DiskInfoTable", func() {
 
 		cst := ui.NewDiskInfoTable(buffer)
 
-		cst.Add("host1", "name1", "uuid1", &diagagentclient.InfoResponse{
+		cst.Add("name1", "64bfefb0-97fd-4e34-b0fb-499ccb684faa", &diagagentclient.InfoResponse{
 			Persistent: diagagentclient.DiskInfo{
 				BytesTotal:  456,
 				BytesFree:   123,
@@ -30,7 +31,7 @@ var _ = Describe("DiskInfoTable", func() {
 				InodesFree:  1567000,
 			},
 		})
-		cst.Add("host2", "name2", "uuid2", &diagagentclient.InfoResponse{
+		cst.Add("name2", "4a136f80-d88d-447c-bce8-4b87492110a7", &diagagentclient.InfoResponse{
 			Persistent: diagagentclient.DiskInfo{
 				BytesTotal:  456,
 				BytesFree:   123,
@@ -44,18 +45,19 @@ var _ = Describe("DiskInfoTable", func() {
 				InodesFree:  1567000,
 			},
 		})
-		cst.Add("host3", "name3", "uuid3", nil)
+		cst.Add("name3", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
 
 		cst.Render()
 
 		Expect(buffer.String()).To(Equal(
-			`+-------+-------------+---------------------------------------+-----------------------------------------+
-| HOST  |  NAME/UUID  |         PERSISTENT DISK USED          |           EPHEMERAL DISK USED           |
-+-------+-------------+---------------------------------------+-----------------------------------------+
-| host1 | name1/uuid1 | 73.0% of 456B (28.1% of 0.79M inodes) | 22.9% of 142.2K (12.4% of 1.79M inodes) |
-| host2 | name2/uuid2 | 73.0% of 456B (28.1% of 7.89M inodes) | 22.9% of 1.4K (12.4% of 1.79M inodes)   |
-| host3 | name3/uuid3 | N/A - ERROR                           | N/A - ERROR                             |
-+-------+-------------+---------------------------------------+-----------------------------------------+
+
+			`+--------------------------------------------+----------------------+------------------------+
+|                  INSTANCE                  | PERSISTENT DISK USED |  EPHEMERAL DISK USED   |
++--------------------------------------------+----------------------+------------------------+
+| name1/64bfefb0-97fd-4e34-b0fb-499ccb684faa | 333B / 456B (73.0%)  | 32.5K / 142.2K (22.9%) |
+| name2/4a136f80-d88d-447c-bce8-4b87492110a7 | 333B / 456B (73.0%)  | 333B / 1.4K (22.9%)    |
+| name3/3a79c040-1d3a-4583-8566-9c7097760baa | N/A - ERROR          | N/A - ERROR            |
++--------------------------------------------+----------------------+------------------------+
 `,
 		))
 	})

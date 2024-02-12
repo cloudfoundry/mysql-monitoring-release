@@ -188,8 +188,7 @@ var _ = Describe("mysql-diag cli", func() {
 	It("renders a disk information table", func() {
 		session := runMainWithArgs()
 
-		Eventually(session.Out).Should(gbytes.Say("HOST"))
-		Eventually(session.Out).Should(gbytes.Say("NAME/UUID"))
+		Eventually(session.Out).Should(gbytes.Say("INSTANCE"))
 		Eventually(session.Out).Should(gbytes.Say("PERSISTENT DISK USED"))
 		Eventually(session.Out).Should(gbytes.Say("EPHEMERAL DISK USED"))
 		Eventually(session.Out).Should(gbytes.Say("73.0"))
