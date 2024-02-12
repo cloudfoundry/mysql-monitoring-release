@@ -3,10 +3,11 @@ package ui_test
 import (
 	"bytes"
 
-	"github.com/cloudfoundry/mysql-diag/database"
-	"github.com/cloudfoundry/mysql-diag/ui"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/mysql-diag/database"
+	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
 var _ = Describe("ClusterStateTable", func() {
@@ -16,28 +17,28 @@ var _ = Describe("ClusterStateTable", func() {
 
 		cst := ui.NewClusterStateTable(buffer)
 
-		cst.Add("host1", "name1", "uuid1", &database.GaleraStatus{
+		cst.Add("mysql", "uuid1", &database.GaleraStatus{
 			LocalState:    "localState1",
 			ClusterSize:   1,
 			ClusterStatus: "clusterStatus1",
 		})
-		cst.Add("host2", "name2", "uuid2", &database.GaleraStatus{
+		cst.Add("mysql", "uuid2", &database.GaleraStatus{
 			LocalState:    "localState2",
 			ClusterSize:   2,
 			ClusterStatus: "clusterStatus2",
 		})
-		cst.Add("host3", "name3", "uuid3", nil)
+		cst.Add("name3", "uuid3", nil)
 
 		cst.Render()
 
 		Expect(buffer.String()).To(Equal(
-			`+-------+-------------+-------------------+----------------------+--------------------+
-| HOST  |  NAME/UUID  | WSREP LOCAL STATE | WSREP CLUSTER STATUS | WSREP CLUSTER SIZE |
-+-------+-------------+-------------------+----------------------+--------------------+
-| host1 | name1/uuid1 | localState1       | clusterStatus1       |                  1 |
-| host2 | name2/uuid2 | localState2       | clusterStatus2       |                  2 |
-| host3 | name3/uuid3 | N/A - ERROR       | N/A - ERROR          | N/A - ERROR        |
-+-------+-------------+-------------------+----------------------+--------------------+
+			`+-------------+-------------+----------------+
+|  INSTANCE   |    STATE    | CLUSTER STATUS |
++-------------+-------------+----------------+
+| mysql/uuid1 | localState1 | clusterStatus1 |
+| mysql/uuid2 | localState2 | clusterStatus2 |
+| name3/uuid3 | N/A - ERROR | N/A - ERROR    |
++-------------+-------------+----------------+
 `,
 		))
 	})

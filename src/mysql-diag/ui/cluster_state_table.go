@@ -3,11 +3,11 @@ package ui
 import (
 	"fmt"
 	"io"
-	"strconv"
 	"sync"
 
-	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/olekukonko/tablewriter"
+
+	"github.com/cloudfoundry/mysql-diag/database"
 )
 
 type ClusterStateTable struct {
@@ -22,27 +22,24 @@ func NewClusterStateTable(writer io.Writer) *ClusterStateTable {
 		table: tablewriter.NewWriter(writer),
 	}
 
-	cst.table.SetHeader([]string{"HOST", "NAME/UUID", "WSREP LOCAL STATE", "WSREP CLUSTER STATUS", "WSREP CLUSTER SIZE"})
+	cst.table.SetHeader([]string{"INSTANCE", "STATE", "CLUSTER STATUS"})
 
 	return &cst
 }
 
-func (t *ClusterStateTable) Add(host string, name string, uuid string, galeraStatus *database.GaleraStatus) {
+func (t *ClusterStateTable) Add(name string, uuid string, galeraStatus *database.GaleraStatus) {
 	t.mutex.Lock()
 	defer t.mutex.Unlock()
 
-	if len(uuid) > 8 {
-		uuid = uuid[:8]
-	}
 	nameUUID := fmt.Sprintf("%s/%s", name, uuid)
 
-	wsrepLocalState, wsrepClusterStatus, wsrepClusterSize := errorContent, errorContent, errorContent
+	wsrepLocalState, wsrepClusterStatus := errorContent, errorContent
 
 	if galeraStatus != nil {
-		wsrepLocalState, wsrepClusterStatus, wsrepClusterSize = galeraStatus.LocalState, galeraStatus.ClusterStatus, strconv.Itoa(galeraStatus.ClusterSize)
+		wsrepLocalState, wsrepClusterStatus = galeraStatus.LocalState, galeraStatus.ClusterStatus
 	}
 
-	row := []string{host, nameUUID, wsrepLocalState, wsrepClusterStatus, wsrepClusterSize}
+	row := []string{nameUUID, wsrepLocalState, wsrepClusterStatus}
 	t.table.Append(row)
 }
 

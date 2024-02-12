@@ -164,11 +164,9 @@ var _ = Describe("mysql-diag cli", func() {
 	It("renders a wsrep status table without error", func() {
 		session := runMainWithArgs()
 
-		Eventually(session.Out).Should(gbytes.Say("HOST"))
-		Eventually(session.Out).Should(gbytes.Say("NAME/UUID"))
-		Eventually(session.Out).Should(gbytes.Say("WSREP LOCAL STATE"))
-		Eventually(session.Out).Should(gbytes.Say("WSREP CLUSTER STATUS"))
-		Eventually(session.Out).Should(gbytes.Say("WSREP CLUSTER SIZE"))
+		Eventually(session.Out).Should(gbytes.Say("INSTANCE"))
+		Eventually(session.Out).Should(gbytes.Say("STATE"))
+		Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))
 
 		Expect(canaryServer.ReceivedRequests()).Should(HaveLen(1))
 
@@ -253,7 +251,7 @@ var _ = Describe("mysql-diag cli", func() {
 			session := runMainWithArgs()
 			Eventually(session).Should(gexec.Exit())
 			Eventually(session.Out).Should(gbytes.Say("Canary not configured, skipping health check"))
-			Eventually(session.Out).Should(gbytes.Say("WSREP CLUSTER STATUS"))
+			Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))
 			Eventually(session.Out).Should(gbytes.Say("Agent not configured, skipping disk check"))
 		})
 	})

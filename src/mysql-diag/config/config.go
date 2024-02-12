@@ -4,7 +4,6 @@ import (
 	"crypto/x509"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -96,7 +95,7 @@ func (tls *TLS) HTTPClient() *http.Client {
 }
 
 func (c *Config) HostsWithLogs() []string {
-	result := []string{}
+	var result []string
 	for _, node := range c.Mysql.Nodes {
 		result = append(result, node.Host)
 	}
@@ -105,7 +104,7 @@ func (c *Config) HostsWithLogs() []string {
 }
 
 func LoadFromFile(filepath string) (*Config, error) {
-	contents, err := ioutil.ReadFile(filepath)
+	contents, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, err
 	}

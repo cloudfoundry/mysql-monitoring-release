@@ -27,7 +27,7 @@ func checkClusterStatus(mysqlConfig config.MysqlConfig) bool {
 	rows := getClusterStatus(mysqlConfig)
 	for _, row := range rows {
 		n := row.node
-		clusterStateTable.Add(n.Host, n.Name, n.UUID, row.status)
+		clusterStateTable.Add(n.Name, n.UUID, row.status)
 	}
 
 	clusterStateTable.Render()
