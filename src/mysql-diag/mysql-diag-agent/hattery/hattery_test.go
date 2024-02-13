@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cloudfoundry/mysql-diag/hattery"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
+
+	"github.com/cloudfoundry/mysql-diag/hattery"
 )
 
 type payload struct {
@@ -34,19 +35,18 @@ var _ = Describe("Hattery", func() {
 
 	It("fetches stuff", func() {
 		server.AppendHandlers(ghttp.CombineHandlers(
-			ghttp.VerifyRequest("GET", "/foo/bar"),
+			ghttp.VerifyRequest("GET", "/"),
 			ghttp.VerifyBasicAuth(username, password),
 			ghttp.RespondWithJSONEncoded(http.StatusOK, response),
 		))
 
 		var fetched payload
 
-		err := hattery.Url(url).Path("/foo").Path("/bar").BasicAuth(username, password).Timeout(5 * time.Second).Fetch(&fetched)
+		err := hattery.Url(url).BasicAuth(username, password).Timeout(5 * time.Second).Fetch(&fetched)
 
 		Expect(err).ToNot(HaveOccurred())
 		Expect(fetched).To(Equal(response))
 
 		Expect(server.ReceivedRequests()).To(HaveLen(1))
 	})
-
 })

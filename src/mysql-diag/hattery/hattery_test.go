@@ -37,14 +37,14 @@ var _ = Describe("Hattery", func() {
 
 		It("fetches stuff", func() {
 			server.AppendHandlers(ghttp.CombineHandlers(
-				ghttp.VerifyRequest("GET", "/foo/bar"),
+				ghttp.VerifyRequest("GET", "/"),
 				ghttp.VerifyBasicAuth(username, password),
 				ghttp.RespondWithJSONEncoded(http.StatusOK, response),
 			))
 
 			var fetched payload
 
-			err := hattery.Url(url).Path("/foo").Path("/bar").BasicAuth(username, password).Timeout(5 * time.Second).Fetch(&fetched)
+			err := hattery.Url(url).BasicAuth(username, password).Timeout(5 * time.Second).Fetch(&fetched)
 
 			Expect(err).ToNot(HaveOccurred())
 			Expect(fetched).To(Equal(response))
@@ -65,7 +65,7 @@ var _ = Describe("Hattery", func() {
 
 		It("fetches stuff ovr TLS", func() {
 			server.AppendHandlers(ghttp.CombineHandlers(
-				ghttp.VerifyRequest("GET", "/foo/bar"),
+				ghttp.VerifyRequest("GET", "/"),
 				ghttp.VerifyBasicAuth(username, password),
 				ghttp.RespondWithJSONEncoded(http.StatusOK, response),
 			))
@@ -74,8 +74,6 @@ var _ = Describe("Hattery", func() {
 
 			err := hattery.
 				Url(url).
-				Path("/foo").
-				Path("/bar").
 				BasicAuth(username, password).
 				Timeout(5 * time.Second).
 				Client(client).

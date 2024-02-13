@@ -31,14 +31,6 @@ func Url(url string) Request {
 	return Request{}.Url(url)
 }
 
-func Timeout(timeout time.Duration) Request {
-	return Request{}.Timeout(timeout)
-}
-
-func Header(key string, value string) Request {
-	return Request{}.Header(key, value)
-}
-
 func (r Request) Url(url string) Request {
 	return Request{
 		url:     url,
@@ -58,41 +50,11 @@ func (r Request) Client(c *http.Client) Request {
 	}
 }
 
-func (r Request) Path(path string) Request {
-	// TODO: if path doesn't start with leading /, add it
-	return Request{
-		url:     r.url + path,
-		timeout: r.timeout,
-		headers: r.headers,
-		auth:    r.auth,
-	}
-}
-
 func (r Request) Timeout(timeout time.Duration) Request {
 	return Request{
 		url:     r.url,
 		timeout: timeout,
 		headers: r.headers,
-		auth:    r.auth,
-	}
-}
-
-func copyMapAndAdd(original map[string]string, key string, value string) map[string]string {
-	newMap := make(map[string]string)
-	for k, v := range original {
-		newMap[k] = v
-	}
-
-	newMap[key] = value
-
-	return newMap
-}
-
-func (r Request) Header(key string, value string) Request {
-	return Request{
-		url:     r.url,
-		timeout: r.timeout,
-		headers: copyMapAndAdd(r.headers, key, value),
 		auth:    r.auth,
 	}
 }
