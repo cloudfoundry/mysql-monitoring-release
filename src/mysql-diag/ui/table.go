@@ -6,6 +6,7 @@ import (
 	"sort"
 	"sync"
 
+	"code.cloudfoundry.org/bytefmt"
 	"github.com/olekukonko/tablewriter"
 
 	"github.com/cloudfoundry/mysql-diag/database"
@@ -20,7 +21,7 @@ type Table struct {
 	clusterInfo []clusterInfo
 }
 
-//const errorContent = "N/A - ERROR"
+const errorContent = "N/A - ERROR"
 
 func NewTable(writer io.Writer) *Table {
 	t := Table{
@@ -53,10 +54,10 @@ func (t *Table) AddDiskInfo(name string, uuid string, info *diagagentclient.Info
 	})
 }
 
-//func prettifyDisk(info diagagentclient.DiskInfo) string {
-//	percentageUsed := float64(info.BytesTotal-info.BytesFree) / float64(info.BytesTotal) * 100
-//	return fmt.Sprintf("%s / %s (%.1f%%)", bytefmt.ByteSize(info.BytesTotal-info.BytesFree), bytefmt.ByteSize(info.BytesTotal), percentageUsed)
-//}
+func prettifyDisk(info diagagentclient.DiskInfo) string {
+	percentageUsed := float64(info.BytesTotal-info.BytesFree) / float64(info.BytesTotal) * 100
+	return fmt.Sprintf("%s / %s (%.1f%%)", bytefmt.ByteSize(info.BytesTotal-info.BytesFree), bytefmt.ByteSize(info.BytesTotal), percentageUsed)
+}
 
 type diskInfo struct {
 	instance       string
