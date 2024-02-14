@@ -55,28 +55,26 @@ func PercentUsed(total uint64, free uint64) uint {
 	return uint(used * 100 / total)
 }
 
-func CheckDiskStatus(mysqlConfig config.MysqlConfig) []DiskSpaceIssue {
-	if mysqlConfig.Agent == nil {
-		fmt.Println("Agent not configured, skipping disk check")
+func CheckDiskStatus(nodeList []NodeDiskInfo, t *config.ThresholdConfig) []DiskSpaceIssue {
+	if isAnyInfoPresent(nodeList) {
+		return ValidateCapacity(nodeList, t)
+	} else {
 		return nil
 	}
+}
 
-	rows := getDisks(mysqlConfig)
-
-	if isAnyInfoPresent(rows) {
+func RenderDiskTable(nodeList []NodeDiskInfo) {
+	if isAnyInfoPresent(nodeList) {
 		diskInfoTable := ui.NewDiskInfoTable(os.Stdout)
 
-		for _, row := range rows {
+		for _, row := range nodeList {
 			n := row.Node
 			diskInfoTable.Add(n.Name, n.UUID, row.Info)
 		}
 
 		diskInfoTable.Render()
-
-		return ValidateCapacity(rows, mysqlConfig.Threshold)
 	} else {
 		fmt.Println(msg.Alert("Unable to gather disk usage information, moving on. Run bosh vms --vitals for this information."))
-		return nil
 	}
 }
 
@@ -89,7 +87,7 @@ func isAnyInfoPresent(infos []NodeDiskInfo) bool {
 	return false
 }
 
-func getDisks(mysqlConfig config.MysqlConfig) []NodeDiskInfo {
+func GetNodesDiskInfo(mysqlConfig config.MysqlConfig) []NodeDiskInfo {
 	channel := make(chan NodeDiskInfo, len(mysqlConfig.Nodes))
 
 	for _, n := range mysqlConfig.Nodes {

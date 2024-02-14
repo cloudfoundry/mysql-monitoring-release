@@ -10,6 +10,7 @@ import (
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/disk"
+	"github.com/cloudfoundry/mysql-diag/diskspaceissue"
 	"github.com/cloudfoundry/mysql-diag/msg"
 	"github.com/cloudfoundry/mysql-diag/ui"
 )
@@ -21,17 +22,7 @@ const (
 var configFilepath = flag.String("c", defaultConfigPath, "location of config file")
 
 // returns true if the cluster needs bootstrap
-func checkClusterStatus(mysqlConfig config.MysqlConfig) bool {
-	clusterStateTable := ui.NewClusterStateTable(os.Stdout)
-
-	rows := getClusterStatus(mysqlConfig)
-	for _, row := range rows {
-		n := row.node
-		clusterStateTable.Add(n.Name, n.UUID, row.status)
-	}
-
-	clusterStateTable.Render()
-
+func checkClusterBootstrapStatus(rows []*nodeStatus) bool {
 	statuses := make([]*database.GaleraStatus, len(rows))
 	for i, row := range rows {
 		statuses[i] = row.status
@@ -44,12 +35,23 @@ func checkClusterStatus(mysqlConfig config.MysqlConfig) bool {
 	}
 }
 
+func renderClusterTable(nodeList []*nodeStatus) {
+	clusterStateTable := ui.NewClusterStateTable(os.Stdout)
+
+	for _, row := range nodeList {
+		n := row.node
+		clusterStateTable.Add(n.Name, n.UUID, row.status)
+	}
+
+	clusterStateTable.Render()
+}
+
 type nodeStatus struct {
 	node   config.MysqlNode
 	status *database.GaleraStatus
 }
 
-func getClusterStatus(mysqlConfig config.MysqlConfig) []*nodeStatus {
+func getNodesClusterInfo(mysqlConfig config.MysqlConfig) []*nodeStatus {
 	channel := make(chan nodeStatus, len(mysqlConfig.Nodes))
 
 	for _, n := range mysqlConfig.Nodes {
@@ -106,6 +108,7 @@ func printCurrentTime() {
 }
 
 func main() {
+	var diskStatus []diskspaceissue.DiskSpaceIssue
 	flag.Parse()
 
 	c, err := config.LoadFromFile(*configFilepath)
@@ -116,13 +119,23 @@ func main() {
 
 	printCurrentTime()
 	unhealthy := checkCanary(c.Canary)
-	needsBootstrap := checkClusterStatus(c.Mysql)
-	diskSpaceIssues := disk.CheckDiskStatus(c.Mysql)
+
+	cNodes := getNodesClusterInfo(c.Mysql)
+	renderClusterTable(cNodes)
+	needsBootstrap := checkClusterBootstrapStatus(cNodes)
+
+	if c.Mysql.Agent == nil {
+		fmt.Println("Agent not configured, skipping disk check")
+	} else {
+		dNodes := disk.GetNodesDiskInfo(c.Mysql)
+		disk.RenderDiskTable(dNodes)
+		diskStatus = disk.CheckDiskStatus(dNodes, c.Mysql.Threshold)
+	}
 
 	messages := ui.Report(ui.ReporterParams{
 		IsCanaryHealthy: !unhealthy,
 		NeedsBootstrap:  needsBootstrap,
-		DiskSpaceIssues: diskSpaceIssues,
+		DiskSpaceIssues: diskStatus,
 	})
 
 	for _, message := range messages {
