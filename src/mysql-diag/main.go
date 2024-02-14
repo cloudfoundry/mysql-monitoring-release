@@ -35,15 +35,16 @@ func checkClusterBootstrapStatus(rows []*nodeStatus) bool {
 	}
 }
 
-func renderClusterTable(nodeList []*nodeStatus) {
-	clusterStateTable := ui.NewClusterStateTable(os.Stdout)
+func renderClusterTable(nodeList []*nodeStatus, table *ui.Table) {
+	//clusterStateTable := ui.NewClusterStateTable(os.Stdout)
 
 	for _, row := range nodeList {
 		n := row.node
-		clusterStateTable.Add(n.Name, n.UUID, row.status)
+		table.AddClusterInfo(n.Name, n.UUID, row.status)
+		//clusterStateTable.Add(n.Name, n.UUID, row.status)
 	}
 
-	clusterStateTable.Render()
+	//clusterStateTable.Render()
 }
 
 type nodeStatus struct {
@@ -120,17 +121,21 @@ func main() {
 	printCurrentTime()
 	unhealthy := checkCanary(c.Canary)
 
-	cNodes := getNodesClusterInfo(c.Mysql)
-	renderClusterTable(cNodes)
-	needsBootstrap := checkClusterBootstrapStatus(cNodes)
+	table := ui.NewTable(os.Stdout)
+
+	nodeStatuses := getNodesClusterInfo(c.Mysql)
+	renderClusterTable(nodeStatuses, table)
+	needsBootstrap := checkClusterBootstrapStatus(nodeStatuses)
 
 	if c.Mysql.Agent == nil {
 		fmt.Println("Agent not configured, skipping disk check")
 	} else {
-		dNodes := disk.GetNodesDiskInfo(c.Mysql)
-		disk.RenderDiskTable(dNodes)
-		diskStatus = disk.CheckDiskStatus(dNodes, c.Mysql.Threshold)
+		nodeDiskInfos := disk.GetNodesDiskInfo(c.Mysql)
+		disk.RenderDiskTable(nodeDiskInfos, table)
+		diskStatus = disk.CheckDiskStatus(nodeDiskInfos, c.Mysql.Threshold)
 	}
+
+	table.Render()
 
 	messages := ui.Report(ui.ReporterParams{
 		IsCanaryHealthy: !unhealthy,

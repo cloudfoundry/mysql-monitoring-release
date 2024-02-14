@@ -167,6 +167,7 @@ var _ = Describe("mysql-diag cli", func() {
 		Eventually(session.Out).Should(gbytes.Say("INSTANCE"))
 		Eventually(session.Out).Should(gbytes.Say("STATE"))
 		Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))
+		Eventually(session.Out).Should(gbytes.Say("N/A - ERROR"))
 
 		Expect(canaryServer.ReceivedRequests()).Should(HaveLen(1))
 
@@ -189,7 +190,7 @@ var _ = Describe("mysql-diag cli", func() {
 		Eventually(session.Out).Should(gbytes.Say("INSTANCE"))
 		Eventually(session.Out).Should(gbytes.Say("PERSISTENT DISK USED"))
 		Eventually(session.Out).Should(gbytes.Say("EPHEMERAL DISK USED"))
-		Eventually(session.Out).Should(gbytes.Say("73.0"))
+		Eventually(session.Out).Should(gbytes.Say(`333B / 456B \(73\.0%\)`))
 
 		Expect(agentServer.ReceivedRequests()).Should(HaveLen(1))
 
@@ -251,8 +252,9 @@ var _ = Describe("mysql-diag cli", func() {
 			session := runMainWithArgs()
 			Eventually(session).Should(gexec.Exit())
 			Eventually(session.Out).Should(gbytes.Say("Canary not configured, skipping health check"))
-			Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))
 			Eventually(session.Out).Should(gbytes.Say("Agent not configured, skipping disk check"))
+			Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))
+			Eventually(session.Out).Should(gbytes.Say("N/A - ERROR"))
 		})
 	})
 })

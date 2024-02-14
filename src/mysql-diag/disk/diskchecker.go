@@ -2,7 +2,6 @@ package disk
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/diagagentclient"
@@ -63,16 +62,16 @@ func CheckDiskStatus(nodeList []NodeDiskInfo, t *config.ThresholdConfig) []DiskS
 	}
 }
 
-func RenderDiskTable(nodeList []NodeDiskInfo) {
+func RenderDiskTable(nodeList []NodeDiskInfo, table *ui.Table) {
 	if isAnyInfoPresent(nodeList) {
-		diskInfoTable := ui.NewDiskInfoTable(os.Stdout)
+		//diskInfoTable := ui.NewDiskInfoTable(os.Stdout)
 
 		for _, row := range nodeList {
 			n := row.Node
-			diskInfoTable.Add(n.Name, n.UUID, row.Info)
+			table.AddDiskInfo(n.Name, n.UUID, row.Info)
 		}
 
-		diskInfoTable.Render()
+		//diskInfoTable.Render()
 	} else {
 		fmt.Println(msg.Alert("Unable to gather disk usage information, moving on. Run bosh vms --vitals for this information."))
 	}
