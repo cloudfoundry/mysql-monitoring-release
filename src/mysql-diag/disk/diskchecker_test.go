@@ -239,4 +239,73 @@ var _ = Describe("DiskChecker", func() {
 			})
 		})
 	})
+
+	Context("HasAtLeastOneInfo", func() {
+		It("returns true when info is populated", func() {
+			infos := []disk.NodeDiskInfo{nodeWithInfo}
+
+			result := disk.HasAtLeastOneInfo(infos)
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns true when info is empty", func() {
+			infos := []disk.NodeDiskInfo{nodeWithEmptyInfo}
+
+			result := disk.HasAtLeastOneInfo(infos)
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns false when a node doesn't have info", func() {
+			infos := []disk.NodeDiskInfo{nodeWithoutInfo}
+
+			result := disk.HasAtLeastOneInfo(infos)
+			Expect(result).To(BeFalse())
+		})
+
+		It("returns true when at least one node has info", func() {
+			infos := []disk.NodeDiskInfo{
+				nodeWithInfo,
+				nodeWithoutInfo,
+			}
+
+			result := disk.HasAtLeastOneInfo(infos)
+			Expect(result).To(BeTrue())
+		})
+
+		It("returns false for slices", func() {
+			infos := []disk.NodeDiskInfo{}
+
+			result := disk.HasAtLeastOneInfo(infos)
+			Expect(result).To(BeFalse())
+		})
+	})
 })
+
+var nodeWithInfo = disk.NodeDiskInfo{
+	Node: config.MysqlNode{
+		Host: "",
+		Name: "",
+		UUID: "",
+	},
+	Info: &diagagentclient.InfoResponse{
+		Persistent: diagagentclient.DiskInfo{},
+		Ephemeral:  diagagentclient.DiskInfo{},
+	},
+}
+
+var nodeWithEmptyInfo = disk.NodeDiskInfo{
+	Node: config.MysqlNode{
+		Host: "",
+		Name: "",
+		UUID: "",
+	},
+	Info: &diagagentclient.InfoResponse{},
+}
+
+var nodeWithoutInfo = disk.NodeDiskInfo{
+	Node: config.MysqlNode{
+		Host: "",
+		Name: "",
+		UUID: "",
+	},
+}

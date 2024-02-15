@@ -2,6 +2,7 @@ package disk
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/diagagentclient"
@@ -9,6 +10,11 @@ import (
 	"github.com/cloudfoundry/mysql-diag/msg"
 	"github.com/cloudfoundry/mysql-diag/ui"
 )
+
+type NodeDiskInfo struct {
+	Node config.MysqlNode
+	Info *diagagentclient.InfoResponse
+}
 
 func ValidateCapacity(nodeDiskInfos []NodeDiskInfo, threshold *config.ThresholdConfig) []DiskSpaceIssue {
 	issues := []DiskSpaceIssue{}
@@ -55,7 +61,7 @@ func PercentUsed(total uint64, free uint64) uint {
 }
 
 func CheckDiskStatus(nodeDiskInfos []NodeDiskInfo, t *config.ThresholdConfig) []DiskSpaceIssue {
-	if isAnyInfoPresent(nodeDiskInfos) {
+	if HasAtLeastOneInfo(nodeDiskInfos) {
 		return ValidateCapacity(nodeDiskInfos, t)
 	} else {
 		return nil
@@ -63,7 +69,7 @@ func CheckDiskStatus(nodeDiskInfos []NodeDiskInfo, t *config.ThresholdConfig) []
 }
 
 func AddDiskDataToTable(nodeDiskInfos []NodeDiskInfo, table *ui.Table) {
-	if isAnyInfoPresent(nodeDiskInfos) {
+	if HasAtLeastOneInfo(nodeDiskInfos) {
 		for _, row := range nodeDiskInfos {
 			n := row.Node
 			table.AddDiskInfo(n.Name, n.UUID, row.Info)
@@ -71,15 +77,6 @@ func AddDiskDataToTable(nodeDiskInfos []NodeDiskInfo, table *ui.Table) {
 	} else {
 		fmt.Println(msg.Alert("Unable to gather disk usage information, moving on. Run bosh vms --vitals for this information."))
 	}
-}
-
-func isAnyInfoPresent(infos []NodeDiskInfo) bool {
-	for _, info := range infos {
-		if info.Info != nil {
-			return true
-		}
-	}
-	return false
 }
 
 func GetNodeDiskInfos(mysqlConfig config.MysqlConfig) []NodeDiskInfo {
@@ -112,4 +109,10 @@ func GetNodeDiskInfos(mysqlConfig config.MysqlConfig) []NodeDiskInfo {
 	}
 
 	return nodeDiskInfos
+}
+
+func HasAtLeastOneInfo(infos []NodeDiskInfo) bool {
+	return slices.ContainsFunc(infos, func(i NodeDiskInfo) bool {
+		return i.Info != nil
+	})
 }
