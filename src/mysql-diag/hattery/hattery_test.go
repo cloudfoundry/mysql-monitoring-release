@@ -2,6 +2,7 @@ package hattery_test
 
 import (
 	"net/http"
+	"testing"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -10,6 +11,11 @@ import (
 
 	"github.com/cloudfoundry/mysql-diag/hattery"
 )
+
+func TestHattery(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Hattery Suite")
+}
 
 type payload struct {
 	Fookey string `json:"foo"`
