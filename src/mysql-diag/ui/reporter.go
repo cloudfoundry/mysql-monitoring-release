@@ -21,7 +21,7 @@ func Report(params ReporterParams) []string {
 	}
 
 	if params.NeedsBootstrap {
-		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://docs.vmware.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3.1/mysql-for-tas/bootstrapping.html"))
+		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://docs.vmware.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3.2/mysql-for-tas/bootstrapping.html"))
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap {
