@@ -5,7 +5,7 @@ go 1.20
 require (
 	code.cloudfoundry.org/clock v1.1.0
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/tlsconfig v0.0.0-20240209182105-bbe53504285f
+	code.cloudfoundry.org/tlsconfig v0.0.0-20240216143505-4f8d9b753d56
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/cloudfoundry/multierror v0.0.0-20230911185048-add4c8e88cda
@@ -16,7 +16,7 @@ require (
 	github.com/onsi/gomega v1.31.1
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/pivotal-cf-experimental/service-config v0.0.0-20160129003516-b1dc94de6ada
-	golang.org/x/tools v0.17.0
+	golang.org/x/tools v0.18.0
 	gopkg.in/validator.v2 v2.0.1
 )
 
@@ -47,7 +47,7 @@ require (
 	github.com/moby/term v0.5.0 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/opencontainers/image-spec v1.0.2 // indirect
+	github.com/opencontainers/image-spec v1.1.0 // indirect
 	github.com/opencontainers/runc v1.1.12 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
@@ -56,7 +56,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
-	go.step.sm/crypto v0.43.0 // indirect
+	go.step.sm/crypto v0.43.1 // indirect
 	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/mod v0.15.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
