@@ -84,7 +84,7 @@ func (dc *DbClient) FindLastBackupTimestamp() (time.Time, error) {
 	return value, nil
 }
 
-func (dc *DbClient) runSingleRowQuery(query string, params []interface{}) (map[string]string, error) {
+func (dc *DbClient) runSingleRowQuery(query string, params []any) (map[string]string, error) {
 	rows, err := dc.connection.Query(query, params...)
 	if err != nil {
 		return nil, err
@@ -98,22 +98,26 @@ func (dc *DbClient) runSingleRowQuery(query string, params []interface{}) (map[s
 		return nil, err
 	}
 
+	nullOrString := func(v any) string {
+		value := v.(*sql.NullString)
+		if value.Valid {
+			return value.String
+		} else {
+			return "NULL"
+		}
+	}
+
 	if rows.Next() {
-		columnValues := make([]interface{}, len(columns))
-		columnPointers := make([]interface{}, len(columns))
-		for i := range columns {
-			columnPointers[i] = &columnValues[i]
+		scanValues := make([]any, len(columns))
+		for i := range scanValues {
+			scanValues[i] = new(sql.NullString)
 		}
-		err := rows.Scan(columnPointers...)
-		if err != nil {
-			panic(err)
+
+		if err = rows.Scan(scanValues...); err != nil {
+			return nil, err
 		}
-		for index, col := range columns {
-			value := columnValues[index]
-			if value == nil {
-				value = []uint8("NULL")
-			}
-			result[strings.ToLower(col)] = string(value.([]uint8))
+		for i, col := range columns {
+			result[strings.ToLower(col)] = nullOrString(scanValues[i])
 		}
 	}
 

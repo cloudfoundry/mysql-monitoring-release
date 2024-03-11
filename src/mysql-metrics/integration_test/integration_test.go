@@ -147,6 +147,7 @@ var _ = Describe("mysql-metrics", func() {
 			Expect(contents).NotTo(BeEmpty())
 
 			contentsAsString := fmt.Sprintf("%s", contents)
+			Expect(contentsAsString).To(MatchRegexp(`follower/seconds_behind_master","value":\d+`), `metrics output:\n%s`, contentsAsString)
 			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_used_percent\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_used\",\"value\":\\d+"))
 			Expect(contentsAsString).To(MatchRegexp("system/persistent_disk_free\",\"value\":\\d+"))

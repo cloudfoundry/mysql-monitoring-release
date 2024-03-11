@@ -47,6 +47,10 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 	db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(localhost:%s)/", resource.GetPort("3306/tcp")))
 	Expect(err).NotTo(HaveOccurred())
 	Expect(pool.Retry(db.Ping)).To(Succeed())
+	Expect(db.Exec(`CHANGE REPLICATION SOURCE TO SOURCE_HOST = 'some-host', SOURCE_USER = 'some-user', SOURCE_PASSWORD = 'some-password'`)).
+		Error().NotTo(HaveOccurred())
+	Expect(db.Exec(`START REPLICA`)).
+		Error().NotTo(HaveOccurred())
 	return []byte(resource.GetPort("3306/tcp") + "\t" + metricsBinPath)
 }, func(data []byte) {
 	info := strings.Fields(string(data))
