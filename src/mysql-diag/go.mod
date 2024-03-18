@@ -3,7 +3,7 @@ module github.com/cloudfoundry/mysql-diag
 go 1.20
 
 require (
-	code.cloudfoundry.org/bytefmt v0.0.0-20231017140541-3b893ed0421b
+	code.cloudfoundry.org/bytefmt v0.0.0-20240312201700-9a4852549313
 	code.cloudfoundry.org/tlsconfig v0.0.0-20240308143921-4b874b341ed6
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.16.0
