@@ -1,0 +1,69 @@
+name: mysql-monitoring
+version: 10.12.0
+commit_hash: a3db87dc
+uncommitted_changes: false
+jobs:
+- name: mysql-diag
+  version: 3fae7afc6ab897019107b16b02075ad385e2c6ec5f7f550ca2b56e3a98944cce
+  fingerprint: 3fae7afc6ab897019107b16b02075ad385e2c6ec5f7f550ca2b56e3a98944cce
+  sha1: sha256:26864eb1df36c2e6ce0f51e091629092661740cde3204f1c07e69a519561e399
+  packages:
+  - mysql-diag
+- name: mysql-diag-agent
+  version: 701b46f98f7cedabb1e4bf4b28031923fe017515cdd9b1b2a585a4de60e1fb9f
+  fingerprint: 701b46f98f7cedabb1e4bf4b28031923fe017515cdd9b1b2a585a4de60e1fb9f
+  sha1: sha256:d17ad3d5246a1cdf1f8eed9c5112748ea36e520766b8a00600faef67975a31c6
+  packages:
+  - mysql-diag
+- name: mysql-metrics
+  version: 39eefb19280573e8f66e8c7916035fd479b7c9b32725f4d00dd6e8cfbe57464b
+  fingerprint: 39eefb19280573e8f66e8c7916035fd479b7c9b32725f4d00dd6e8cfbe57464b
+  sha1: sha256:74b58728647da43c7f950364920f9e468757ec24b5ad5cf276067076f244bddc
+  packages:
+  - mysql-metrics
+- name: replication-canary
+  version: ce55a2ef051a9146706ea10f933ed60e87c14a752d45d7f6d0f1ca474b52049d
+  fingerprint: ce55a2ef051a9146706ea10f933ed60e87c14a752d45d7f6d0f1ca474b52049d
+  sha1: sha256:197f5c2d3b67ed37339c19ca27df41d474bdac8b5041417175dd1b514a278577
+  packages:
+  - replication-canary
+- name: send-email
+  version: d84d74931ad8a5d5066131f6652e5bf2a0406d88897e7c80bdab1d868b0c4156
+  fingerprint: d84d74931ad8a5d5066131f6652e5bf2a0406d88897e7c80bdab1d868b0c4156
+  sha1: sha256:a596c303ce5d0b031e80add0f1eb400d96ce8f726390d7118f84710ff7ee939b
+  packages:
+  - notifications-client
+packages:
+- name: golang-1-linux
+  version: 6aad26c0e11f1c08fe8408af93d386eed66fd4c29170b8d9a034677eaa4f61d9
+  fingerprint: 6aad26c0e11f1c08fe8408af93d386eed66fd4c29170b8d9a034677eaa4f61d9
+  sha1: sha256:6742860369e7ce134e8ca4a037917d386ef6b0b92338a5b46114baee4d3cea19
+  dependencies: []
+- name: mysql-diag
+  version: 6e80332b94e176ec71e8d6302bdb27d3adcdbc5db84640defb6450f417a8c395
+  fingerprint: 6e80332b94e176ec71e8d6302bdb27d3adcdbc5db84640defb6450f417a8c395
+  sha1: sha256:5ec1be0080f65b6cdb867e4660f141ae63488b9a702e7577e490c03f51beaafe
+  dependencies:
+  - golang-1-linux
+- name: mysql-metrics
+  version: 0dedf3cc0907edc2fa7bca538a2e82e42ce71a607d32f234926fad24cf2fef51
+  fingerprint: 0dedf3cc0907edc2fa7bca538a2e82e42ce71a607d32f234926fad24cf2fef51
+  sha1: sha256:24ff2881f6067ae8e0d5e91755f569ba75c70ce07f1a2a03b1e0c7d035af9c75
+  dependencies:
+  - golang-1-linux
+- name: notifications-client
+  version: a050e5ba6dfe7ee39c661391441e05c5677056c28689325cf7d2722def798e23
+  fingerprint: a050e5ba6dfe7ee39c661391441e05c5677056c28689325cf7d2722def798e23
+  sha1: sha256:4a31c0b9cc607b8ac6ae3bc5a89c5451794c5aaa2409e424b17147097898ece1
+  dependencies:
+  - golang-1-linux
+- name: replication-canary
+  version: cbe41db0ba891fe08a944f8db1b08e7a9c6416086db540c4cd2264be73711a5b
+  fingerprint: cbe41db0ba891fe08a944f8db1b08e7a9c6416086db540c4cd2264be73711a5b
+  sha1: sha256:659b3e99a906342c2bccb4aacbe152c04b5840bf09a2346dda6a1a5bbc03dadb
+  dependencies:
+  - golang-1-linux
+license:
+  version: 3aadce127741a6d3b0f03182ae9acccc9fa1b40f09da6bd7882a2b2578531c41
+  fingerprint: 3aadce127741a6d3b0f03182ae9acccc9fa1b40f09da6bd7882a2b2578531c41
+  sha1: sha256:d7682fdae2066999c48f0e2f4387633c98fc8f86958b7f8b7d81f0c8edba7415
