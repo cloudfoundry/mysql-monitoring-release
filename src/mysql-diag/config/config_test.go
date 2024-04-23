@@ -2,7 +2,6 @@ package config_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -115,12 +114,12 @@ var _ = Describe("config", func() {
 			uuid,
 		)
 
-		tempDir, err := ioutil.TempDir("", "")
+		tempDir, err := os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
 
 		configFilepath = filepath.Join(tempDir, "mysql-diag-config.yml")
 
-		err = ioutil.WriteFile(configFilepath, []byte(formatted), os.ModePerm)
+		err = os.WriteFile(configFilepath, []byte(formatted), os.ModePerm)
 		Expect(err).NotTo(HaveOccurred())
 
 		node = config.MysqlNode{
@@ -183,7 +182,7 @@ var _ = Describe("config", func() {
 
 	Context("when the file contents cannot be unmarshalled", func() {
 		BeforeEach(func() {
-			err := ioutil.WriteFile(configFilepath, []byte("invalid contents"), os.ModePerm)
+			err := os.WriteFile(configFilepath, []byte("invalid contents"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 		})
 

@@ -2,7 +2,6 @@ package main_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -32,7 +31,7 @@ var _ = Describe("mysql diag agent", func() {
 	BeforeEach(func() {
 		var err error
 
-		tempDir, err = ioutil.TempDir("", "mysql-diag-integration-tests")
+		tempDir, err = os.MkdirTemp("", "mysql-diag-integration-tests")
 		Expect(err).NotTo(HaveOccurred())
 
 		port = 59991
@@ -123,6 +122,6 @@ var _ = Describe("mysql diag agent", func() {
 func writeAsYamlToFile(object interface{}, filepath string) {
 	b, err := yaml.Marshal(object)
 	Expect(err).NotTo(HaveOccurred())
-	err = ioutil.WriteFile(filepath, b, os.ModePerm)
+	err = os.WriteFile(filepath, b, os.ModePerm)
 	Expect(err).NotTo(HaveOccurred())
 }

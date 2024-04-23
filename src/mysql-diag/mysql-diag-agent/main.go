@@ -47,7 +47,7 @@ func main() {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(responseBytes)
+		_, _ = w.Write(responseBytes)
 	}
 
 	router := http.NewServeMux()
@@ -55,7 +55,7 @@ func main() {
 	router.Handle("/api/v1/info", basicAuth.Wrap(http.HandlerFunc(infoHandler)))
 
 	bindAddress := fmt.Sprintf(":%d", c.Port)
-	fmt.Println(fmt.Sprintf("Listening on: '%s'", bindAddress))
+	fmt.Printf("Listening on: '%s'\n", bindAddress)
 
 	listener, err := c.NetworkListener()
 	if err != nil {

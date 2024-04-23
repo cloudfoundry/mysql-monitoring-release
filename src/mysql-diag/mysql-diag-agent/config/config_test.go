@@ -6,7 +6,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -49,12 +48,12 @@ var _ = Describe("config", func() {
 		))
 
 		var err error
-		tempDir, err = ioutil.TempDir("", "")
+		tempDir, err = os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
 
 		configFilepath = filepath.Join(tempDir, "mysql-diag-agent-config.yml")
 
-		err = ioutil.WriteFile(configFilepath, configContents, os.ModePerm)
+		err = os.WriteFile(configFilepath, configContents, os.ModePerm)
 		Expect(err).NotTo(HaveOccurred())
 	})
 
@@ -90,7 +89,7 @@ var _ = Describe("config", func() {
 
 	Context("when the file contents cannot be unmarshalled", func() {
 		BeforeEach(func() {
-			err := ioutil.WriteFile(configFilepath, []byte("invalid contents"), os.ModePerm)
+			err := os.WriteFile(configFilepath, []byte("invalid contents"), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -119,7 +118,7 @@ var _ = Describe("config", func() {
 
 			configFilepath = filepath.Join(tempDir, "mysql-diag-agent-config.yml")
 
-			err = ioutil.WriteFile(configFilepath, configContents, os.ModePerm)
+			err = os.WriteFile(configFilepath, configContents, os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
 
 		})
@@ -161,7 +160,7 @@ var _ = Describe("config", func() {
 		It("can provide a TLS listener", func() {
 			l, err := rootConfig.NetworkListener()
 			Expect(err).NotTo(HaveOccurred())
-			defer l.Close()
+			defer func(c io.Closer) { _ = c.Close() }(l)
 
 			errCh := make(chan error)
 			go func() {
@@ -170,8 +169,8 @@ var _ = Describe("config", func() {
 					errCh <- err
 					return
 				}
-				defer conn.Close()
-				conn.Write([]byte("foo"))
+				defer func(c io.Closer) { _ = c.Close() }(conn)
+				_, _ = conn.Write([]byte("foo"))
 				errCh <- err
 			}()
 
@@ -204,12 +203,12 @@ var _ = Describe("config", func() {
 
 				l, err := rootConfig.NetworkListener()
 				Expect(err).NotTo(HaveOccurred())
-				defer l.Close()
+				defer func(c io.Closer) { _ = c.Close() }(l)
 
 				errCh := make(chan error, 1)
 				go func() {
 					conn, err := l.Accept()
-					defer conn.Close()
+					defer func(c io.Closer) { _ = c.Close() }(conn)
 					_, _ = conn.Write([]byte("foo"))
 					errCh <- err
 				}()
@@ -218,7 +217,7 @@ var _ = Describe("config", func() {
 				conn, err := net.Dial("tcp", address)
 				Expect(err).NotTo(HaveOccurred())
 
-				msg, err := ioutil.ReadAll(conn)
+				msg, err := io.ReadAll(conn)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(string(msg)).To(Equal("foo"))
 				Expect(conn.Close()).To(Succeed())

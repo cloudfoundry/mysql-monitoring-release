@@ -3,8 +3,8 @@ package config
 import (
 	"crypto/tls"
 	"fmt"
-	"io/ioutil"
 	"net"
+	"os"
 
 	"code.cloudfoundry.org/tlsconfig"
 	"gopkg.in/yaml.v2"
@@ -26,7 +26,7 @@ type Config struct {
 }
 
 func LoadFromFile(filepath string) (*Config, error) {
-	contents, err := ioutil.ReadFile(filepath)
+	contents, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, err
 	}
