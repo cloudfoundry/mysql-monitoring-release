@@ -3,14 +3,14 @@ module github.com/cloudfoundry/mysql-diag
 go 1.20
 
 require (
-	code.cloudfoundry.org/bytefmt v0.0.0-20240409162623-53abdae41573
-	code.cloudfoundry.org/tlsconfig v0.0.0-20240410162701-78a97c114f7f
+	code.cloudfoundry.org/bytefmt v0.0.0-20240418163414-335139cff0b2
+	code.cloudfoundry.org/tlsconfig v0.0.0-20240417163319-a2cf10de323a
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.16.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/ginkgo/v2 v2.17.1
-	github.com/onsi/gomega v1.32.0
+	github.com/onsi/gomega v1.33.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -19,7 +19,7 @@ require (
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/pprof v0.0.0-20240415144954-be81aee2d733 // indirect
+	github.com/google/pprof v0.0.0-20240422182052-72c8669ad3e7 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -28,7 +28,7 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/square/certstrap v1.3.0 // indirect
-	go.step.sm/crypto v0.44.3 // indirect
+	go.step.sm/crypto v0.44.7 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect

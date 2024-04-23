@@ -1,11 +1,13 @@
 module github.com/cloudfoundry/replication-canary
 
-go 1.20
+go 1.21
+
+toolchain go1.22.2
 
 require (
 	code.cloudfoundry.org/clock v1.1.0
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/tlsconfig v0.0.0-20240410162701-78a97c114f7f
+	code.cloudfoundry.org/tlsconfig v0.0.0-20240417163319-a2cf10de323a
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/cloudfoundry/multierror v0.0.0-20240405184450-633a03531b34
@@ -13,7 +15,7 @@ require (
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.8.1
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.32.0
+	github.com/onsi/gomega v1.33.0
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/pivotal-cf-experimental/service-config v0.0.0-20160129003516-b1dc94de6ada
 	golang.org/x/tools v0.20.0
@@ -26,12 +28,12 @@ require (
 	dario.cat/mergo v1.0.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
-	github.com/Microsoft/go-winio v0.6.1 // indirect
+	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/containerd/continuity v0.4.3 // indirect
-	github.com/docker/cli v26.0.1+incompatible // indirect
-	github.com/docker/docker v26.0.1+incompatible // indirect
+	github.com/docker/cli v26.1.0+incompatible // indirect
+	github.com/docker/docker v26.1.0+incompatible // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -56,7 +58,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
-	go.step.sm/crypto v0.44.3 // indirect
+	go.step.sm/crypto v0.44.7 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
