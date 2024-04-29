@@ -74,10 +74,6 @@ properties:
   mysql-metrics.cpu_metrics_enabled:
     description: "enable cpu metrics"
     default: true
-
-  mysql-metrics.backup_schedule_in_hours:
-    description: "the expected number of hours between backups"
-
   mysql-metrics.tls:
     description: "TLS configuration for loggregator client"
 

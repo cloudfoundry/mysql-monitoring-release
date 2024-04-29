@@ -189,17 +189,3 @@ spec:
       title: Persistent Disk Used Percent
       description: "Persistent disk used on the MySQL node."
       recommendedResponse: "Upgrade the service instance to a plan with larger disk capacity."
-  <% if p("mysql-metrics.backup_metrics_enabled") %>
-  - name: mysql_backups
-    promql: (time() - _$origin_last_successful_backup{source_id="$source_id", deployment="$deployment"}) / 3600
-    thresholds:
-    - level: critical
-      operator: gt
-      value: <%= p("mysql-metrics.backup_schedule_in_hours") %>
-    alert:
-      for: 5m
-    documentation:
-      title: Hours since last successful backup
-      description: Using the configured backup schedule for the service instance as a threshold, this metric shows how many hours have passed since the last successful backup
-      recommendedResponse: Check the logs for the service instance to determine why recent backups are missing
-  <% end %>
