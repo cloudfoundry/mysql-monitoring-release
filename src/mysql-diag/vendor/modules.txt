@@ -1,7 +1,7 @@
-# code.cloudfoundry.org/bytefmt v0.0.0-20240510175427-fd0528cc37f1
+# code.cloudfoundry.org/bytefmt v0.0.0-20240526171149-658a10a2f1fb
 ## explicit; go 1.20
 code.cloudfoundry.org/bytefmt
-# code.cloudfoundry.org/tlsconfig v0.0.0-20240516170203-d50b3d56ba06
+# code.cloudfoundry.org/tlsconfig v0.0.0-20240522170710-79df114af82a
 ## explicit; go 1.19
 code.cloudfoundry.org/tlsconfig
 code.cloudfoundry.org/tlsconfig/certtest
@@ -15,7 +15,7 @@ github.com/DATA-DOG/go-sqlmock
 # github.com/fatih/color v1.17.0
 ## explicit; go 1.17
 github.com/fatih/color
-# github.com/go-logr/logr v1.4.1
+# github.com/go-logr/logr v1.4.2
 ## explicit; go 1.18
 github.com/go-logr/logr
 github.com/go-logr/logr/funcr
@@ -32,7 +32,7 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/pprof v0.0.0-20240509144519-723abb6459b7
+# github.com/google/pprof v0.0.0-20240525223248-4bfdf5a9a2af
 ## explicit; go 1.19
 github.com/google/pprof/profile
 # github.com/kr/text v0.2.0
@@ -49,7 +49,7 @@ github.com/mattn/go-runewidth
 # github.com/olekukonko/tablewriter v0.0.5
 ## explicit; go 1.12
 github.com/olekukonko/tablewriter
-# github.com/onsi/ginkgo/v2 v2.17.3
+# github.com/onsi/ginkgo/v2 v2.19.0
 ## explicit; go 1.20
 github.com/onsi/ginkgo/v2
 github.com/onsi/ginkgo/v2/config
@@ -97,7 +97,7 @@ github.com/rivo/uniseg
 # github.com/square/certstrap v1.3.0
 ## explicit; go 1.18
 github.com/square/certstrap/pkix
-# go.step.sm/crypto v0.45.0
+# go.step.sm/crypto v0.45.1
 ## explicit; go 1.20
 go.step.sm/crypto/fingerprint
 go.step.sm/crypto/internal/bcrypt_pbkdf
