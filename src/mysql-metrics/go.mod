@@ -19,7 +19,7 @@ require (
 
 require (
 	code.cloudfoundry.org/go-diodes v0.0.0-20240604201846-c756bfed2ed3 // indirect
-	code.cloudfoundry.org/tlsconfig v0.0.0-20240606172222-82aa02bc07ea // indirect
+	code.cloudfoundry.org/tlsconfig v0.0.0-20240613173017-075d5b187a0d // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
@@ -28,7 +28,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/containerd/continuity v0.4.3 // indirect
 	github.com/docker/cli v26.1.4+incompatible // indirect
-	github.com/docker/docker v26.1.4+incompatible // indirect
+	github.com/docker/docker v27.0.0+incompatible // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/moby/term v0.5.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
-	github.com/opencontainers/runc v1.1.12 // indirect
+	github.com/opencontainers/runc v1.1.13 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
@@ -56,8 +56,8 @@ require (
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240610135401-a8a62080eff3 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240617180043-68d350f18fd4 // indirect
 	google.golang.org/grpc v1.64.0 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

@@ -10,7 +10,7 @@ code.cloudfoundry.org/go-loggregator/v9/rpc/loggregator_v2
 code.cloudfoundry.org/lager/v3
 code.cloudfoundry.org/lager/v3/internal/truncate
 code.cloudfoundry.org/lager/v3/lagerflags
-# code.cloudfoundry.org/tlsconfig v0.0.0-20240606172222-82aa02bc07ea
+# code.cloudfoundry.org/tlsconfig v0.0.0-20240613173017-075d5b187a0d
 ## explicit; go 1.19
 code.cloudfoundry.org/tlsconfig
 # dario.cat/mergo v1.0.0
@@ -51,7 +51,7 @@ github.com/docker/cli/cli/compose/schema
 github.com/docker/cli/cli/compose/template
 github.com/docker/cli/cli/compose/types
 github.com/docker/cli/opts
-# github.com/docker/docker v26.1.4+incompatible
+# github.com/docker/docker v27.0.0+incompatible
 ## explicit
 github.com/docker/docker/api/types/blkiodev
 github.com/docker/docker/api/types/container
@@ -160,8 +160,8 @@ github.com/opencontainers/go-digest
 ## explicit; go 1.18
 github.com/opencontainers/image-spec/specs-go
 github.com/opencontainers/image-spec/specs-go/v1
-# github.com/opencontainers/runc v1.1.12
-## explicit; go 1.17
+# github.com/opencontainers/runc v1.1.13
+## explicit; go 1.18
 github.com/opencontainers/runc/libcontainer/user
 # github.com/openzipkin/zipkin-go v0.4.3
 ## explicit; go 1.20
@@ -282,7 +282,7 @@ golang.org/x/tools/internal/tokeninternal
 golang.org/x/tools/internal/typeparams
 golang.org/x/tools/internal/typesinternal
 golang.org/x/tools/internal/versions
-# google.golang.org/genproto/googleapis/rpc v0.0.0-20240610135401-a8a62080eff3
+# google.golang.org/genproto/googleapis/rpc v0.0.0-20240617180043-68d350f18fd4
 ## explicit; go 1.20
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.64.0
@@ -338,8 +338,8 @@ google.golang.org/grpc/serviceconfig
 google.golang.org/grpc/stats
 google.golang.org/grpc/status
 google.golang.org/grpc/tap
-# google.golang.org/protobuf v1.34.1
-## explicit; go 1.17
+# google.golang.org/protobuf v1.34.2
+## explicit; go 1.20
 google.golang.org/protobuf/encoding/protojson
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
