@@ -1,4 +1,4 @@
-# code.cloudfoundry.org/bytefmt v0.0.0-20240622173923-7a5a4f8651ac
+# code.cloudfoundry.org/bytefmt v0.0.0-20240625174231-fca5dc407bce
 ## explicit; go 1.20
 code.cloudfoundry.org/bytefmt
 # code.cloudfoundry.org/tlsconfig v0.0.0-20240613173017-075d5b187a0d
@@ -32,7 +32,7 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/pprof v0.0.0-20240622144329-c177fd99eaa9
+# github.com/google/pprof v0.0.0-20240625030939-27f56978b8b0
 ## explicit; go 1.19
 github.com/google/pprof/profile
 # github.com/kr/pretty v0.3.1
@@ -95,7 +95,7 @@ github.com/rivo/uniseg
 # github.com/square/certstrap v1.3.0
 ## explicit; go 1.18
 github.com/square/certstrap/pkix
-# go.step.sm/crypto v0.47.1
+# go.step.sm/crypto v0.48.0
 ## explicit; go 1.20
 go.step.sm/crypto/fingerprint
 go.step.sm/crypto/internal/bcrypt_pbkdf
