@@ -5,9 +5,10 @@ import (
 	"errors"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/cloudfoundry/mysql-diag/database"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
+	"github.com/cloudfoundry/mysql-diag/database"
 )
 
 var _ = Describe("database client", func() {
@@ -46,7 +47,8 @@ var _ = Describe("database client", func() {
 			AddRow("wsrep_local_state_comment", "upsidedown").
 			AddRow("wsrep_cluster_size", "3").
 			AddRow("wsrep_cluster_state_uuid", "0b646f90-c164-11e6-a904-67f70a31986c").
-			AddRow("wsrep_cluster_status", "Primary")
+			AddRow("wsrep_cluster_status", "Primary").
+			AddRow("wsrep_local_index", "befe0c28-b5f4")
 		mock.ExpectQuery(`SHOW STATUS LIKE 'wsrep_%'`).WillReturnRows(rows1)
 
 		rows2 := sqlmock.NewRows([]string{"variable_name", "value"}).
@@ -60,5 +62,6 @@ var _ = Describe("database client", func() {
 		Expect(status.ClusterSize).To(Equal(3))
 		Expect(status.ClusterStatus).To(Equal("Primary"))
 		Expect(status.ReadOnly).To(BeTrue())
+		Expect(status.LocalIndex).To(Equal("befe0c28-b5f4"))
 	})
 })

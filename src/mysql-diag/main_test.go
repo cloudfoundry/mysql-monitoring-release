@@ -174,6 +174,16 @@ var _ = Describe("mysql-diag cli", func() {
 		Eventually(session, executableTimeout).Should(gexec.Exit(0))
 	})
 
+	It("reports the current active writer", func() {
+		session := runMainWithArgs()
+
+		Eventually(session.Out).Should(gbytes.Say("INSTANCE"))
+		Eventually(session.Out).Should(gbytes.Say(`\[0\] mysql/uuid`))
+		Eventually(session.Out).Should(gbytes.Say("NOTE: Proxies will currently attempt to direct traffic to \"\""))
+
+		Eventually(session, executableTimeout).Should(gexec.Exit(0))
+	})
+
 	It("tells us that we need bootstrap", func() {
 		session := runMainWithArgs()
 		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] You must bootstrap the cluster. Follow these instructions: https://docs\.vmware\.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3\.2/mysql-for-tas/bootstrapping\.html`))

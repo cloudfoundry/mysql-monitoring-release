@@ -4,15 +4,18 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/database"
 	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
 	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
 var (
-	isCanaryHealthy bool
-	needsBootstrap  bool
-	diskSpaceIssues []DiskSpaceIssue
-	messages        []string
+	isCanaryHealthy     bool
+	needsBootstrap      bool
+	diskSpaceIssues     []DiskSpaceIssue
+	messages            []string
+	nodeClusterStatuses []*ui.NodeClusterStatus
 )
 
 var _ = Describe("Reporter", func() {
@@ -20,17 +23,29 @@ var _ = Describe("Reporter", func() {
 		isCanaryHealthy = true
 		needsBootstrap = false
 		diskSpaceIssues = []DiskSpaceIssue{}
+		nodeClusterStatuses = []*ui.NodeClusterStatus{
+			{
+				Node: config.MysqlNode{
+					Name: "mysql",
+					UUID: "c5522e95-1cdc-4930-9242-e3c0a37a3c2a",
+				},
+				Status: &database.GaleraStatus{
+					LocalIndex: "befe0c28-b5f4",
+				},
+			},
+		}
 	})
 
 	Context("when everything is healthy", func() {
-		It("remains quiet", func() {
+		It("remains quiet except for communicating writeable node", func() {
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy: isCanaryHealthy,
-				NeedsBootstrap:  needsBootstrap,
-				DiskSpaceIssues: diskSpaceIssues,
+				IsCanaryHealthy:     isCanaryHealthy,
+				NeedsBootstrap:      needsBootstrap,
+				DiskSpaceIssues:     diskSpaceIssues,
+				NodeClusterStatuses: nodeClusterStatuses,
 			})
 
-			Expect(messages).To(BeEmpty())
+			Expect(len(messages)).To(Equal(1))
 		})
 	})
 
@@ -38,9 +53,10 @@ var _ = Describe("Reporter", func() {
 		BeforeEach(func() {
 			isCanaryHealthy = false
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy: isCanaryHealthy,
-				NeedsBootstrap:  needsBootstrap,
-				DiskSpaceIssues: diskSpaceIssues,
+				IsCanaryHealthy:     isCanaryHealthy,
+				NeedsBootstrap:      needsBootstrap,
+				DiskSpaceIssues:     diskSpaceIssues,
+				NodeClusterStatuses: nodeClusterStatuses,
 			})
 		})
 
@@ -61,9 +77,10 @@ var _ = Describe("Reporter", func() {
 		BeforeEach(func() {
 			needsBootstrap = true
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy: isCanaryHealthy,
-				NeedsBootstrap:  needsBootstrap,
-				DiskSpaceIssues: diskSpaceIssues,
+				IsCanaryHealthy:     isCanaryHealthy,
+				NeedsBootstrap:      needsBootstrap,
+				DiskSpaceIssues:     diskSpaceIssues,
+				NodeClusterStatuses: nodeClusterStatuses,
 			})
 		})
 
@@ -93,9 +110,10 @@ var _ = Describe("Reporter", func() {
 				},
 			}
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy: isCanaryHealthy,
-				NeedsBootstrap:  needsBootstrap,
-				DiskSpaceIssues: diskSpaceIssues,
+				IsCanaryHealthy:     isCanaryHealthy,
+				NeedsBootstrap:      needsBootstrap,
+				DiskSpaceIssues:     diskSpaceIssues,
+				NodeClusterStatuses: nodeClusterStatuses,
 			})
 		})
 
@@ -130,14 +148,45 @@ var _ = Describe("Reporter", func() {
 				},
 			}
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy: isCanaryHealthy,
-				NeedsBootstrap:  needsBootstrap,
-				DiskSpaceIssues: diskSpaceIssues,
+				IsCanaryHealthy:     isCanaryHealthy,
+				NeedsBootstrap:      needsBootstrap,
+				DiskSpaceIssues:     diskSpaceIssues,
+				NodeClusterStatuses: nodeClusterStatuses,
 			})
 		})
 
 		It("should not duplicate warning messages", func() {
-			Expect(len(messages)).To(Equal(6))
+			Expect(len(messages)).To(Equal(7))
 		})
+	})
+
+	It("communicates the writeable node", func() {
+		messages = ui.Report(ui.ReporterParams{
+			IsCanaryHealthy: isCanaryHealthy,
+			NeedsBootstrap:  needsBootstrap,
+			DiskSpaceIssues: diskSpaceIssues,
+			NodeClusterStatuses: []*ui.NodeClusterStatus{
+				{
+					Node: config.MysqlNode{
+						Name: "mysql",
+						UUID: "c5522e95-1cdc-4930-9242-e3c0a37a3c2a",
+					},
+					Status: &database.GaleraStatus{
+						LocalIndex: "befe0c28-b5f4",
+					},
+				},
+				{
+					Node: config.MysqlNode{
+						Name: "mysql",
+						UUID: "cf85ed2f-3ec1-4cfe-98aa-1d9c56896ce8",
+					},
+					Status: &database.GaleraStatus{
+						LocalIndex: "8e9483c8-beed",
+					},
+				},
+			},
+		})
+
+		Expect(messages).To(ContainElement(MatchRegexp("NOTE: Proxies will currently attempt to direct traffic to \"mysql/cf85ed2f-3ec1-4cfe-98aa-1d9c56896ce8\"")))
 	})
 })

@@ -11,6 +11,7 @@ type GaleraStatus struct {
 	ClusterSize   int
 	ClusterStatus string
 	ReadOnly      bool
+	LocalIndex    string
 }
 
 type DatabaseClient struct {
@@ -69,6 +70,8 @@ func (c *DatabaseClient) getGaleraStatus(status *GaleraStatus) error {
 			if err != nil {
 				return err
 			}
+		case "wsrep_local_index":
+			status.LocalIndex = value
 		}
 	}
 

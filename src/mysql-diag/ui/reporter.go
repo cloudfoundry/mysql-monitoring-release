@@ -3,14 +3,22 @@ package ui
 import (
 	"fmt"
 
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/database"
 	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
 	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type ReporterParams struct {
-	IsCanaryHealthy bool
-	NeedsBootstrap  bool
-	DiskSpaceIssues []DiskSpaceIssue
+	IsCanaryHealthy     bool
+	NeedsBootstrap      bool
+	DiskSpaceIssues     []DiskSpaceIssue
+	NodeClusterStatuses []*NodeClusterStatus
+}
+
+type NodeClusterStatus struct {
+	Node   config.MysqlNode
+	Status *database.GaleraStatus
 }
 
 func Report(params ReporterParams) []string {
@@ -43,6 +51,15 @@ Do not perform the following unless instructed by Pivotal Support:
 
 `)
 	}
+	name := ""
+	minLocalIndex := maxUUID
+	for _, status := range params.NodeClusterStatuses {
+		if status.Status != nil && status.Status.LocalIndex < minLocalIndex {
+			minLocalIndex = status.Status.LocalIndex
+			name = fmt.Sprintf("%s/%s", status.Node.Name, status.Node.UUID)
+		}
+	}
+	messages = append(messages, msg.Alert(fmt.Sprintf("NOTE: Proxies will currently attempt to direct traffic to \"%s\"", name)))
 
 	return messages
 }

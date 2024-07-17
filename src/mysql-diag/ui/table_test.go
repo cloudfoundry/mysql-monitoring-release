@@ -5,6 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/format"
 
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/diagagentclient"
@@ -12,6 +13,8 @@ import (
 )
 
 var _ = Describe("Table", func() {
+	format.TruncatedDiff = false
+
 	It("prints a table with disk info", func() {
 		buffer := new(bytes.Buffer)
 
@@ -51,13 +54,13 @@ var _ = Describe("Table", func() {
 
 		Expect(buffer.String()).To(Equal(
 
-			`+--------------------------------------------+-------+----------------+----------------------+------------------------+
-|                  INSTANCE                  | STATE | CLUSTER STATUS | PERSISTENT DISK USED |  EPHEMERAL DISK USED   |
-+--------------------------------------------+-------+----------------+----------------------+------------------------+
-| mysql/3a79c040-1d3a-4583-8566-9c7097760baa |       |                | N/A - ERROR          | N/A - ERROR            |
-| mysql/4a136f80-d88d-447c-bce8-4b87492110a7 |       |                | 333B / 456B (73.0%)  | 333B / 1.4K (22.9%)    |
-| mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa |       |                | 333B / 456B (73.0%)  | 32.5K / 142.2K (22.9%) |
-+--------------------------------------------+-------+----------------+----------------------+------------------------+
+			`+-------------------------------------------------+-------+----------------+----------------------+------------------------+
+|                    INSTANCE                     | STATE | CLUSTER STATUS | PERSISTENT DISK USED |  EPHEMERAL DISK USED   |
++-------------------------------------------------+-------+----------------+----------------------+------------------------+
+|  [0] mysql/3a79c040-1d3a-4583-8566-9c7097760baa |       |                | N/A - ERROR          | N/A - ERROR            |
+|  [1] mysql/4a136f80-d88d-447c-bce8-4b87492110a7 |       |                | 333B / 456B (73.0%)  | 333B / 1.4K (22.9%)    |
+|  [2] mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa |       |                | 333B / 456B (73.0%)  | 32.5K / 142.2K (22.9%) |
++-------------------------------------------------+-------+----------------+----------------------+------------------------+
 `,
 		))
 	})
@@ -71,24 +74,26 @@ var _ = Describe("Table", func() {
 			LocalState:    "localState1",
 			ClusterSize:   1,
 			ClusterStatus: "clusterStatus1",
+			LocalIndex:    "befe0c28-b5f4",
 		})
 		table.AddClusterInfo("mysql", "4a136f80-d88d-447c-bce8-4b87492110a7", &database.GaleraStatus{
 			LocalState:    "localState2",
 			ClusterSize:   2,
 			ClusterStatus: "clusterStatus2",
+			LocalIndex:    "4375e0a0-a811",
 		})
-		table.AddClusterInfo("name3", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
+		table.AddClusterInfo("mysql", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
 
 		table.Render()
 
 		Expect(buffer.String()).To(Equal(
-			`+--------------------------------------------+-------------+----------------+----------------------+---------------------+
-|                  INSTANCE                  |    STATE    | CLUSTER STATUS | PERSISTENT DISK USED | EPHEMERAL DISK USED |
-+--------------------------------------------+-------------+----------------+----------------------+---------------------+
-| mysql/4a136f80-d88d-447c-bce8-4b87492110a7 | localState2 | clusterStatus2 |                      |                     |
-| mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa | localState1 | clusterStatus1 |                      |                     |
-| name3/3a79c040-1d3a-4583-8566-9c7097760baa | N/A - ERROR | N/A - ERROR    |                      |                     |
-+--------------------------------------------+-------------+----------------+----------------------+---------------------+
+			`+-------------------------------------------------+-------------+----------------+----------------------+---------------------+
+|                    INSTANCE                     |    STATE    | CLUSTER STATUS | PERSISTENT DISK USED | EPHEMERAL DISK USED |
++-------------------------------------------------+-------------+----------------+----------------------+---------------------+
+|  [0] mysql/4a136f80-d88d-447c-bce8-4b87492110a7 | localState2 | clusterStatus2 |                      |                     |
+|  [1] mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa | localState1 | clusterStatus1 |                      |                     |
+|  [2] mysql/3a79c040-1d3a-4583-8566-9c7097760baa | N/A - ERROR | N/A - ERROR    |                      |                     |
++-------------------------------------------------+-------------+----------------+----------------------+---------------------+
 `,
 		))
 	})
@@ -126,30 +131,32 @@ var _ = Describe("Table", func() {
 				InodesFree:  1567000,
 			},
 		})
-		table.AddDiskInfo("name3", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
+		table.AddDiskInfo("mysql", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
 
 		table.AddClusterInfo("mysql", "64bfefb0-97fd-4e34-b0fb-499ccb684faa", &database.GaleraStatus{
 			LocalState:    "localState1",
 			ClusterSize:   1,
 			ClusterStatus: "clusterStatus1",
+			LocalIndex:    "4375e0a0-a811",
 		})
 		table.AddClusterInfo("mysql", "4a136f80-d88d-447c-bce8-4b87492110a7", &database.GaleraStatus{
 			LocalState:    "localState2",
 			ClusterSize:   2,
 			ClusterStatus: "clusterStatus2",
+			LocalIndex:    "befe0c28-b5f4",
 		})
-		table.AddClusterInfo("name3", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
+		table.AddClusterInfo("mysql", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
 
 		table.Render()
 
 		Expect(buffer.String()).To(Equal(
-			`+--------------------------------------------+-------------+----------------+----------------------+------------------------+
-|                  INSTANCE                  |    STATE    | CLUSTER STATUS | PERSISTENT DISK USED |  EPHEMERAL DISK USED   |
-+--------------------------------------------+-------------+----------------+----------------------+------------------------+
-| mysql/4a136f80-d88d-447c-bce8-4b87492110a7 | localState2 | clusterStatus2 | 333B / 456B (73.0%)  | 333B / 1.4K (22.9%)    |
-| mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa | localState1 | clusterStatus1 | 333B / 456B (73.0%)  | 32.5K / 142.2K (22.9%) |
-| name3/3a79c040-1d3a-4583-8566-9c7097760baa | N/A - ERROR | N/A - ERROR    | N/A - ERROR          | N/A - ERROR            |
-+--------------------------------------------+-------------+----------------+----------------------+------------------------+
+			`+-------------------------------------------------+-------------+----------------+----------------------+------------------------+
+|                    INSTANCE                     |    STATE    | CLUSTER STATUS | PERSISTENT DISK USED |  EPHEMERAL DISK USED   |
++-------------------------------------------------+-------------+----------------+----------------------+------------------------+
+|  [0] mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa | localState1 | clusterStatus1 | 333B / 456B (73.0%)  | 32.5K / 142.2K (22.9%) |
+|  [1] mysql/4a136f80-d88d-447c-bce8-4b87492110a7 | localState2 | clusterStatus2 | 333B / 456B (73.0%)  | 333B / 1.4K (22.9%)    |
+|  [2] mysql/3a79c040-1d3a-4583-8566-9c7097760baa | N/A - ERROR | N/A - ERROR    | N/A - ERROR          | N/A - ERROR            |
++-------------------------------------------------+-------------+----------------+----------------------+------------------------+
 `,
 		))
 	})

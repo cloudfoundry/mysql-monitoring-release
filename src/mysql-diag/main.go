@@ -21,10 +21,10 @@ const (
 var configFilepath = flag.String("c", defaultConfigPath, "location of config file")
 
 // returns true if the cluster needs bootstrap
-func checkClusterBootstrapStatus(rows []*nodeClusterStatus) bool {
+func checkClusterBootstrapStatus(rows []*ui.NodeClusterStatus) bool {
 	statuses := make([]*database.GaleraStatus, len(rows))
 	for i, row := range rows {
-		statuses[i] = row.status
+		statuses[i] = row.Status
 	}
 
 	if database.DoWeNeedBootstrap(statuses) {
@@ -34,20 +34,15 @@ func checkClusterBootstrapStatus(rows []*nodeClusterStatus) bool {
 	}
 }
 
-func addClusterDataToTable(nodeStatuses []*nodeClusterStatus, table *ui.Table) {
+func addClusterDataToTable(nodeStatuses []*ui.NodeClusterStatus, table *ui.Table) {
 	for _, row := range nodeStatuses {
-		n := row.node
-		table.AddClusterInfo(n.Name, n.UUID, row.status)
+		n := row.Node
+		table.AddClusterInfo(n.Name, n.UUID, row.Status)
 	}
 }
 
-type nodeClusterStatus struct {
-	node   config.MysqlNode
-	status *database.GaleraStatus
-}
-
-func getNodeClusterStatuses(mysqlConfig config.MysqlConfig) []*nodeClusterStatus {
-	channel := make(chan nodeClusterStatus, len(mysqlConfig.Nodes))
+func getNodeClusterStatuses(mysqlConfig config.MysqlConfig) []*ui.NodeClusterStatus {
+	channel := make(chan ui.NodeClusterStatus, len(mysqlConfig.Nodes))
 
 	for _, n := range mysqlConfig.Nodes {
 		n := n
@@ -59,11 +54,11 @@ func getNodeClusterStatuses(mysqlConfig config.MysqlConfig) []*nodeClusterStatus
 				msg.PrintfErrorIntro("", "error retrieving galera status: %v", err)
 			}
 
-			channel <- nodeClusterStatus{node: n, status: galeraStatus}
+			channel <- ui.NodeClusterStatus{Node: n, Status: galeraStatus}
 		}()
 	}
 
-	var nodeStatuses []*nodeClusterStatus
+	var nodeStatuses []*ui.NodeClusterStatus
 	for i := 0; i < len(mysqlConfig.Nodes); i++ {
 		ns := <-channel
 		nodeStatuses = append(nodeStatuses, &ns)
@@ -126,9 +121,10 @@ func main() {
 	table.Render()
 
 	messages := ui.Report(ui.ReporterParams{
-		IsCanaryHealthy: !unhealthy,
-		NeedsBootstrap:  needsBootstrap,
-		DiskSpaceIssues: diskSpaceIssues,
+		IsCanaryHealthy:     !unhealthy,
+		NeedsBootstrap:      needsBootstrap,
+		DiskSpaceIssues:     diskSpaceIssues,
+		NodeClusterStatuses: nodeClusterStatuses,
 	})
 
 	for _, message := range messages {

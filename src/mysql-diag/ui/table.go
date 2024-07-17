@@ -22,6 +22,7 @@ type Table struct {
 }
 
 const errorContent = "N/A - ERROR"
+const maxUUID = "zzzzzzzz-zzzz-zzzz-zzzz-zzzzzzzzzzzz"
 
 func NewTable(writer io.Writer) *Table {
 	t := Table{
@@ -71,16 +72,17 @@ func (t *Table) AddClusterInfo(name string, uuid string, galeraStatus *database.
 
 	nameUUID := fmt.Sprintf("%s/%s", name, uuid)
 
-	wsrepLocalState, wsrepClusterStatus := errorContent, errorContent
+	wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex := errorContent, errorContent, maxUUID
 
 	if galeraStatus != nil {
-		wsrepLocalState, wsrepClusterStatus = galeraStatus.LocalState, galeraStatus.ClusterStatus
+		wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex = galeraStatus.LocalState, galeraStatus.ClusterStatus, galeraStatus.LocalIndex
 	}
 
 	t.clusterInfo = append(t.clusterInfo, clusterInfo{
 		instance:      nameUUID,
 		localState:    wsrepLocalState,
 		clusterStatus: wsrepClusterStatus,
+		localIndex:    wsrepLocalIndex,
 	})
 }
 
@@ -88,6 +90,7 @@ type clusterInfo struct {
 	instance      string
 	localState    string
 	clusterStatus string
+	localIndex    string
 }
 
 func (t *Table) aggregateInfo() {
@@ -112,20 +115,25 @@ func (t *Table) aggregateInfo() {
 		if r, ok := result[n.instance]; ok {
 			r.localState = n.localState
 			r.clusterStatus = n.clusterStatus
+			r.localIndex = n.localIndex
 		}
 	}
 
 	var rows [][]string
 	for k, v := range result {
-		rows = append(rows, []string{k, v.localState, v.clusterStatus, v.persistentDisk, v.ephemeralDisk})
+		rows = append(rows, []string{k, v.localIndex, v.localState, v.clusterStatus, v.persistentDisk, v.ephemeralDisk})
 	}
 
 	sort.Slice(rows, func(i, j int) bool {
-		return rows[i][0] < rows[j][0]
+		if rows[i][1] == rows[j][1] {
+			return rows[i][0] < rows[j][0]
+		}
+
+		return rows[i][1] < rows[j][1]
 	})
 
-	for _, r := range rows {
-		t.table.Append([]string{r[0], r[1], r[2], r[3], r[4]})
+	for idx, r := range rows {
+		t.table.Append([]string{fmt.Sprintf(" [%d] %s", idx, r[0]), r[2], r[3], r[4], r[5]})
 	}
 }
 
@@ -134,6 +142,7 @@ type row struct {
 	ephemeralDisk  string
 	localState     string
 	clusterStatus  string
+	localIndex     string
 }
 
 func (t *Table) Render() {
