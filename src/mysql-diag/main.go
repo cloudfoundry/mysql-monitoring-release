@@ -6,10 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloudfoundry/mysql-diag/canaryclient"
 	"github.com/cloudfoundry/mysql-diag/config"
-	"github.com/cloudfoundry/mysql-diag/database"
-	"github.com/cloudfoundry/mysql-diag/disk"
+	"github.com/cloudfoundry/mysql-diag/data"
 	"github.com/cloudfoundry/mysql-diag/msg"
 	"github.com/cloudfoundry/mysql-diag/ui"
 )
@@ -34,24 +32,20 @@ func main() {
 	}
 
 	printCurrentTime()
-	unhealthy := canaryclient.Check(c.Canary)
 
-	nodeClusterStatuses := database.GetNodeClusterStatuses(c.Mysql)
-	needsBootstrap := database.CheckClusterBootstrapStatus(nodeClusterStatuses)
-
-	nodeDiskInfos := disk.GetNodeDiskInfos(c.Mysql)
-	diskSpaceIssues := disk.CheckDiskStatus(nodeDiskInfos, c.Mysql.Threshold)
+	aggregator := data.NewAggregator(c.Canary, c.Mysql)
+	data := aggregator.Aggregate()
 
 	table := ui.NewTable(os.Stdout)
-	table.AddClusterDataToTable(nodeClusterStatuses)
-	table.AddDiskDataToTable(nodeDiskInfos)
+	table.AddClusterDataToTable(data.NodeClusterStatuses)
+	table.AddDiskDataToTable(data.NodeDiskInfo)
 	table.Render()
 
 	messages := ui.Report(ui.ReporterParams{
-		IsCanaryHealthy:     !unhealthy,
-		NeedsBootstrap:      needsBootstrap,
-		DiskSpaceIssues:     diskSpaceIssues,
-		NodeClusterStatuses: nodeClusterStatuses,
+		IsCanaryHealthy:     !data.Unhealthy,
+		NeedsBootstrap:      data.NeedsBootstrap,
+		DiskSpaceIssues:     data.DiskSpaceIssues,
+		NodeClusterStatuses: data.NodeClusterStatuses,
 	})
 
 	for _, message := range messages {
