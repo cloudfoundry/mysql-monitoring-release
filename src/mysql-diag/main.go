@@ -37,8 +37,8 @@ func main() {
 	data := aggregator.Aggregate()
 
 	table := ui.NewTable(os.Stdout)
-	table.AddClusterDataToTable(data.NodeClusterStatuses)
-	table.AddDiskDataToTable(data.NodeDiskInfo)
+	table.AddClusterData(data.NodeClusterStatuses)
+	table.AddDiskData(data.NodeDiskInfo)
 	table.Render()
 
 	messages := ui.Report(ui.ReporterParams{

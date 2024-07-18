@@ -89,14 +89,14 @@ func (t *Table) AddClusterInfo(name string, uuid string, galeraStatus *database.
 	})
 }
 
-func (t *Table) AddClusterDataToTable(nodeStatuses []*database.NodeClusterStatus) {
+func (t *Table) AddClusterData(nodeStatuses []*database.NodeClusterStatus) {
 	for _, ns := range nodeStatuses {
 		n := ns.Node
 		t.AddClusterInfo(n.Name, n.UUID, ns.Status)
 	}
 }
 
-func (t *Table) AddDiskDataToTable(nodeDiskInfos []disk.NodeDiskInfo) {
+func (t *Table) AddDiskData(nodeDiskInfos []disk.NodeDiskInfo) {
 	if HasAtLeastOneInfo(nodeDiskInfos) {
 		for _, nd := range nodeDiskInfos {
 			n := nd.Node
