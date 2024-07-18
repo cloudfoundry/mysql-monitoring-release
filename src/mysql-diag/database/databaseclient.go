@@ -4,6 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"strconv"
+
+	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type GaleraStatus struct {
@@ -12,6 +15,11 @@ type GaleraStatus struct {
 	ClusterStatus string
 	ReadOnly      bool
 	LocalIndex    string
+}
+
+type NodeClusterStatus struct {
+	Node   config.MysqlNode
+	Status *GaleraStatus
 }
 
 type DatabaseClient struct {
@@ -93,4 +101,30 @@ func (c *DatabaseClient) Status() (*GaleraStatus, error) {
 	}
 
 	return &status, nil
+}
+
+func GetNodeClusterStatuses(mysqlConfig config.MysqlConfig) []*NodeClusterStatus {
+	channel := make(chan NodeClusterStatus, len(mysqlConfig.Nodes))
+
+	for _, n := range mysqlConfig.Nodes {
+		n := n
+
+		go func() {
+			ac := NewDatabaseClient(mysqlConfig.Connection(n))
+			galeraStatus, err := ac.Status()
+			if err != nil {
+				msg.PrintfErrorIntro("", "error retrieving galera status: %v", err)
+			}
+
+			channel <- NodeClusterStatus{Node: n, Status: galeraStatus}
+		}()
+	}
+
+	var nodeStatuses []*NodeClusterStatus
+	for i := 0; i < len(mysqlConfig.Nodes); i++ {
+		ns := <-channel
+		nodeStatuses = append(nodeStatuses, &ns)
+	}
+
+	return nodeStatuses
 }

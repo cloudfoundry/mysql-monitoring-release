@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"io"
+	"slices"
 	"sort"
 	"sync"
 
@@ -11,6 +12,8 @@ import (
 
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/diagagentclient"
+	"github.com/cloudfoundry/mysql-diag/disk"
+	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type Table struct {
@@ -83,6 +86,30 @@ func (t *Table) AddClusterInfo(name string, uuid string, galeraStatus *database.
 		localState:    wsrepLocalState,
 		clusterStatus: wsrepClusterStatus,
 		localIndex:    wsrepLocalIndex,
+	})
+}
+
+func (t *Table) AddClusterDataToTable(nodeStatuses []*database.NodeClusterStatus) {
+	for _, ns := range nodeStatuses {
+		n := ns.Node
+		t.AddClusterInfo(n.Name, n.UUID, ns.Status)
+	}
+}
+
+func (t *Table) AddDiskDataToTable(nodeDiskInfos []disk.NodeDiskInfo) {
+	if HasAtLeastOneInfo(nodeDiskInfos) {
+		for _, nd := range nodeDiskInfos {
+			n := nd.Node
+			t.AddDiskInfo(n.Name, n.UUID, nd.Info)
+		}
+	} else {
+		fmt.Println(msg.Alert("Unable to gather disk usage information, moving on. Run bosh vms --vitals for this information."))
+	}
+}
+
+func HasAtLeastOneInfo(infos []disk.NodeDiskInfo) bool {
+	return slices.ContainsFunc(infos, func(i disk.NodeDiskInfo) bool {
+		return i.Info != nil
 	})
 }
 

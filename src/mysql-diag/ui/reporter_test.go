@@ -6,24 +6,24 @@ import (
 
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/database"
-	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
+	"github.com/cloudfoundry/mysql-diag/disk"
 	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
 var (
 	isCanaryHealthy     bool
 	needsBootstrap      bool
-	diskSpaceIssues     []DiskSpaceIssue
+	diskSpaceIssues     []disk.DiskSpaceIssue
 	messages            []string
-	nodeClusterStatuses []*ui.NodeClusterStatus
+	nodeClusterStatuses []*database.NodeClusterStatus
 )
 
 var _ = Describe("Reporter", func() {
 	BeforeEach(func() {
 		isCanaryHealthy = true
 		needsBootstrap = false
-		diskSpaceIssues = []DiskSpaceIssue{}
-		nodeClusterStatuses = []*ui.NodeClusterStatus{
+		diskSpaceIssues = []disk.DiskSpaceIssue{}
+		nodeClusterStatuses = []*database.NodeClusterStatus{
 			{
 				Node: config.MysqlNode{
 					Name: "mysql",
@@ -99,7 +99,7 @@ var _ = Describe("Reporter", func() {
 
 	Context("when there are disk space issues", func() {
 		BeforeEach(func() {
-			diskSpaceIssues = []DiskSpaceIssue{
+			diskSpaceIssues = []disk.DiskSpaceIssue{
 				{
 					DiskType: "Foobar",
 					NodeName: "SomeNode",
@@ -137,7 +137,7 @@ var _ = Describe("Reporter", func() {
 		BeforeEach(func() {
 			isCanaryHealthy = false
 			needsBootstrap = true
-			diskSpaceIssues = []DiskSpaceIssue{
+			diskSpaceIssues = []disk.DiskSpaceIssue{
 				{
 					DiskType: "Foobar",
 					NodeName: "SomeNode",
@@ -165,7 +165,7 @@ var _ = Describe("Reporter", func() {
 			IsCanaryHealthy: isCanaryHealthy,
 			NeedsBootstrap:  needsBootstrap,
 			DiskSpaceIssues: diskSpaceIssues,
-			NodeClusterStatuses: []*ui.NodeClusterStatus{
+			NodeClusterStatuses: []*database.NodeClusterStatus{
 				{
 					Node: config.MysqlNode{
 						Name: "mysql",

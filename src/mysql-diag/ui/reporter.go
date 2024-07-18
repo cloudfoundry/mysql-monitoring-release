@@ -3,22 +3,16 @@ package ui
 import (
 	"fmt"
 
-	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/database"
-	. "github.com/cloudfoundry/mysql-diag/diskspaceissue"
+	"github.com/cloudfoundry/mysql-diag/disk"
 	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type ReporterParams struct {
 	IsCanaryHealthy     bool
 	NeedsBootstrap      bool
-	DiskSpaceIssues     []DiskSpaceIssue
-	NodeClusterStatuses []*NodeClusterStatus
-}
-
-type NodeClusterStatus struct {
-	Node   config.MysqlNode
-	Status *database.GaleraStatus
+	DiskSpaceIssues     []disk.DiskSpaceIssue
+	NodeClusterStatuses []*database.NodeClusterStatus
 }
 
 func Report(params ReporterParams) []string {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/hattery"
+	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type CanaryStatus struct {
@@ -51,4 +52,30 @@ func (c CanaryClient) constructURL() string {
 		return fmt.Sprintf("https://%s/api/v1/status", c.address)
 	}
 	return fmt.Sprintf("http://%s/api/v1/status", c.address)
+}
+
+// Returns true if the canary is unhealthy. Otherwise, it's either healthy or unknown.
+func Check(config *config.CanaryConfig) bool {
+	if config == nil {
+		fmt.Println("Canary not configured, skipping health check")
+		return false
+	}
+
+	intro := "Checking canary status... "
+	fmt.Println(intro)
+
+	client := NewCanaryClient("127.0.0.1", config.ApiPort, *config)
+	healthy, err := client.Status()
+	if err != nil {
+		msg.PrintfErrorIntro(intro, "%v", err)
+		return false
+	} else {
+		if healthy {
+			fmt.Println(intro + msg.Happy("healthy"))
+			return false
+		} else {
+			fmt.Println(intro + msg.Alert("unhealthy"))
+			return true
+		}
+	}
 }
