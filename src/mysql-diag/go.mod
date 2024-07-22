@@ -5,7 +5,7 @@ go 1.21
 toolchain go1.22.5
 
 require (
-	code.cloudfoundry.org/bytefmt v0.0.0-20240711175842-1bcb71f1f634
+	code.cloudfoundry.org/bytefmt v0.0.0-20240722180632-e94c220fe743
 	code.cloudfoundry.org/tlsconfig v0.0.0-20240712175922-ffce9516cec8
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.17.0
@@ -21,11 +21,11 @@ require (
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/pprof v0.0.0-20240711041743-f6c9dda6c6da // indirect
+	github.com/google/pprof v0.0.0-20240722153945-304e4f0156b8 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/square/certstrap v1.3.0 // indirect
