@@ -26,6 +26,7 @@ type Table struct {
 
 const errorContent = "N/A - ERROR"
 const maxUUID = "zzzzzzzz-zzzz-zzzz-zzzz-zzzzzzzzzzzz"
+const defLastApplied = "-1"
 
 func NewTable(writer io.Writer) *Table {
 	t := Table{
@@ -33,7 +34,7 @@ func NewTable(writer io.Writer) *Table {
 	}
 
 	t.table.SetAutoWrapText(false)
-	t.table.SetHeader([]string{"INSTANCE", "STATE", "CLUSTER STATUS", "PERSISTENT DISK USED", "EPHEMERAL DISK USED"})
+	t.table.SetHeader([]string{"INSTANCE", "STATE", "CLUSTER STATUS", "SEQNO", "PERSISTENT DISK USED", "EPHEMERAL DISK USED"})
 
 	return &t
 }
@@ -75,10 +76,11 @@ func (t *Table) AddClusterInfo(name string, uuid string, galeraStatus *database.
 
 	nameUUID := fmt.Sprintf("%s/%s", name, uuid)
 
-	wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex := errorContent, errorContent, maxUUID
+	wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex, wsrepLastApplied := errorContent, errorContent, maxUUID, defLastApplied
 
 	if galeraStatus != nil {
-		wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex = galeraStatus.LocalState, galeraStatus.ClusterStatus, galeraStatus.LocalIndex
+		wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex, wsrepLastApplied =
+			galeraStatus.LocalState, galeraStatus.ClusterStatus, galeraStatus.LocalIndex, galeraStatus.LastApplied
 	}
 
 	t.clusterInfo = append(t.clusterInfo, clusterInfo{
@@ -86,6 +88,7 @@ func (t *Table) AddClusterInfo(name string, uuid string, galeraStatus *database.
 		localState:    wsrepLocalState,
 		clusterStatus: wsrepClusterStatus,
 		localIndex:    wsrepLocalIndex,
+		seqNo:         wsrepLastApplied,
 	})
 }
 
@@ -118,6 +121,7 @@ type clusterInfo struct {
 	localState    string
 	clusterStatus string
 	localIndex    string
+	seqNo         string
 }
 
 func (t *Table) aggregateInfo() {
@@ -143,6 +147,7 @@ func (t *Table) aggregateInfo() {
 			r.localState = n.localState
 			r.clusterStatus = n.clusterStatus
 			r.localIndex = n.localIndex
+			r.seqNo = n.seqNo
 		}
 	}
 
@@ -170,6 +175,7 @@ type row struct {
 	localState     string
 	clusterStatus  string
 	localIndex     string
+	seqNo          string
 }
 
 func (t *Table) Render() {

@@ -138,25 +138,27 @@ var _ = Describe("Table", func() {
 			ClusterSize:   1,
 			ClusterStatus: "clusterStatus1",
 			LocalIndex:    "4375e0a0-a811",
+			LastApplied:   "7",
 		})
 		table.AddClusterInfo("mysql", "4a136f80-d88d-447c-bce8-4b87492110a7", &database.GaleraStatus{
 			LocalState:    "localState2",
 			ClusterSize:   2,
 			ClusterStatus: "clusterStatus2",
 			LocalIndex:    "befe0c28-b5f4",
+			LastApplied:   "5",
 		})
 		table.AddClusterInfo("mysql", "3a79c040-1d3a-4583-8566-9c7097760baa", nil)
 
 		table.Render()
 
 		Expect(buffer.String()).To(Equal(
-			`+-------------------------------------------------+-------------+----------------+----------------------+------------------------+
-|                    INSTANCE                     |    STATE    | CLUSTER STATUS | PERSISTENT DISK USED |  EPHEMERAL DISK USED   |
-+-------------------------------------------------+-------------+----------------+----------------------+------------------------+
-|  [0] mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa | localState1 | clusterStatus1 | 333B / 456B (73.0%)  | 32.5K / 142.2K (22.9%) |
-|  [1] mysql/4a136f80-d88d-447c-bce8-4b87492110a7 | localState2 | clusterStatus2 | 333B / 456B (73.0%)  | 333B / 1.4K (22.9%)    |
-|  [2] mysql/3a79c040-1d3a-4583-8566-9c7097760baa | N/A - ERROR | N/A - ERROR    | N/A - ERROR          | N/A - ERROR            |
-+-------------------------------------------------+-------------+----------------+----------------------+------------------------+
+			`+-------------------------------------------------+-------------+----------------+---------------------+------------------------+---------------------+
+|                    INSTANCE                     |    STATE    | CLUSTER STATUS | SEQNO | PERSISTENT DISK USED |  EPHEMERAL DISK USED   |
++-------------------------------------------------+-------------+----------------+-------+----------------------+------------------------+
+|  [0] mysql/64bfefb0-97fd-4e34-b0fb-499ccb684faa | localState1 | clusterStatus1 |   7   | 333B / 456B (73.0%)  | 32.5K / 142.2K (22.9%) |
+|  [1] mysql/4a136f80-d88d-447c-bce8-4b87492110a7 | localState2 | clusterStatus2 |   5   | 333B / 456B (73.0%)  | 333B / 1.4K (22.9%)    |
+|  [2] mysql/3a79c040-1d3a-4583-8566-9c7097760baa | N/A - ERROR | N/A - ERROR    |       | N/A - ERROR          | N/A - ERROR            |
++-------------------------------------------------+-------------+----------------+-------+----------------------+------------------------+
 `,
 		))
 	})
