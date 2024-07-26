@@ -15,8 +15,9 @@ import (
 )
 
 type Config struct {
-	Canary *CanaryConfig `yaml:"canary"`
-	Mysql  MysqlConfig   `yaml:"mysql"`
+	Canary      *CanaryConfig      `yaml:"canary"`
+	Mysql       MysqlConfig        `yaml:"mysql"`
+	GaleraAgent *GaleraAgentConfig `yaml:"galera_agent"`
 }
 
 type GaleraAgentConfig struct {
