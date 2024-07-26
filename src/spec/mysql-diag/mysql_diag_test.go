@@ -17,8 +17,8 @@ var _ = Describe("MySQLDiag", func() {
 		Expect(session.ExitCode()).To(BeZero())
 		Expect(session).To(SatisfyAll(
 			gbytes.Say(`(Checking canary status\.\.\. .*healthy.*)|(Canary not configured)`),
-			gbytes.Say(`SEQNO\s+\|PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
-			gbytes.Say(`Synced\s+\|\s+Primary\s+\|\s+[0-9]+\s+|`),
+			gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
+			gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
 		))
 	})
 	When("a node is offline", func() {

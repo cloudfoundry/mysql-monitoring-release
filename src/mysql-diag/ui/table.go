@@ -5,6 +5,7 @@ import (
 	"io"
 	"slices"
 	"sort"
+	"strconv"
 	"sync"
 
 	"code.cloudfoundry.org/bytefmt"
@@ -79,8 +80,9 @@ func (t *Table) AddClusterInfo(name string, uuid string, galeraStatus *database.
 	wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex, wsrepLastApplied := errorContent, errorContent, maxUUID, defLastApplied
 
 	if galeraStatus != nil {
-		wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex, wsrepLastApplied =
-			galeraStatus.LocalState, galeraStatus.ClusterStatus, galeraStatus.LocalIndex, galeraStatus.LastApplied
+		wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex =
+			galeraStatus.LocalState, galeraStatus.ClusterStatus, galeraStatus.LocalIndex
+		wsrepLastApplied = strconv.Itoa(galeraStatus.LastApplied)
 	}
 
 	t.clusterInfo = append(t.clusterInfo, clusterInfo{
@@ -153,7 +155,7 @@ func (t *Table) aggregateInfo() {
 
 	var rows [][]string
 	for k, v := range result {
-		rows = append(rows, []string{k, v.localIndex, v.localState, v.clusterStatus, v.persistentDisk, v.ephemeralDisk})
+		rows = append(rows, []string{k, v.localIndex, v.localState, v.clusterStatus, v.seqNo, v.persistentDisk, v.ephemeralDisk})
 	}
 
 	sort.Slice(rows, func(i, j int) bool {
@@ -165,7 +167,7 @@ func (t *Table) aggregateInfo() {
 	})
 
 	for idx, r := range rows {
-		t.table.Append([]string{fmt.Sprintf(" [%d] %s", idx, r[0]), r[2], r[3], r[4], r[5]})
+		t.table.Append([]string{fmt.Sprintf(" [%d] %s", idx, r[0]), r[2], r[3], r[4], r[5], r[6]})
 	}
 }
 

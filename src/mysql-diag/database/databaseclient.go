@@ -15,7 +15,7 @@ type GaleraStatus struct {
 	ClusterStatus string
 	ReadOnly      bool
 	LocalIndex    string
-	LastApplied   string
+	LastApplied   int
 }
 
 type NodeClusterStatus struct {
@@ -82,7 +82,10 @@ func (c *DatabaseClient) getGaleraStatus(status *GaleraStatus) error {
 		case "wsrep_local_index":
 			status.LocalIndex = value
 		case "wsrep_last_applied":
-			status.LastApplied = value
+			status.LastApplied, err = strconv.Atoi(value)
+			if err != nil {
+				return err
+			}
 		}
 	}
 

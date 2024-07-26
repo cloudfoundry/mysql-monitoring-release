@@ -65,6 +65,6 @@ var _ = Describe("database client", func() {
 		Expect(status.ClusterStatus).To(Equal("Primary"))
 		Expect(status.ReadOnly).To(BeTrue())
 		Expect(status.LocalIndex).To(Equal("befe0c28-b5f4"))
-		Expect(status.LastApplied).To(Equal("5"))
+		Expect(status.LastApplied).To(Equal(5))
 	})
 })
