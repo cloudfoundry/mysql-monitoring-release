@@ -37,6 +37,10 @@ var _ = Describe("config", func() {
 		agentUsername string
 		agentPassword string
 
+		galeraAgentUsername string
+		galeraAgentPassword string
+		galeraAgentPort     uint
+
 		diskUsedWarningPercent       uint
 		diskInodesUsedWarningPercent uint
 
@@ -59,6 +63,9 @@ var _ = Describe("config", func() {
 		agentPassword = "agentPass"
 		diskUsedWarningPercent = 88
 		diskInodesUsedWarningPercent = 77
+		galeraAgentUsername = "galera-agent"
+		galeraAgentPassword = "galera-agent-password"
+		galeraAgentPort = 9201
 
 		formatString := `{
 				"canary": {
@@ -69,6 +76,16 @@ var _ = Describe("config", func() {
 						"enabled": true,
 						"ca": "pem-encoded-authority-for-replication",
 						"server_name": "expected-replication-canary-identity"
+					}
+				},
+				"galera_agent": {
+					"username": "%s",
+					"password": "%s",
+					"api_port": %d,
+					"tls": {
+						"enabled": true,
+						"ca": "pem-encoded-authority-for-galera-agent",
+						"server_name": "expected-galera-agent-identity"
 					}
 				},
 				"mysql": {
@@ -101,6 +118,9 @@ var _ = Describe("config", func() {
 			canaryUsername,
 			canaryPassword,
 			canaryPort,
+			galeraAgentUsername,
+			galeraAgentPassword,
+			galeraAgentPort,
 			username,
 			password,
 			port,
@@ -167,6 +187,14 @@ var _ = Describe("config", func() {
 		Expect(len(c.Mysql.Nodes)).To(Equal(1))
 		Expect(c.Mysql.Nodes[0].Host).To(Equal(host))
 		Expect(c.Mysql.Nodes[0].Name).To(Equal(nodeName))
+
+		Expect(c.GaleraAgent).To(Not(BeNil()))
+		Expect(c.GaleraAgent.Username).To(Equal(galeraAgentUsername))
+		Expect(c.GaleraAgent.Password).To(Equal(galeraAgentPassword))
+		Expect(c.GaleraAgent.ApiPort).To(Equal(galeraAgentPort))
+		Expect(c.GaleraAgent.TLS.Enabled).To(BeTrue())
+		Expect(c.GaleraAgent.TLS.CA).To(Equal(`pem-encoded-authority-for-galera-agent`))
+		Expect(c.GaleraAgent.TLS.ServerName).To(Equal(`expected-galera-agent-identity`))
 	})
 
 	Context("when the file does not exist", func() {
