@@ -34,6 +34,12 @@ func (a aggregator) Aggregate() Data {
 	unhealthy := canaryclient.Check(a.canary)
 
 	nodeClusterStatuses := database.GetNodeClusterStatuses(a.mySQL)
+	sequenceNumbers, isUnhealthy := mysqlAgentClient.GetSequenceNumbers(a.MySQL)
+	if isUnhealthy {
+		for node, seqNo := range sequenceNumbers {
+			nodeClusterStatuses[node].Status.LastApplied = seqNo
+		}
+	}
 	needsBootstrap := database.CheckClusterBootstrapStatus(nodeClusterStatuses)
 
 	nodeDiskInfos := disk.GetNodeDiskInfos(a.mySQL)

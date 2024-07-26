@@ -19,6 +19,13 @@ type Config struct {
 	Mysql  MysqlConfig   `yaml:"mysql"`
 }
 
+type GaleraAgentConfig struct {
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	ApiPort  uint   `yaml:"api_port"`
+	TLS      TLS    `yaml:"tls"`
+}
+
 type CanaryConfig struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
