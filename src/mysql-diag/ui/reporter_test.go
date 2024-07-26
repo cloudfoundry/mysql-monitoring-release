@@ -30,7 +30,18 @@ var _ = Describe("Reporter", func() {
 					UUID: "c5522e95-1cdc-4930-9242-e3c0a37a3c2a",
 				},
 				Status: &database.GaleraStatus{
-					LocalIndex: "befe0c28-b5f4",
+					LocalIndex:  "befe0c28-b5f4",
+					LastApplied: 10,
+				},
+			},
+			{
+				Node: config.MysqlNode{
+					Name: "mysql",
+					UUID: "cf85ed2f-3ec1-4cfe-98aa-1d9c56896ce8",
+				},
+				Status: &database.GaleraStatus{
+					LocalIndex:  "8e9483c8-beed",
+					LastApplied: 1000,
 				},
 			},
 		}
@@ -95,8 +106,12 @@ var _ = Describe("Reporter", func() {
 		It("warns not to recreate", func() {
 			Expect(messages).To(ContainElement(MatchRegexp("\\[WARNING\\] NOT RECOMMENDED")))
 		})
-	})
 
+		It("communicates the node to boostrap", func() {
+			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] Bootstrap node: \"mysql/cf85ed2f-3ec1-4cfe-98aa-1d9c56896ce8\"")))
+
+		})
+	})
 	Context("when there are disk space issues", func() {
 		BeforeEach(func() {
 			diskSpaceIssues = []disk.DiskSpaceIssue{
@@ -156,7 +171,7 @@ var _ = Describe("Reporter", func() {
 		})
 
 		It("should not duplicate warning messages", func() {
-			Expect(len(messages)).To(Equal(7))
+			Expect(len(messages)).To(Equal(8))
 		})
 	})
 

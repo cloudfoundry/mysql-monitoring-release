@@ -34,18 +34,18 @@ func main() {
 	printCurrentTime()
 
 	aggregator := data.NewAggregator(c.Canary, c.Mysql)
-	data := aggregator.Aggregate()
+	aggregatedData := aggregator.Aggregate()
 
 	table := ui.NewTable(os.Stdout)
-	table.AddClusterData(data.NodeClusterStatuses)
-	table.AddDiskData(data.NodeDiskInfo)
+	table.AddClusterData(aggregatedData.NodeClusterStatuses)
+	table.AddDiskData(aggregatedData.NodeDiskInfo)
 	table.Render()
 
 	messages := ui.Report(ui.ReporterParams{
-		IsCanaryHealthy:     !data.Unhealthy,
-		NeedsBootstrap:      data.NeedsBootstrap,
-		DiskSpaceIssues:     data.DiskSpaceIssues,
-		NodeClusterStatuses: data.NodeClusterStatuses,
+		IsCanaryHealthy:     !aggregatedData.Unhealthy,
+		NeedsBootstrap:      aggregatedData.NeedsBootstrap,
+		DiskSpaceIssues:     aggregatedData.DiskSpaceIssues,
+		NodeClusterStatuses: aggregatedData.NodeClusterStatuses,
 	})
 
 	for _, message := range messages {

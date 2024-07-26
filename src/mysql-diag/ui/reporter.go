@@ -1,7 +1,9 @@
 package ui
 
 import (
+	"cmp"
 	"fmt"
+	"slices"
 
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/disk"
@@ -23,7 +25,12 @@ func Report(params ReporterParams) []string {
 	}
 
 	if params.NeedsBootstrap {
+		slices.SortStableFunc(params.NodeClusterStatuses, func(i, j *database.NodeClusterStatus) int {
+			return cmp.Compare(i.Status.LastApplied, j.Status.LastApplied)
+		})
+		bootstrapNode := fmt.Sprintf("%s/%s", params.NodeClusterStatuses[len(params.NodeClusterStatuses)-1].Node.Name, params.NodeClusterStatuses[len(params.NodeClusterStatuses)-1].Node.UUID)
 		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://docs.vmware.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3.2/mysql-for-tas/bootstrapping.html"))
+		messages = append(messages, msg.Alert(fmt.Sprintf("\n[CRITICAL] Bootstrap node: \"%s\"", bootstrapNode)))
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap {
