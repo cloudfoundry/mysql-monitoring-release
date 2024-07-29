@@ -44,6 +44,21 @@ if_link('replication-canary') do |link|
   config[:mysql][:password] = link.p('mysql-monitoring.replication-canary.canary_password')
 end
 
+if_link('galera-agent') do |link|
+  config[:galera_agent] = {
+    # recycle the same username/pw for basic auth, keeps the number of credentials down
+    username: link.p('endpoint_username'),
+    password: link.p('endpoint_password'),
+    api_port: link.p('port'),
+    tls: {
+      enabled: link.p('endpoint_tls.enabled'),
+      ca: link.p('endpoint_tls.ca'),
+      server_name: link.p('endpoint_tls.server_name'),
+    },
+  }
+
+end
+
 if_p('db_username', 'db_password') do |db_username, db_password|
   config[:mysql][:username] = db_username
   config[:mysql][:password] = db_password

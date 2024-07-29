@@ -34,10 +34,11 @@ var _ = Describe("GaleraAgentClient", func() {
 			server = ghttp.NewServer()
 
 			host, port = testutil.ParseURL(server.URL())
-			galeraAgentClient = NewGaleraAgentClient(host, port, galeraAgentCfg)
+			galeraAgentCfg.ApiPort = port
+			galeraAgentClient = NewGaleraAgentClient(host, galeraAgentCfg)
 
 			responseStatus = http.StatusOK
-			response = GaleraAgentSequenceNumber{SequenceNumber: "123"}
+			response = 123
 		})
 
 		JustBeforeEach(func() {
@@ -55,7 +56,7 @@ var _ = Describe("GaleraAgentClient", func() {
 		})
 
 		Context("when making the request returns an error", func() {
-			client := NewGaleraAgentClient("notvalid", port, galeraAgentCfg)
+			client := NewGaleraAgentClient("notvalid", galeraAgentCfg)
 
 			It("returns an error", func() {
 				_, err := client.SequenceNumber()
@@ -102,10 +103,11 @@ var _ = Describe("GaleraAgentClient", func() {
 			galeraAgentCfg.TLS.ServerName = "example.com"
 
 			host, port = testutil.ParseURL(server.URL())
-			galeraAgentClient = NewGaleraAgentClient(host, port, galeraAgentCfg)
+			galeraAgentCfg.ApiPort = port
+			galeraAgentClient = NewGaleraAgentClient(host, galeraAgentCfg)
 
 			responseStatus = http.StatusOK
-			response = GaleraAgentSequenceNumber{SequenceNumber: "123"}
+			response = 123
 		})
 
 		JustBeforeEach(func() {
@@ -123,7 +125,7 @@ var _ = Describe("GaleraAgentClient", func() {
 		})
 
 		Context("when making the request returns an error", func() {
-			client := NewGaleraAgentClient("notvalid", port, galeraAgentCfg)
+			client := NewGaleraAgentClient("notvalid", galeraAgentCfg)
 
 			It("returns an error", func() {
 				_, err := client.SequenceNumber()

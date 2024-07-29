@@ -15,10 +15,10 @@ func DoWeNeedBootstrap(gs []*GaleraStatus) bool {
 }
 
 // returns true if the cluster needs bootstrap
-func CheckClusterBootstrapStatus(rows []*NodeClusterStatus) bool {
-	statuses := make([]*GaleraStatus, len(rows))
-	for i, row := range rows {
-		statuses[i] = row.Status
+func CheckClusterBootstrapStatus(rows map[string]*NodeClusterStatus) bool {
+	statuses := make([]*GaleraStatus, 0, len(rows))
+	for _, row := range rows {
+		statuses = append(statuses, row.Status)
 	}
 
 	if DoWeNeedBootstrap(statuses) {

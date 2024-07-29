@@ -8,7 +8,9 @@ import (
 	"time"
 
 	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/hattery"
+	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
 type GaleraAgentClient struct {
@@ -19,31 +21,60 @@ type GaleraAgentClient struct {
 	httpClient *http.Client
 }
 
-type GaleraAgentSequenceNumber struct {
-	SequenceNumber string `json:"sequence_number"`
-}
-
-func NewGaleraAgentClient(host string, port uint, canary config.GaleraAgentConfig) *GaleraAgentClient {
+func NewGaleraAgentClient(host string, galeraAgent config.GaleraAgentConfig) *GaleraAgentClient {
 	return &GaleraAgentClient{
-		address:    net.JoinHostPort(host, strconv.Itoa(int(port))),
-		httpClient: canary.TLS.HTTPClient(),
-		useTLS:     canary.TLS.Enabled,
-		username:   canary.Username,
-		password:   canary.Password,
+		address:    net.JoinHostPort(host, strconv.Itoa(int(galeraAgent.ApiPort))),
+		httpClient: galeraAgent.TLS.HTTPClient(),
+		useTLS:     galeraAgent.TLS.Enabled,
+		username:   galeraAgent.Username,
+		password:   galeraAgent.Password,
 	}
 }
 
-func (g *GaleraAgentClient) SequenceNumber() (string, error) {
+func (g *GaleraAgentClient) SequenceNumber() (int, error) {
 	url := g.constructURL()
 
-	var res GaleraAgentSequenceNumber
+	var seqNo int
 	err := hattery.Url(url).
-		Timeout(time.Second*10).
+		Timeout(time.Second*30).
 		BasicAuth(g.username, g.password).
 		Client(g.httpClient).
-		Fetch(&res)
+		Fetch(&seqNo)
 
-	return res.SequenceNumber, err
+	return seqNo, err
+}
+
+func GetSequenceNumbers(galeraAgentConfig *config.GaleraAgentConfig, nodeClusterStatus map[string]*database.NodeClusterStatus) {
+	if galeraAgentConfig == nil {
+		fmt.Println("Galera Agent not configured, skipping sequence number check")
+		return
+	}
+	channel := make(chan database.NodeClusterStatus, len(nodeClusterStatus))
+	channelCount := 0
+	for _, status := range nodeClusterStatus {
+		n := status.Node
+		s := status.Status
+		if s != nil {
+			continue
+		}
+		channelCount += 1
+		go func() {
+			s = &database.GaleraStatus{}
+			agentClient := NewGaleraAgentClient(n.Host, *galeraAgentConfig)
+			sequenceNumber, err := agentClient.SequenceNumber()
+			if err != nil {
+				msg.PrintfErrorIntro("", "error retrieving galera agent sequence number: %v", err)
+			} else {
+				s.LastApplied = sequenceNumber
+			}
+			channel <- database.NodeClusterStatus{Node: n, Status: s}
+		}()
+	}
+
+	for i := 0; i < channelCount; i++ {
+		ns := <-channel
+		nodeClusterStatus[ns.Node.Host] = &ns
+	}
 }
 
 func (c *GaleraAgentClient) constructURL() string {

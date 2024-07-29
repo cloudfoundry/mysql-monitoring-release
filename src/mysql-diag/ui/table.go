@@ -80,8 +80,15 @@ func (t *Table) AddClusterInfo(name string, uuid string, galeraStatus *database.
 	wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex, wsrepLastApplied := errorContent, errorContent, maxUUID, defLastApplied
 
 	if galeraStatus != nil {
-		wsrepLocalState, wsrepClusterStatus, wsrepLocalIndex =
-			galeraStatus.LocalState, galeraStatus.ClusterStatus, galeraStatus.LocalIndex
+		if galeraStatus.LocalState != "" {
+			wsrepLocalState = galeraStatus.LocalState
+		}
+		if galeraStatus.ClusterStatus != "" {
+			wsrepClusterStatus = galeraStatus.ClusterStatus
+		}
+		if galeraStatus.LocalIndex != "" {
+			wsrepLocalIndex = galeraStatus.LocalIndex
+		}
 		wsrepLastApplied = strconv.Itoa(galeraStatus.LastApplied)
 	}
 

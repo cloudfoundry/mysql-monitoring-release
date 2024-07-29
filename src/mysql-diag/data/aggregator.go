@@ -5,6 +5,7 @@ import (
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/disk"
+	mysqlAgentClient "github.com/cloudfoundry/mysql-diag/galera-agent-client"
 )
 
 type Data struct {
@@ -19,34 +20,42 @@ type Data struct {
 }
 
 type aggregator struct {
-	canary *config.CanaryConfig
-	mySQL  config.MysqlConfig
+	canary      *config.CanaryConfig
+	mySQL       config.MysqlConfig
+	galeraAgent *config.GaleraAgentConfig
 }
 
-func NewAggregator(canary *config.CanaryConfig, mysql config.MysqlConfig) aggregator {
+func NewAggregator(canary *config.CanaryConfig, mysql config.MysqlConfig, galeraAgent *config.GaleraAgentConfig) aggregator {
 	return aggregator{
-		canary: canary,
-		mySQL:  mysql,
+		canary:      canary,
+		mySQL:       mysql,
+		galeraAgent: galeraAgent,
 	}
 }
 
 func (a aggregator) Aggregate() Data {
 	unhealthy := canaryclient.Check(a.canary)
 
-	nodeClusterStatuses := database.GetNodeClusterStatuses(a.mySQL)
-	sequenceNumbers, isUnhealthy := mysqlAgentClient.GetSequenceNumbers(a.MySQL)
-	if isUnhealthy {
-		for node, seqNo := range sequenceNumbers {
-			nodeClusterStatuses[node].Status.LastApplied = seqNo
+	nodeClusterStatuses := make(map[string]*database.NodeClusterStatus)
+	for _, node := range a.mySQL.Nodes {
+		nodeClusterStatuses[node.Host] = &database.NodeClusterStatus{
+			Node:   node,
+			Status: nil,
 		}
 	}
+	database.GetNodeClusterStatuses(a.mySQL, nodeClusterStatuses)
 	needsBootstrap := database.CheckClusterBootstrapStatus(nodeClusterStatuses)
-
+	mysqlAgentClient.GetSequenceNumbers(a.galeraAgent, nodeClusterStatuses)
 	nodeDiskInfos := disk.GetNodeDiskInfos(a.mySQL)
 	diskSpaceIssues := disk.CheckDiskStatus(nodeDiskInfos, a.mySQL.Threshold)
 
+	statuses := make([]*database.NodeClusterStatus, 0, len(nodeClusterStatuses))
+	for _, value := range nodeClusterStatuses {
+		statuses = append(statuses, value)
+	}
+
 	return Data{
-		NodeClusterStatuses: nodeClusterStatuses,
+		NodeClusterStatuses: statuses,
 		NodeDiskInfo:        nodeDiskInfos,
 		DiskSpaceIssues:     diskSpaceIssues,
 		Unhealthy:           unhealthy,

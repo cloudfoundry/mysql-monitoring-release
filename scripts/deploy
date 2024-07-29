@@ -21,6 +21,7 @@ bosh --non-interactive --deployment=pxc deploy --no-redact \
   -o ../pxc-release/operations/proxy-route-with-nats-tls.yml \
   -o ../pxc-release/operations/experimental/fast-deploy-with-downtime-and-danger.yml \
   -o ../pxc-release/operations/require-tls.yml \
+  -o ../pxc-release/operations/galera-agent-tls.yml \
   -o operations/pxc-add-metrics.yml \
   -o operations/pxc-add-monitoring.yml \
   -o operations/pxc-add-notifications-db.yml \
