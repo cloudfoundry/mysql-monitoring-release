@@ -111,6 +111,35 @@ var _ = Describe("Reporter", func() {
 			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] Bootstrap node: \"mysql/cf85ed2f-3ec1-4cfe-98aa-1d9c56896ce8\"")))
 
 		})
+		It("does not communicate the writeable node", func() {
+			messages = ui.Report(ui.ReporterParams{
+				IsCanaryHealthy: isCanaryHealthy,
+				NeedsBootstrap:  needsBootstrap,
+				DiskSpaceIssues: diskSpaceIssues,
+				NodeClusterStatuses: []*database.NodeClusterStatus{
+					{
+						Node: config.MysqlNode{
+							Name: "mysql",
+							UUID: "c5522e95-1cdc-4930-9242-e3c0a37a3c2a",
+						},
+						Status: &database.GaleraStatus{
+							LocalIndex: "befe0c28-b5f4",
+						},
+					},
+					{
+						Node: config.MysqlNode{
+							Name: "mysql",
+							UUID: "cf85ed2f-3ec1-4cfe-98aa-1d9c56896ce8",
+						},
+						Status: &database.GaleraStatus{
+							LocalIndex: "8e9483c8-beed",
+						},
+					},
+				},
+			})
+
+			Expect(messages).To(Not(ContainElement(MatchRegexp("NOTE: Proxies will currently attempt to direct traffic to \".*\""))))
+		})
 	})
 	Context("when there are disk space issues", func() {
 		BeforeEach(func() {
@@ -171,7 +200,7 @@ var _ = Describe("Reporter", func() {
 		})
 
 		It("should not duplicate warning messages", func() {
-			Expect(len(messages)).To(Equal(8))
+			Expect(len(messages)).To(Equal(7))
 		})
 	})
 

@@ -109,11 +109,12 @@ func (c *DatabaseClient) Status() (*GaleraStatus, error) {
 	return &status, nil
 }
 
-func GetNodeClusterStatuses(mysqlConfig config.MysqlConfig) []*NodeClusterStatus {
+func GetNodeClusterStatuses(mysqlConfig config.MysqlConfig, nodeClusterStatus map[string]*NodeClusterStatus) {
 	channel := make(chan NodeClusterStatus, len(mysqlConfig.Nodes))
 
-	for _, n := range mysqlConfig.Nodes {
-		n := n
+	for _, status := range nodeClusterStatus {
+		n := status.Node
+		s := status.Status
 
 		go func() {
 			ac := NewDatabaseClient(mysqlConfig.Connection(n))
@@ -121,16 +122,15 @@ func GetNodeClusterStatuses(mysqlConfig config.MysqlConfig) []*NodeClusterStatus
 			if err != nil {
 				msg.PrintfErrorIntro("", "error retrieving galera status: %v", err)
 			}
-
+			if galeraStatus == nil {
+				galeraStatus = s
+			}
 			channel <- NodeClusterStatus{Node: n, Status: galeraStatus}
 		}()
 	}
 
-	var nodeStatuses []*NodeClusterStatus
 	for i := 0; i < len(mysqlConfig.Nodes); i++ {
 		ns := <-channel
-		nodeStatuses = append(nodeStatuses, &ns)
+		nodeClusterStatus[ns.Node.Host] = &ns
 	}
-
-	return nodeStatuses
 }

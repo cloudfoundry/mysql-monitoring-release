@@ -33,7 +33,7 @@ func main() {
 
 	printCurrentTime()
 
-	aggregator := data.NewAggregator(c.Canary, c.Mysql)
+	aggregator := data.NewAggregator(c.Canary, c.Mysql, c.GaleraAgent)
 	aggregatedData := aggregator.Aggregate()
 
 	table := ui.NewTable(os.Stdout)

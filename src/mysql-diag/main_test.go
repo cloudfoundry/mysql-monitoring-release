@@ -12,11 +12,11 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/cloudfoundry/mysql-diag/config"
-
 	"github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
 	"github.com/onsi/gomega/ghttp"
+
+	"github.com/cloudfoundry/mysql-diag/config"
 
 	"github.com/cloudfoundry/mysql-diag/canaryclient"
 	"github.com/cloudfoundry/mysql-diag/diagagentclient"
@@ -42,6 +42,11 @@ var _ = Describe("mysql-diag cli", func() {
 		agentUsername string
 		agentPassword string
 
+		galeraAgentUsername       string
+		galeraAgentPassword       string
+		galeraAgentResponseStatus int
+		galeraAgentResponse       interface{}
+
 		diskUsedWarningPercent       uint
 		diskInodesUsedWarningPercent uint
 
@@ -61,6 +66,9 @@ var _ = Describe("mysql-diag cli", func() {
 		agentHost, agentPort = testutil.ParseURL(agentServer.URL())
 		agentUsername = "agentfoo"
 		agentPassword = "agentbar"
+
+		galeraAgentUsername = "agentfoo"
+		galeraAgentPassword = "agentbar"
 
 		tempDir, err := os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
@@ -100,11 +108,20 @@ var _ = Describe("mysql-diag cli", func() {
 					},
 				},
 			},
+			GaleraAgent: &config.GaleraAgentConfig{
+				Username: galeraAgentUsername,
+				Password: galeraAgentPassword,
+				Host:     agentHost,
+				ApiPort:  agentPort,
+			},
 		}
 		writeAsYamlToFile(cfg, configFilepath)
 
 		canaryResponseStatus = http.StatusOK
 		canaryResponse = canaryclient.CanaryStatus{Healthy: false}
+
+		galeraAgentResponseStatus = http.StatusOK
+		galeraAgentResponse = 123
 	})
 
 	JustBeforeEach(func() {
@@ -112,6 +129,12 @@ var _ = Describe("mysql-diag cli", func() {
 			ghttp.VerifyRequest("GET", "/api/v1/status"),
 			ghttp.VerifyBasicAuth(canaryUsername, canaryPassword),
 			ghttp.RespondWithJSONEncoded(canaryResponseStatus, canaryResponse),
+		))
+
+		agentServer.AppendHandlers(ghttp.CombineHandlers(
+			ghttp.VerifyRequest("GET", "/sequence_number"),
+			ghttp.VerifyBasicAuth(galeraAgentUsername, galeraAgentPassword),
+			ghttp.RespondWithJSONEncoded(galeraAgentResponseStatus, galeraAgentResponse),
 		))
 
 		response := diagagentclient.InfoResponse{
@@ -133,6 +156,7 @@ var _ = Describe("mysql-diag cli", func() {
 			ghttp.VerifyBasicAuth(agentUsername, agentPassword),
 			ghttp.RespondWithJSONEncoded(http.StatusOK, response),
 		))
+
 	})
 
 	AfterEach(func() {
@@ -179,7 +203,7 @@ var _ = Describe("mysql-diag cli", func() {
 
 		Eventually(session.Out).Should(gbytes.Say("INSTANCE"))
 		Eventually(session.Out).Should(gbytes.Say(`\[0\] mysql/uuid`))
-		Eventually(session.Out).Should(gbytes.Say("NOTE: Proxies will currently attempt to direct traffic to \"\""))
+		Consistently(session.Out).Should(Not(gbytes.Say("NOTE: Proxies will currently attempt to direct traffic to \"mysql/.*\"")))
 
 		Eventually(session, executableTimeout).Should(gexec.Exit(0))
 	})
@@ -202,7 +226,7 @@ var _ = Describe("mysql-diag cli", func() {
 		Eventually(session.Out).Should(gbytes.Say("EPHEMERAL DISK USED"))
 		Eventually(session.Out).Should(gbytes.Say(`333B / 456B \(73\.0%\)`))
 
-		Expect(agentServer.ReceivedRequests()).Should(HaveLen(1))
+		Expect(agentServer.ReceivedRequests()).Should(HaveLen(2))
 
 		Eventually(session, executableTimeout).Should(gexec.Exit(0))
 	})
@@ -240,7 +264,7 @@ var _ = Describe("mysql-diag cli", func() {
 		})
 	})
 
-	Context("when agent and replication canary is not present", func() {
+	Context("when agent, replication canary and galera-agent is not present", func() {
 		BeforeEach(func() {
 			nodeName := "mysql"
 
@@ -257,11 +281,11 @@ var _ = Describe("mysql-diag cli", func() {
 
 			writeAsYamlToFile(cfg, configFilepath)
 		})
-
-		It("skips rep-canary check and disk check", func() {
+		It("skips rep-canary check, disk check and sequence number", func() {
 			session := runMainWithArgs()
 			Eventually(session).Should(gexec.Exit())
 			Eventually(session.Out).Should(gbytes.Say("Canary not configured, skipping health check"))
+			Eventually(session.Out).Should(gbytes.Say("Galera Agent not configured, skipping sequence number check"))
 			Eventually(session.Out).Should(gbytes.Say("Agent not configured, skipping disk check"))
 			Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))
 			Eventually(session.Out).Should(gbytes.Say("N/A - ERROR"))

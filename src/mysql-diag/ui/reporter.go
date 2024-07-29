@@ -52,15 +52,19 @@ Do not perform the following unless instructed by Pivotal Support:
 
 `)
 	}
-	name := ""
-	minLocalIndex := maxUUID
-	for _, status := range params.NodeClusterStatuses {
-		if status.Status != nil && status.Status.LocalIndex < minLocalIndex {
-			minLocalIndex = status.Status.LocalIndex
-			name = fmt.Sprintf("%s/%s", status.Node.Name, status.Node.UUID)
+	if !params.NeedsBootstrap {
+
+		name := ""
+		minLocalIndex := maxUUID
+		for _, status := range params.NodeClusterStatuses {
+			if status.Status.LocalIndex != "" && status.Status.LocalIndex < minLocalIndex {
+				minLocalIndex = status.Status.LocalIndex
+				name = fmt.Sprintf("%s/%s", status.Node.Name, status.Node.UUID)
+			}
 		}
+
+		messages = append(messages, msg.Alert(fmt.Sprintf("NOTE: Proxies will currently attempt to direct traffic to \"%s\"", name)))
 	}
-	messages = append(messages, msg.Alert(fmt.Sprintf("NOTE: Proxies will currently attempt to direct traffic to \"%s\"", name)))
 
 	return messages
 }
