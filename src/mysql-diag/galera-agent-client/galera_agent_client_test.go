@@ -52,7 +52,7 @@ var _ = Describe("GaleraAgentClient", func() {
 		It("returns sequence numbers without error", func() {
 			status, err := galeraAgentClient.SequenceNumber()
 			Expect(err).NotTo(HaveOccurred())
-			Expect(status).To(Equal("123"))
+			Expect(status).To(Equal(123))
 		})
 
 		Context("when making the request returns an error", func() {
@@ -121,7 +121,7 @@ var _ = Describe("GaleraAgentClient", func() {
 		It("returns status without error", func() {
 			status, err := galeraAgentClient.SequenceNumber()
 			Expect(err).NotTo(HaveOccurred())
-			Expect(status).To(Equal("123"))
+			Expect(status).To(Equal(123))
 		})
 
 		Context("when making the request returns an error", func() {
