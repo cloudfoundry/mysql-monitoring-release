@@ -13,6 +13,8 @@ import (
 	"github.com/cloudfoundry/mysql-diag/msg"
 )
 
+const DEFAULT_SEQNO = -1
+
 type GaleraAgentClient struct {
 	address    string
 	username   string
@@ -59,7 +61,7 @@ func GetSequenceNumbers(galeraAgentConfig *config.GaleraAgentConfig, nodeCluster
 		}
 		channelCount += 1
 		go func() {
-			s = &database.GaleraStatus{}
+			s = &database.GaleraStatus{LastApplied: DEFAULT_SEQNO}
 			agentClient := NewGaleraAgentClient(n.Host, *galeraAgentConfig)
 			sequenceNumber, err := agentClient.SequenceNumber()
 			if err != nil {
