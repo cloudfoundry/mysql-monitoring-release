@@ -131,7 +131,7 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
 					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
 					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
+					gbytes.Say(`\s+-1+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
 				))
 			})
 		})
