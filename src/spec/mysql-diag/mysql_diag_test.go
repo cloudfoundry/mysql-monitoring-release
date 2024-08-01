@@ -105,19 +105,26 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 	})
 	When("the cluster is online", func() {
 		When("mysql is not accepting connections", func() {
+			var instances []Instance
+			var downInstance string
 			BeforeEach(func() {
-				By("stopping mysqld on mysql/0")
-				args := []string{"ssh", "mysql/0", "sudo kill -s STOP $(pidof mysqld)"}
+				var err error
+				instances, err = Instances(MatchByInstanceGroup("mysql"))
+				Expect(err).NotTo(HaveOccurred())
+				downInstance = instances[0].Instance
+				By("stopping mysqld on " + downInstance)
+				args := []string{"ssh", downInstance, "-c", "sudo kill -s STOP $(pidof mysqld)"}
 				session := testhelpers.ExecuteBosh(args, 10*time.Second)
+
 				Expect(session.ExitCode()).To(BeZero())
 			})
 			AfterEach(func() {
-				args := []string{"ssh", "mysql/0", "sudo monit restart galera-init"}
+				args := []string{"ssh", downInstance, "sudo monit restart galera-init"}
 				session := testhelpers.ExecuteBosh(args, 10*time.Second)
 				Expect(session.ExitCode()).To(BeZero())
 
 				Eventually(func() *gbytes.Buffer {
-					args = []string{"ssh", "mysql/0", "--command=\"sudo monit summary | grep galera-init\""}
+					args = []string{"ssh", downInstance, "--command=\"sudo monit summary | grep galera-init\""}
 					session = testhelpers.ExecuteBosh(args, 10*time.Second)
 					return session.Out
 				}, "2m", "1s").Should(gbytes.Say(`Process 'galera-init'\s+running`))
@@ -128,6 +135,7 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				Expect(session.ExitCode()).To(BeZero())
 				Expect(session).To(SatisfyAll(
 					gbytes.Say(`(Checking canary status\.\.\. .*healthy.*)|(Canary not configured)`),
+					gbytes.Say(`error retrieving galera status from node `+downInstance),
 					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
 					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
 					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),

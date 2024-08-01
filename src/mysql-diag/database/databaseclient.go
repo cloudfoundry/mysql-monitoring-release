@@ -120,7 +120,7 @@ func GetNodeClusterStatuses(mysqlConfig config.MysqlConfig, nodeClusterStatus ma
 			ac := NewDatabaseClient(mysqlConfig.Connection(n))
 			galeraStatus, err := ac.Status()
 			if err != nil {
-				msg.PrintfErrorIntro("", "error retrieving galera status: %v", err)
+				msg.PrintfErrorIntro("", "error retrieving galera status from node %s: %v", status.Node.Name+"/"+status.Node.UUID, err)
 			}
 			if galeraStatus == nil {
 				galeraStatus = s
