@@ -5,8 +5,8 @@ go 1.21
 toolchain go1.22.5
 
 require (
-	code.cloudfoundry.org/bytefmt v0.0.0-20240727181252-5b6127bbde80
-	code.cloudfoundry.org/tlsconfig v0.0.0-20240712175922-ffce9516cec8
+	code.cloudfoundry.org/bytefmt v0.0.0-20240804182054-0a63f33a903d
+	code.cloudfoundry.org/tlsconfig v0.0.0-20240804182054-12ab4b1e7eda
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.17.0
 	github.com/go-sql-driver/mysql v1.8.1
@@ -33,7 +33,7 @@ require (
 	golang.org/x/crypto v0.25.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect

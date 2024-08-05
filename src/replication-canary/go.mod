@@ -7,7 +7,7 @@ toolchain go1.22.2
 require (
 	code.cloudfoundry.org/clock v1.2.0
 	code.cloudfoundry.org/lager v2.0.0+incompatible
-	code.cloudfoundry.org/tlsconfig v0.0.0-20240712175922-ffce9516cec8
+	code.cloudfoundry.org/tlsconfig v0.0.0-20240804182054-12ab4b1e7eda
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/cloudfoundry/multierror v0.0.0-20240611110611-7208a9f3225c
@@ -60,10 +60,10 @@ require (
 	go.step.sm/crypto v0.51.1 // indirect
 	golang.org/x/crypto v0.25.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
-	golang.org/x/mod v0.19.0 // indirect
+	golang.org/x/mod v0.20.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
