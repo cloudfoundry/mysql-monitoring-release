@@ -5,8 +5,8 @@ go 1.21
 toolchain go1.22.5
 
 require (
-	code.cloudfoundry.org/bytefmt v0.0.0-20240808182453-a379845013d9
-	code.cloudfoundry.org/tlsconfig v0.0.0-20240808182450-b1b581e211a2
+	code.cloudfoundry.org/bytefmt v0.1.0
+	code.cloudfoundry.org/tlsconfig v0.1.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.17.0
 	github.com/go-sql-driver/mysql v1.8.1
