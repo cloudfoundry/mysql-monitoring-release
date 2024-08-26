@@ -5,7 +5,7 @@ go 1.22
 toolchain go1.22.6
 
 require (
-	code.cloudfoundry.org/clock v1.3.0
+	code.cloudfoundry.org/clock v1.5.0
 	code.cloudfoundry.org/lager v2.0.0+incompatible
 	code.cloudfoundry.org/tlsconfig v0.1.0
 	code.cloudfoundry.org/uaa-go-client v0.0.0-20211019180233-425e185131b9
@@ -59,7 +59,7 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	go.step.sm/crypto v0.51.1 // indirect
 	golang.org/x/crypto v0.26.0 // indirect
-	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa // indirect
+	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948 // indirect
 	golang.org/x/mod v0.20.0 // indirect
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
