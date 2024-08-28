@@ -233,9 +233,7 @@ var _ = Describe("mysql-diag cli", func() {
 
 	It("tells us the download-logs command", func() {
 		session := runMainWithArgs()
-		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] Run the download-logs command:`))
-		Eventually(session.Out).Should(gbytes.Say(`\$ download-logs -o /tmp/output`))
-		Eventually(session.Out).Should(gbytes.Say(`For full information about how to download and use the download-logs command see https://community\.pivotal\.io/s/article/script-to-download-mysql-logs-for-pas-tile-ha-clusters\?language=en_US`))
+		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] Run the bosh logs command: targeting each of the VMs in your VMware SQL with MySQL for TAS cluster, proxies, and jumpbox to retrieve the VM logs.`))
 	})
 
 	It("warns us to not do silly things", func() {

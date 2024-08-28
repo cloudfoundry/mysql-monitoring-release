@@ -76,7 +76,7 @@ var _ = Describe("Reporter", func() {
 		})
 
 		It("gives suggestion to download logs", func() {
-			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] Run the download-logs command:")))
+			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] Run the bosh logs command:")))
 		})
 
 		It("warns not to recreate", func() {
@@ -100,7 +100,7 @@ var _ = Describe("Reporter", func() {
 		})
 
 		It("gives suggestion to download logs", func() {
-			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] Run the download-logs command:")))
+			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] Run the bosh logs command:")))
 		})
 
 		It("warns not to recreate", func() {
@@ -169,7 +169,7 @@ var _ = Describe("Reporter", func() {
 		})
 
 		It("does not suggest downloading logs", func() {
-			Expect(messages).ToNot(ContainElement(MatchRegexp("\\[CRITICAL\\] Run the download-logs command")))
+			Expect(messages).ToNot(ContainElement(MatchRegexp("\\[CRITICAL\\] Run the bosh logs command")))
 		})
 
 		It("warns us to not do silly things", func() {

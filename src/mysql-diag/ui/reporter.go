@@ -34,9 +34,7 @@ func Report(params ReporterParams) []string {
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap {
-		messages = append(messages, msg.Alert("\n[CRITICAL] Run the download-logs command:")+`
-$ download-logs -o /tmp/output
-For full information about how to download and use the download-logs command see https://community.pivotal.io/s/article/script-to-download-mysql-logs-for-pas-tile-ha-clusters?language=en_US`)
+		messages = append(messages, msg.Alert("\n[CRITICAL] Run the bosh logs command: targeting each of the VMs in your VMware SQL with MySQL for TAS cluster, proxies, and jumpbox to retrieve the VM logs."))
 	}
 
 	if !params.IsCanaryHealthy || params.NeedsBootstrap || len(params.DiskSpaceIssues) > 0 {
