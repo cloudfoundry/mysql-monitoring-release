@@ -282,7 +282,6 @@ var _ = Describe("mysql-diag cli", func() {
 		It("skips rep-canary check, disk check and sequence number", func() {
 			session := runMainWithArgs()
 			Eventually(session).Should(gexec.Exit())
-			Eventually(session.Out).Should(gbytes.Say("Canary not configured, skipping health check"))
 			Eventually(session.Out).Should(gbytes.Say("Galera Agent not configured, skipping sequence number check"))
 			Eventually(session.Out).Should(gbytes.Say("Agent not configured, skipping disk check"))
 			Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))

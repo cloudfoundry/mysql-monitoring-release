@@ -57,7 +57,6 @@ func (c CanaryClient) constructURL() string {
 // Returns true if the canary is unhealthy. Otherwise, it's either healthy or unknown.
 func Check(config *config.CanaryConfig) bool {
 	if config == nil {
-		fmt.Println("Canary not configured, skipping health check")
 		return false
 	}
 
