@@ -60,20 +60,17 @@ func Check(config *config.CanaryConfig) bool {
 		return false
 	}
 
-	intro := "Checking canary status... "
-	fmt.Println(intro)
-
 	client := NewCanaryClient("127.0.0.1", config.ApiPort, *config)
 	healthy, err := client.Status()
 	if err != nil {
-		msg.PrintfErrorIntro(intro, "%v", err)
+		msg.PrintfErrorIntro("Checking canary status... ", "%v", err)
 		return false
 	} else {
 		if healthy {
-			fmt.Println(intro + msg.Happy("healthy"))
+			fmt.Println("Checking canary status... " + msg.Happy("healthy"))
 			return false
 		} else {
-			fmt.Println(intro + msg.Alert("unhealthy"))
+			fmt.Println("Checking canary status... " + msg.Alert("unhealthy"))
 			return true
 		}
 	}

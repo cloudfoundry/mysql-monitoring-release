@@ -40,7 +40,6 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 			session := testhelpers.ExecuteBosh(args, 1*time.Minute)
 			Expect(session.ExitCode()).To(BeZero())
 			Expect(session).To(SatisfyAll(
-				gbytes.Say(`Checking canary status\.\.\.`),
 				gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
 				gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
 				gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
@@ -95,7 +94,6 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 			session = testhelpers.ExecuteBosh(args, 1*time.Minute)
 			Expect(session.ExitCode()).To(BeZero())
 			Expect(session).To(SatisfyAll(
-				gbytes.Say(`Checking canary status\.\.\.`),
 				gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
 				gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
 				gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
@@ -134,7 +132,6 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				session := testhelpers.ExecuteBosh(args, 90*time.Second)
 				Expect(session.ExitCode()).To(BeZero())
 				Expect(session).To(SatisfyAll(
-					gbytes.Say(`(Checking canary status\.\.\. .*healthy.*)`),
 					gbytes.Say(`error retrieving galera status from node `+downInstance),
 					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
 					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
