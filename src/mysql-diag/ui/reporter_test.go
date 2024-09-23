@@ -50,7 +50,6 @@ var _ = Describe("Reporter", func() {
 	Context("when everything is healthy", func() {
 		It("remains quiet except for communicating writeable node", func() {
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy:     isCanaryHealthy,
 				NeedsBootstrap:      needsBootstrap,
 				DiskSpaceIssues:     diskSpaceIssues,
 				NodeClusterStatuses: nodeClusterStatuses,
@@ -60,35 +59,10 @@ var _ = Describe("Reporter", func() {
 		})
 	})
 
-	Context("when canary is unhealthy", func() {
-		BeforeEach(func() {
-			isCanaryHealthy = false
-			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy:     isCanaryHealthy,
-				NeedsBootstrap:      needsBootstrap,
-				DiskSpaceIssues:     diskSpaceIssues,
-				NodeClusterStatuses: nodeClusterStatuses,
-			})
-		})
-
-		It("chirps", func() {
-			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] The replication process is unhealthy")))
-		})
-
-		It("gives suggestion to download logs", func() {
-			Expect(messages).To(ContainElement(MatchRegexp("\\[CRITICAL\\] Run the bosh logs command:")))
-		})
-
-		It("warns not to recreate", func() {
-			Expect(messages).To(ContainElement(MatchRegexp("\\[WARNING\\] NOT RECOMMENDED")))
-		})
-	})
-
 	Context("when needing bootstrap", func() {
 		BeforeEach(func() {
 			needsBootstrap = true
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy:     isCanaryHealthy,
 				NeedsBootstrap:      needsBootstrap,
 				DiskSpaceIssues:     diskSpaceIssues,
 				NodeClusterStatuses: nodeClusterStatuses,
@@ -113,7 +87,6 @@ var _ = Describe("Reporter", func() {
 		})
 		It("does not communicate the writeable node", func() {
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy: isCanaryHealthy,
 				NeedsBootstrap:  needsBootstrap,
 				DiskSpaceIssues: diskSpaceIssues,
 				NodeClusterStatuses: []*database.NodeClusterStatus{
@@ -154,7 +127,6 @@ var _ = Describe("Reporter", func() {
 				},
 			}
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy:     isCanaryHealthy,
 				NeedsBootstrap:      needsBootstrap,
 				DiskSpaceIssues:     diskSpaceIssues,
 				NodeClusterStatuses: nodeClusterStatuses,
@@ -192,7 +164,6 @@ var _ = Describe("Reporter", func() {
 				},
 			}
 			messages = ui.Report(ui.ReporterParams{
-				IsCanaryHealthy:     isCanaryHealthy,
 				NeedsBootstrap:      needsBootstrap,
 				DiskSpaceIssues:     diskSpaceIssues,
 				NodeClusterStatuses: nodeClusterStatuses,
@@ -200,13 +171,12 @@ var _ = Describe("Reporter", func() {
 		})
 
 		It("should not duplicate warning messages", func() {
-			Expect(len(messages)).To(Equal(7))
+			Expect(len(messages)).To(Equal(6))
 		})
 	})
 
 	It("communicates the writeable node", func() {
 		messages = ui.Report(ui.ReporterParams{
-			IsCanaryHealthy: isCanaryHealthy,
 			NeedsBootstrap:  needsBootstrap,
 			DiskSpaceIssues: diskSpaceIssues,
 			NodeClusterStatuses: []*database.NodeClusterStatus{

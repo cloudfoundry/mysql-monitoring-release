@@ -18,7 +18,6 @@ import (
 
 	"github.com/cloudfoundry/mysql-diag/config"
 
-	"github.com/cloudfoundry/mysql-diag/canaryclient"
 	"github.com/cloudfoundry/mysql-diag/diagagentclient"
 	"github.com/cloudfoundry/mysql-diag/testutil"
 )
@@ -29,12 +28,6 @@ var _ = Describe("mysql-diag cli", func() {
 		configFilepath string
 
 		cfg config.Config
-
-		canaryServer         *ghttp.Server
-		canaryUsername       string
-		canaryPassword       string
-		canaryResponseStatus int
-		canaryResponse       interface{}
 
 		agentServer   *ghttp.Server
 		agentHost     string
@@ -57,10 +50,6 @@ var _ = Describe("mysql-diag cli", func() {
 	)
 
 	BeforeEach(func() {
-		canaryServer = ghttp.NewServer()
-		_, canaryPort := testutil.ParseURL(canaryServer.URL())
-		canaryUsername = "foo"
-		canaryPassword = "bar"
 
 		agentServer = ghttp.NewServer()
 		agentHost, agentPort = testutil.ParseURL(agentServer.URL())
@@ -85,11 +74,6 @@ var _ = Describe("mysql-diag cli", func() {
 
 		configFilepath = filepath.Join(tempDir, "mysql-diag-config.yml")
 		cfg = config.Config{
-			Canary: &config.CanaryConfig{
-				Username: canaryUsername,
-				Password: canaryPassword,
-				ApiPort:  canaryPort,
-			},
 			Mysql: config.MysqlConfig{
 				Agent: &config.AgentConfig{
 					Port:     agentPort,
@@ -117,19 +101,11 @@ var _ = Describe("mysql-diag cli", func() {
 		}
 		writeAsYamlToFile(cfg, configFilepath)
 
-		canaryResponseStatus = http.StatusOK
-		canaryResponse = canaryclient.CanaryStatus{Healthy: false}
-
 		galeraAgentResponseStatus = http.StatusOK
 		galeraAgentResponse = 123
 	})
 
 	JustBeforeEach(func() {
-		canaryServer.AppendHandlers(ghttp.CombineHandlers(
-			ghttp.VerifyRequest("GET", "/api/v1/status"),
-			ghttp.VerifyBasicAuth(canaryUsername, canaryPassword),
-			ghttp.RespondWithJSONEncoded(canaryResponseStatus, canaryResponse),
-		))
 
 		agentServer.AppendHandlers(ghttp.CombineHandlers(
 			ghttp.VerifyRequest("GET", "/sequence_number"),
@@ -193,8 +169,6 @@ var _ = Describe("mysql-diag cli", func() {
 		Eventually(session.Out).Should(gbytes.Say("CLUSTER STATUS"))
 		Eventually(session.Out).Should(gbytes.Say("N/A - ERROR"))
 
-		Expect(canaryServer.ReceivedRequests()).Should(HaveLen(1))
-
 		Eventually(session, executableTimeout).Should(gexec.Exit(0))
 	})
 
@@ -211,11 +185,6 @@ var _ = Describe("mysql-diag cli", func() {
 	It("tells us that we need bootstrap", func() {
 		session := runMainWithArgs()
 		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] You must bootstrap the cluster. Follow these instructions: https://docs\.vmware\.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3\.2/mysql-for-tas/bootstrapping\.html`))
-	})
-
-	It("tells us that the canary is unhealthy", func() {
-		session := runMainWithArgs()
-		Eventually(session.Out).Should(gbytes.Say("\\[CRITICAL\\] The replication process is unhealthy. Writes are disabled."))
 	})
 
 	It("renders a disk information table", func() {

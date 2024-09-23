@@ -1,7 +1,6 @@
 package data
 
 import (
-	"github.com/cloudfoundry/mysql-diag/canaryclient"
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/disk"
@@ -14,28 +13,22 @@ type Data struct {
 	NodeDiskInfo    []disk.NodeDiskInfo
 	DiskSpaceIssues []disk.DiskSpaceIssue
 
-	Unhealthy bool
-
 	NeedsBootstrap bool
 }
 
 type aggregator struct {
-	canary      *config.CanaryConfig
 	mySQL       config.MysqlConfig
 	galeraAgent *config.GaleraAgentConfig
 }
 
-func NewAggregator(canary *config.CanaryConfig, mysql config.MysqlConfig, galeraAgent *config.GaleraAgentConfig) aggregator {
+func NewAggregator(mysql config.MysqlConfig, galeraAgent *config.GaleraAgentConfig) aggregator {
 	return aggregator{
-		canary:      canary,
 		mySQL:       mysql,
 		galeraAgent: galeraAgent,
 	}
 }
 
 func (a aggregator) Aggregate() Data {
-	unhealthy := canaryclient.Check(a.canary)
-
 	nodeClusterStatuses := make(map[string]*database.NodeClusterStatus)
 	for _, node := range a.mySQL.Nodes {
 		nodeClusterStatuses[node.Host] = &database.NodeClusterStatus{
@@ -58,7 +51,6 @@ func (a aggregator) Aggregate() Data {
 		NodeClusterStatuses: statuses,
 		NodeDiskInfo:        nodeDiskInfos,
 		DiskSpaceIssues:     diskSpaceIssues,
-		Unhealthy:           unhealthy,
 		NeedsBootstrap:      needsBootstrap,
 	}
 }

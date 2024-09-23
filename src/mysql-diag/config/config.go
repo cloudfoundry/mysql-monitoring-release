@@ -15,7 +15,6 @@ import (
 )
 
 type Config struct {
-	Canary      *CanaryConfig      `yaml:"canary"`
 	Mysql       MysqlConfig        `yaml:"mysql"`
 	GaleraAgent *GaleraAgentConfig `yaml:"galera_agent"`
 }
@@ -24,13 +23,6 @@ type GaleraAgentConfig struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	Host     string `yaml:"host"`
-	ApiPort  uint   `yaml:"api_port"`
-	TLS      TLS    `yaml:"tls"`
-}
-
-type CanaryConfig struct {
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
 	ApiPort  uint   `yaml:"api_port"`
 	TLS      TLS    `yaml:"tls"`
 }

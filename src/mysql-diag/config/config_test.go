@@ -23,10 +23,6 @@ var _ = Describe("config", func() {
 
 		configFilepath string
 
-		canaryUsername string
-		canaryPassword string
-		canaryPort     uint
-
 		host          string
 		port          uint
 		username      string
@@ -54,9 +50,6 @@ var _ = Describe("config", func() {
 		nodeName = "nodeName"
 		username = "foo"
 		password = "bar"
-		canaryUsername = "canary"
-		canaryPassword = "canaryPassword"
-		canaryPort = 8123
 		uuid = "abcd-efgh"
 		agentPort = 8124
 		agentUsername = "agentfoo"
@@ -68,16 +61,6 @@ var _ = Describe("config", func() {
 		galeraAgentPort = 9201
 
 		formatString := `{
-				"canary": {
-					"username": "%s",
-					"password": "%s",
-					"api_port": %d,
-					"tls": {
-						"enabled": true,
-						"ca": "pem-encoded-authority-for-replication",
-						"server_name": "expected-replication-canary-identity"
-					}
-				},
 				"galera_agent": {
 					"username": "%s",
 					"password": "%s",
@@ -115,9 +98,6 @@ var _ = Describe("config", func() {
 				]}}`
 		formatted := fmt.Sprintf(
 			formatString,
-			canaryUsername,
-			canaryPassword,
-			canaryPort,
 			galeraAgentUsername,
 			galeraAgentPassword,
 			galeraAgentPort,
@@ -165,13 +145,6 @@ var _ = Describe("config", func() {
 	It("reads the config file correctly", func() {
 		c, err := config.LoadFromFile(configFilepath)
 		Expect(err).NotTo(HaveOccurred())
-
-		Expect(c.Canary.Username).To(Equal(canaryUsername))
-		Expect(c.Canary.Password).To(Equal(canaryPassword))
-		Expect(c.Canary.ApiPort).To(Equal(canaryPort))
-		Expect(c.Canary.TLS.Enabled).To(BeTrue())
-		Expect(c.Canary.TLS.CA).To(Equal(`pem-encoded-authority-for-replication`))
-		Expect(c.Canary.TLS.ServerName).To(Equal(`expected-replication-canary-identity`))
 
 		Expect(c.Mysql.Username).To(Equal(username))
 		Expect(c.Mysql.Password).To(Equal(password))

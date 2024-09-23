@@ -33,7 +33,7 @@ func main() {
 
 	printCurrentTime()
 
-	aggregator := data.NewAggregator(c.Canary, c.Mysql, c.GaleraAgent)
+	aggregator := data.NewAggregator(c.Mysql, c.GaleraAgent)
 	aggregatedData := aggregator.Aggregate()
 
 	table := ui.NewTable(os.Stdout)
@@ -42,7 +42,6 @@ func main() {
 	table.Render()
 
 	messages := ui.Report(ui.ReporterParams{
-		IsCanaryHealthy:     !aggregatedData.Unhealthy,
 		NeedsBootstrap:      aggregatedData.NeedsBootstrap,
 		DiskSpaceIssues:     aggregatedData.DiskSpaceIssues,
 		NodeClusterStatuses: aggregatedData.NodeClusterStatuses,

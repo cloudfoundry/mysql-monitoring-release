@@ -41,11 +41,28 @@
           password: ((mysql_monitoring_mysql_diag_agent_password))
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/server_audit_excluded_users?/-
-  value: repcanary
+  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_users?/mysql-diag?
+  value:
+    role: minimal
+    password: ((mysql_diag_db_password))
+    host: any
+
+- type: replace
+  path: /instance_groups/name=mysql-monitor/jobs/name=mysql-diag?/properties/db_username?
+  value: mysql-diag
+
+- type: replace
+  path: /instance_groups/name=mysql-monitor/jobs/name=mysql-diag?/properties/db_password?
+  value: ((mysql_diag_db_password))
 
 - type: replace
   path: /variables/name=mysql_monitoring_mysql_diag_agent_password?
   value:
     name: mysql_monitoring_mysql_diag_agent_password
+    type: password
+
+- type: replace
+  path: /variables/name=mysql_diag_db_password?
+  value:
+    name: mysql_diag_db_password
     type: password

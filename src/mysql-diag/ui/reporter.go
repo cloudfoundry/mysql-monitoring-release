@@ -11,7 +11,6 @@ import (
 )
 
 type ReporterParams struct {
-	IsCanaryHealthy     bool
 	NeedsBootstrap      bool
 	DiskSpaceIssues     []disk.DiskSpaceIssue
 	NodeClusterStatuses []*database.NodeClusterStatus
@@ -19,10 +18,6 @@ type ReporterParams struct {
 
 func Report(params ReporterParams) []string {
 	messages := []string{}
-
-	if !params.IsCanaryHealthy {
-		messages = append(messages, msg.Alert("\n[CRITICAL] The replication process is unhealthy. Writes are disabled."))
-	}
 
 	if params.NeedsBootstrap {
 		slices.SortStableFunc(params.NodeClusterStatuses, func(i, j *database.NodeClusterStatus) int {
@@ -33,11 +28,11 @@ func Report(params ReporterParams) []string {
 		messages = append(messages, msg.Alert(fmt.Sprintf("\n[CRITICAL] Bootstrap node: \"%s\"", bootstrapNode)))
 	}
 
-	if !params.IsCanaryHealthy || params.NeedsBootstrap {
+	if params.NeedsBootstrap {
 		messages = append(messages, msg.Alert("\n[CRITICAL] Run the bosh logs command: targeting each of the VMs in your VMware SQL with MySQL for TAS cluster, proxies, and jumpbox to retrieve the VM logs."))
 	}
 
-	if !params.IsCanaryHealthy || params.NeedsBootstrap || len(params.DiskSpaceIssues) > 0 {
+	if params.NeedsBootstrap || len(params.DiskSpaceIssues) > 0 {
 		for _, diskSpaceIssue := range params.DiskSpaceIssues {
 			messages = append(messages, msg.Alert(fmt.Sprintf("\n[WARNING] %s disk usage is very high on node %s. Some fluctuation on the node currently serving "+
 				"transactions is normal, due to temporary table usage, but be aware that MySQL needs to have sufficient free space "+

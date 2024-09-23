@@ -14,11 +14,5 @@ echo -e "\nTesting Release-Level Specs..."
 echo -e "\nTesting Metrics..."
 "${RELEASE_DIR}"/src/mysql-metrics/bin/test "$@"
 
-echo -e "\nTesting Replication Canary..."
-"${RELEASE_DIR}"/src/replication-canary/bin/test "$@"
-
 echo -e "\nTesting Mysql-Diag..."
 "${RELEASE_DIR}"/src/mysql-diag/bin/test "$@"
-
-echo -e "\nTesting Notifications Client..."
-"${RELEASE_DIR}"/src/replication-canary/notifications-client/bin/test "$@"
