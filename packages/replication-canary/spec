@@ -1,8 +1,0 @@
----
-name: replication-canary
-
-dependencies:
-- golang-1-linux
-
-files:
-- replication-canary/**

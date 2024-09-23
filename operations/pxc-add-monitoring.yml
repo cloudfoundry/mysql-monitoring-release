@@ -22,26 +22,6 @@
     name: mysql-monitor
     instances: 1
     jobs:
-    - name: replication-canary
-      release: mysql-monitoring
-      consumes:
-        cloud_controller:
-          deployment: cf
-          from: cloud_controller
-      properties:
-        cf:
-          skip_ssl_validation: ((cf_skip_ssl_validation))
-        cf_mysql:
-          # proxy_route_suffix should be set to <unique-prefix>.<cf_domain>
-          # This assumes the ops-file pxc-release/operations/register-proxy-route.yml was used
-          external_host: ((proxy_route_suffix))
-        mysql-monitoring:
-          recipient_email: ((mysql_monitoring_recipient_email))
-          cluster_identifier: ((mysql_monitoring_cluster_identifier))
-          replication-canary:
-            uaa_admin_client_secret: ((mysql_monitoring_replication_canary_uaa_admin_client_secret))
-            canary_password: ((mysql_monitoring_replication_canary_canary_password))
-            notifications_client_secret: ((mysql_monitoring_replication_canary_notifications_client_secret))
     - name: mysql-diag
       release: mysql-monitoring
     azs: [z1]
@@ -61,27 +41,8 @@
           password: ((mysql_monitoring_mysql_diag_agent_password))
 
 - type: replace
-  path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/seeded_databases?/name=canary_db?
-  value:
-    name: canary_db
-    username: repcanary
-    password: ((mysql_monitoring_replication_canary_canary_password))
-
-- type: replace
   path: /instance_groups/name=mysql/jobs/name=pxc-mysql/properties/server_audit_excluded_users?/-
   value: repcanary
-
-- type: replace
-  path: /variables/name=mysql_monitoring_replication_canary_canary_password?
-  value:
-    name: mysql_monitoring_replication_canary_canary_password
-    type: password
-
-- type: replace
-  path: /variables/name=mysql_monitoring_replication_canary_notifications_client_secret?
-  value:
-    name: mysql_monitoring_replication_canary_notifications_client_secret
-    type: password
 
 - type: replace
   path: /variables/name=mysql_monitoring_mysql_diag_agent_password?

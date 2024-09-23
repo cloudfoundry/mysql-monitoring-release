@@ -1,5 +1,0 @@
-check process replication-canary
-  with pidfile /var/vcap/sys/run/bpm/replication-canary/replication-canary.pid
-  start program "/var/vcap/jobs/bpm/bin/bpm start replication-canary"
-  stop program "/var/vcap/jobs/bpm/bin/bpm stop replication-canary"
-  group vcap

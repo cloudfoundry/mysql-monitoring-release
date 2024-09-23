@@ -27,23 +27,6 @@ config = {
   }
 }
 
-if_link('replication-canary') do |link|
-  config[:canary] = {
-    # recycle the same username/pw for basic auth, keeps the number of credentials down
-    username: link.p('mysql-monitoring.replication-canary.canary_username'),
-    password: link.p('mysql-monitoring.replication-canary.canary_password'),
-    api_port: link.p('mysql-monitoring.replication-canary.api_port'),
-    tls: {
-      enabled: link.p('mysql-monitoring.replication-canary.tls.enabled'),
-      ca: link.p('mysql-monitoring.replication-canary.tls.ca'),
-      server_name: link.p('mysql-monitoring.replication-canary.tls.server_name'),
-    },
-  }
-
-  config[:mysql][:username] = link.p('mysql-monitoring.replication-canary.canary_username')
-  config[:mysql][:password] = link.p('mysql-monitoring.replication-canary.canary_password')
-end
-
 if_link('galera-agent') do |link|
   config[:galera_agent] = {
     # recycle the same username/pw for basic auth, keeps the number of credentials down
