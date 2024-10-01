@@ -31,9 +31,9 @@ var _ = Describe("Metrics are received", func() {
 		workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
 			session := cf.Cf("tail", "-f", SourceID, "--name-filter=/"+SourceID+"/galera/wsrep_local_index")
 			Eventually(session, 40*time.Second).Should(SatisfyAll(
-				gbytes.Say("mysql/galera/wsrep_local_index:0"),
-				gbytes.Say("mysql/galera/wsrep_local_index:1"),
-				gbytes.Say("mysql/galera/wsrep_local_index:2"),
+				gbytes.Say("/"+SourceID+"/galera/wsrep_local_index:0"),
+				gbytes.Say("/"+SourceID+"/galera/wsrep_local_index:1"),
+				gbytes.Say("/"+SourceID+"/galera/wsrep_local_index:2"),
 			))
 			session.Terminate()
 		})
