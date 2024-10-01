@@ -4,9 +4,7 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
-	"github.com/cloudfoundry/cf-test-helpers/v2/cf"
 	"github.com/cloudfoundry/cf-test-helpers/v2/config"
 	"github.com/cloudfoundry/cf-test-helpers/v2/workflowhelpers"
 	. "github.com/onsi/ginkgo/v2"
@@ -20,6 +18,7 @@ func TestAcceptance(t *testing.T) {
 
 var TestSetup *workflowhelpers.ReproducibleTestSuiteSetup
 var Config *config.Config
+var SourceID string
 
 var _ = BeforeSuite(func() {
 	var missingEnvs []string
@@ -30,6 +29,7 @@ var _ = BeforeSuite(func() {
 		"BOSH_CLIENT_SECRET",
 		"BOSH_DEPLOYMENT",
 		"CONFIG",
+		"METRICS_SOURCE_ID",
 	} {
 		if os.Getenv(v) == "" {
 			missingEnvs = append(missingEnvs, v)
@@ -44,11 +44,7 @@ var _ = BeforeSuite(func() {
 	TestSetup = workflowhelpers.NewTestSuiteSetup(Config)
 	TestSetup.Setup()
 
-	session := cf.Cf("tail", "--help").Wait(10 * time.Second)
-	if session.ExitCode() != 0 {
-		session = cf.Cf("install-plugin", "-f", "log-cache", "-r", "CF-Community").Wait(10 * time.Minute)
-		Expect(session.ExitCode()).To(BeZero())
-	}
+	SourceID = os.Getenv("METRICS_SOURCE_ID")
 })
 
 var _ = AfterSuite(func() {

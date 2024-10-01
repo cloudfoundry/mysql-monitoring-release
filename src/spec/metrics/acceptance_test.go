@@ -19,9 +19,9 @@ import (
 var _ = Describe("Metrics are received", func() {
 	It("correct metrics are emitted within 40s", func() {
 		workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
-			session := cf.Cf("tail", "-f", "p-mysql")
-			Eventually(session.Out, 40*time.Second).Should(gbytes.Say("/p-mysql/performance/questions:"))
-			Eventually(session.Out, 40*time.Second).Should(gbytes.Say("/p-mysql/galera/wsrep_cluster_status:1"))
+			session := cf.Cf("tail", "-f", SourceID)
+			Eventually(session.Out, 40*time.Second).Should(gbytes.Say("/" + SourceID + "/performance/questions:"))
+			Eventually(session.Out, 40*time.Second).Should(gbytes.Say("/" + SourceID + "/galera/wsrep_cluster_status:1"))
 
 			session.Terminate()
 		})
@@ -29,11 +29,11 @@ var _ = Describe("Metrics are received", func() {
 
 	It("has unique wsrep_local_index values for each node", func() {
 		workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
-			session := cf.Cf("tail", "-f", "p-mysql", "--name-filter=/p-mysql/galera/wsrep_local_index")
+			session := cf.Cf("tail", "-f", SourceID, "--name-filter=/"+SourceID+"/galera/wsrep_local_index")
 			Eventually(session, 40*time.Second).Should(SatisfyAll(
-				gbytes.Say("mysql/galera/wsrep_local_index:0"),
-				gbytes.Say("mysql/galera/wsrep_local_index:1"),
-				gbytes.Say("mysql/galera/wsrep_local_index:2"),
+				gbytes.Say("/"+SourceID+"/galera/wsrep_local_index:0"),
+				gbytes.Say("/"+SourceID+"/galera/wsrep_local_index:1"),
+				gbytes.Say("/"+SourceID+"/galera/wsrep_local_index:2"),
 			))
 			session.Terminate()
 		})
@@ -47,7 +47,7 @@ var _ = Describe("Metrics are received", func() {
 		)
 
 		BeforeEach(func() {
-			ephemeralDiskUsedMetricRegex = `/p-mysql/system/ephemeral_disk_used_percent:([0-9]+)`
+			ephemeralDiskUsedMetricRegex = `/` + SourceID + `/system/ephemeral_disk_used_percent:([0-9]+)`
 
 		})
 		AfterEach(func() {
@@ -85,7 +85,7 @@ var _ = Describe("Metrics are received", func() {
 
 			By("Capturing ephemeral disk usage metric before filling the disk", func() {
 				workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
-					session := cf.Cf("tail", "-f", "p-mysql")
+					session := cf.Cf("tail", "-f", SourceID)
 					Eventually(session.Out, 40*time.Second).Should(gbytes.Say(ephemeralDiskUsedMetricRegex))
 					ephDiskMetricsOutput := session.Out.Contents()
 
@@ -104,7 +104,7 @@ var _ = Describe("Metrics are received", func() {
 
 			By("Capturing the ephemeral disk usage metric after allocating a file", func() {
 				workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
-					session := cf.Cf("tail", "-f", "p-mysql")
+					session := cf.Cf("tail", "-f", SourceID)
 					Eventually(session.Out, 40*time.Second).Should(gbytes.Say(ephemeralDiskUsedMetricRegex))
 					out := session.Out.Contents()
 					finalDiskUsePercent = extractIntMatchingRegex(out, ephemeralDiskUsedMetricRegex)
