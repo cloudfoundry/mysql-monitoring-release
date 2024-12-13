@@ -99,6 +99,8 @@ builds:
     version: 9.13.0
   b48b074d-ad84-48f9-7a39-29e7599f1a85:
     version: 10.0.0
+  b5dbf327-9b31-4063-6851-743e6a7c1e3f:
+    version: 10.20.0
   bb8d9756-1787-410e-51fa-2fcfed36699c:
     version: 10.11.0
   bc55e069-18df-4d8e-792a-e7b57f0cc142:
