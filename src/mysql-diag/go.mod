@@ -5,14 +5,14 @@ go 1.22.0
 toolchain go1.23.1
 
 require (
-	code.cloudfoundry.org/bytefmt v0.22.0
-	code.cloudfoundry.org/tlsconfig v0.13.0
+	code.cloudfoundry.org/bytefmt v0.23.0
+	code.cloudfoundry.org/tlsconfig v0.14.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.18.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/onsi/ginkgo/v2 v2.22.1
-	github.com/onsi/gomega v1.36.1
+	github.com/onsi/ginkgo/v2 v2.22.2
+	github.com/onsi/gomega v1.36.2
 	gopkg.in/yaml.v2 v2.4.0
 )
 
