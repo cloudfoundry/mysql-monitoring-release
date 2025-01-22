@@ -31,6 +31,7 @@ type MetricsComputer interface {
 	ComputeGaleraMetrics(map[string]string) []*Metric
 	ComputeCPUMetrics(map[string]string) []*Metric
 	ComputeBackupMetric(time.Time) *Metric
+	ComputeIOMetrics() []*Metric
 }
 
 type Processor struct {
@@ -65,6 +66,8 @@ func (p Processor) Process() error {
 		}
 		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeDiskMetrics(diskStatMap)...)
 	}
+
+	collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeIOMetrics()...)
 
 	if p.config.EmitBrokerMetrics {
 		brokerStatMap, err := p.gatherer.BrokerStats()

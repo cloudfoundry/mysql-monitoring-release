@@ -26,7 +26,6 @@ bosh --non-interactive --deployment=pxc deploy --no-redact \
   -o operations/pxc-add-monitoring.yml \
   -o operations/pxc-add-notifications-db.yml \
   -o operations/mysql-diag-agent-tls.yml \
-  -o operations/replication-canary-tls.yml \
   -o operations/add-loggregator-agents.yml \
   -o operations/dev-release.yml \
   -v cf.deployment_name="${cf_deployment}" \

@@ -8,6 +8,7 @@ type MetricMappingConfig struct {
 	BrokerMetricMappings         map[string]MetricDefinition
 	CPUMetricMappings            map[string]MetricDefinition
 	BackupMetricMappings         map[string]MetricDefinition
+	IOMetricMappings             map[string]MetricDefinition
 }
 
 type MetricDefinition struct {
@@ -337,6 +338,12 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 			"last_successful_backup": {
 				Key:  "last_successful_backup",
 				Unit: "seconds",
+			},
+		},
+		IOMetricMappings: map[string]MetricDefinition{
+			"persistent_disk_read_ios": {
+				Key:  "system/persistent_disk_read_ios",
+				Unit: "integer",
 			},
 		},
 	}
