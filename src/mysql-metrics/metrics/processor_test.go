@@ -1,6 +1,7 @@
 package metrics_test
 
 import (
+	"errors"
 	"time"
 
 	"github.com/cloudfoundry/mysql-metrics/config"
@@ -8,8 +9,6 @@ import (
 	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
 
 	"github.com/hashicorp/go-multierror"
-
-	"errors"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -35,6 +34,7 @@ var _ = Describe("Processor", func() {
 			fakeMetricsComputer,
 			fakeMetricsWriter,
 			configuration,
+			*metrics.DefaultMetricMappingConfig(),
 		)
 	})
 

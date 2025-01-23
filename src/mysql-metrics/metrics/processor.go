@@ -1,9 +1,9 @@
 package metrics
 
 import (
-	"github.com/cloudfoundry/mysql-metrics/config"
-
 	"time"
+
+	"github.com/cloudfoundry/mysql-metrics/config"
 
 	"github.com/hashicorp/go-multierror"
 )
@@ -31,7 +31,6 @@ type MetricsComputer interface {
 	ComputeGaleraMetrics(map[string]string) []*Metric
 	ComputeCPUMetrics(map[string]string) []*Metric
 	ComputeBackupMetric(time.Time) *Metric
-	ComputeIOMetrics() []*Metric
 }
 
 type Processor struct {
@@ -39,6 +38,7 @@ type Processor struct {
 	metricsComputer MetricsComputer
 	metricsWriter   Writer
 	config          *config.Config
+	mapping         MetricMappingConfig
 }
 
 func NewProcessor(
@@ -46,91 +46,36 @@ func NewProcessor(
 	metricsComputer MetricsComputer,
 	metricsWriter Writer,
 	configuration *config.Config,
+	metricMappingConfig MetricMappingConfig,
 ) Processor {
 	return Processor{
 		gatherer:        gatherer,
 		metricsComputer: metricsComputer,
 		metricsWriter:   metricsWriter,
 		config:          configuration,
+		mapping:         metricMappingConfig,
 	}
 }
 
 func (p Processor) Process() error {
+	calculatorPipeline := []Calculator{
+		NewDiskMetricsCalculator(*p.config, p.gatherer.DiskStats, p.metricsComputer.ComputeDiskMetrics),
+		NewBrokerMetricsCalculator(*p.config, p.gatherer.BrokerStats, p.metricsComputer.ComputeBrokerMetrics),
+		NewCPUMetricsCalculator(*p.config, p.gatherer.CPUStats, p.metricsComputer.ComputeCPUMetrics),
+		NewBackupMetricsCalculator(*p.config, p.gatherer.FindLastBackupTimestamp, p.metricsComputer.ComputeBackupMetric),
+		NewMySQLMetricsCalculator(*p.config, p.gatherer.IsDatabaseAvailable, p.gatherer.DatabaseMetadata, p.metricsComputer.ComputeAvailabilityMetric, p.metricsComputer.ComputeGlobalMetrics, p.metricsComputer.ComputeGaleraMetrics),
+		NewLeaderFollowerMetricsCalculator(*p.config, p.gatherer.IsDatabaseFollower, p.gatherer.FollowerMetadata, p.metricsComputer.ComputeIsFollowerMetric, p.metricsComputer.ComputeLeaderFollowerMetrics),
+		NewIOMetricsCalculator(*p.config, p.mapping.IOMetricMappings),
+	}
+
 	var collectedMetrics []*Metric
 	var collectedErrors error
-
-	if p.config.EmitDiskMetrics {
-		diskStatMap, err := p.gatherer.DiskStats()
+	for _, calculator := range calculatorPipeline {
+		metrics, err := calculator.Calculate()
 		if err != nil {
 			collectedErrors = multierror.Append(collectedErrors, err)
 		}
-		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeDiskMetrics(diskStatMap)...)
-	}
-
-	collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeIOMetrics()...)
-
-	if p.config.EmitBrokerMetrics {
-		brokerStatMap, err := p.gatherer.BrokerStats()
-		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
-		}
-		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeBrokerMetrics(brokerStatMap)...)
-	}
-
-	if p.config.EmitCPUMetrics {
-		cpuStatMap, err := p.gatherer.CPUStats()
-		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
-		}
-		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeCPUMetrics(cpuStatMap)...)
-	}
-
-	if p.config.EmitBackupMetrics {
-		backupTimestamp, err := p.gatherer.FindLastBackupTimestamp()
-		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
-		} else {
-			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeBackupMetric(backupTimestamp))
-		}
-	}
-
-	isAvailable := p.gatherer.IsDatabaseAvailable()
-	if p.config.EmitMysqlMetrics {
-		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeAvailabilityMetric(isAvailable))
-
-		if isAvailable {
-			globalStatus, globalVariables, err := p.gatherer.DatabaseMetadata()
-			if err != nil {
-				collectedErrors = multierror.Append(collectedErrors, err)
-			}
-
-			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeGlobalMetrics(globalStatus)...)
-			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeGlobalMetrics(globalVariables)...)
-
-			if p.config.EmitGaleraMetrics {
-				collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeGaleraMetrics(globalStatus)...)
-				collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeGaleraMetrics(globalVariables)...)
-			}
-		}
-	}
-
-	if p.config.EmitLeaderFollowerMetrics {
-		isFollower, err := p.gatherer.IsDatabaseFollower()
-		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
-		}
-
-		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeIsFollowerMetric(isFollower))
-
-		if isFollower {
-			slaveStatus, heartbeatStatus, err := p.gatherer.FollowerMetadata()
-			if err != nil {
-				collectedErrors = multierror.Append(collectedErrors, err)
-			}
-
-			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeLeaderFollowerMetrics(heartbeatStatus)...)
-			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeLeaderFollowerMetrics(slaveStatus)...)
-		}
+		collectedMetrics = append(collectedMetrics, metrics...)
 	}
 
 	if err := p.metricsWriter.Write(collectedMetrics); err != nil {

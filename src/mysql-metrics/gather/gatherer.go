@@ -50,6 +50,7 @@ func (g Gatherer) FindLastBackupTimestamp() (time.Time, error) {
 func (g Gatherer) BrokerStats() (map[string]string, error) {
 	return g.client.ServicePlansDiskAllocated()
 }
+
 func (g Gatherer) CPUStats() (map[string]string, error) {
 	percentage, err := g.cpuStater.GetPercentage()
 	if err != nil {
@@ -57,6 +58,7 @@ func (g Gatherer) CPUStats() (map[string]string, error) {
 	}
 	return map[string]string{"cpu_utilization_percent": strconv.Itoa(percentage)}, err
 }
+
 func (g Gatherer) DiskStats() (map[string]string, error) {
 	bytesFreePersistent, bytesTotalPersistent, inodesFreePersistent, inodesTotalPersistent, err := g.stater.Stats("/var/vcap/store")
 	if err != nil {
