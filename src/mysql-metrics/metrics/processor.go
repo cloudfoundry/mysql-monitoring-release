@@ -34,11 +34,8 @@ type MetricsComputer interface {
 }
 
 type Processor struct {
-	gatherer        Gatherer
-	metricsComputer MetricsComputer
-	metricsWriter   Writer
-	config          *config.Config
-	mapping         MetricMappingConfig
+	metricsWriter Writer
+	pipeline      []Calculator
 }
 
 func NewProcessor(
@@ -48,29 +45,25 @@ func NewProcessor(
 	configuration *config.Config,
 	metricMappingConfig MetricMappingConfig,
 ) Processor {
-	return Processor{
-		gatherer:        gatherer,
-		metricsComputer: metricsComputer,
-		metricsWriter:   metricsWriter,
-		config:          configuration,
-		mapping:         metricMappingConfig,
+	processor := Processor{
+		metricsWriter: metricsWriter,
 	}
+	processor.pipeline = []Calculator{
+		NewDiskMetricsCalculator(*configuration, gatherer.DiskStats, metricsComputer.ComputeDiskMetrics),
+		NewBrokerMetricsCalculator(*configuration, gatherer.BrokerStats, metricsComputer.ComputeBrokerMetrics),
+		NewCPUMetricsCalculator(*configuration, gatherer.CPUStats, metricsComputer.ComputeCPUMetrics),
+		NewBackupMetricsCalculator(*configuration, gatherer.FindLastBackupTimestamp, metricsComputer.ComputeBackupMetric),
+		NewMySQLMetricsCalculator(*configuration, gatherer.IsDatabaseAvailable, gatherer.DatabaseMetadata, metricsComputer.ComputeAvailabilityMetric, metricsComputer.ComputeGlobalMetrics, metricsComputer.ComputeGaleraMetrics),
+		NewLeaderFollowerMetricsCalculator(*configuration, gatherer.IsDatabaseFollower, gatherer.FollowerMetadata, metricsComputer.ComputeIsFollowerMetric, metricsComputer.ComputeLeaderFollowerMetrics),
+		NewIOMetricsCalculator(*configuration, metricMappingConfig.IOMetricMappings),
+	}
+	return processor
 }
 
 func (p Processor) Process() error {
-	calculatorPipeline := []Calculator{
-		NewDiskMetricsCalculator(*p.config, p.gatherer.DiskStats, p.metricsComputer.ComputeDiskMetrics),
-		NewBrokerMetricsCalculator(*p.config, p.gatherer.BrokerStats, p.metricsComputer.ComputeBrokerMetrics),
-		NewCPUMetricsCalculator(*p.config, p.gatherer.CPUStats, p.metricsComputer.ComputeCPUMetrics),
-		NewBackupMetricsCalculator(*p.config, p.gatherer.FindLastBackupTimestamp, p.metricsComputer.ComputeBackupMetric),
-		NewMySQLMetricsCalculator(*p.config, p.gatherer.IsDatabaseAvailable, p.gatherer.DatabaseMetadata, p.metricsComputer.ComputeAvailabilityMetric, p.metricsComputer.ComputeGlobalMetrics, p.metricsComputer.ComputeGaleraMetrics),
-		NewLeaderFollowerMetricsCalculator(*p.config, p.gatherer.IsDatabaseFollower, p.gatherer.FollowerMetadata, p.metricsComputer.ComputeIsFollowerMetric, p.metricsComputer.ComputeLeaderFollowerMetrics),
-		NewIOMetricsCalculator(*p.config, p.mapping.IOMetricMappings),
-	}
-
 	var collectedMetrics []*Metric
 	var collectedErrors error
-	for _, calculator := range calculatorPipeline {
+	for _, calculator := range p.pipeline {
 		metrics, err := calculator.Calculate()
 		if err != nil {
 			collectedErrors = multierror.Append(collectedErrors, err)

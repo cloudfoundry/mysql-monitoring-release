@@ -28,7 +28,9 @@ var _ = Describe("Processor", func() {
 		fakeMetricsComputer = &metricsfakes.FakeMetricsComputer{}
 		fakeMetricsWriter = &metricsfakes.FakeWriter{}
 		configuration = &config.Config{}
+	})
 
+	JustBeforeEach(func() {
 		processor = metrics.NewProcessor(
 			fakeGatherer,
 			fakeMetricsComputer,
