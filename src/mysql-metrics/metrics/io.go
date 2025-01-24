@@ -51,8 +51,19 @@ func (t *ioMetricsCalculator) computeIOMetrics() []*Metric {
 
 		//persistent = /var/vcap/store
 		//ephemeral = /var/vcap/data
+
+		//TODO: try 'syscal.Stat /var/vcap/store'
+		// => { "ephemeral": "dev/sdb1", "persistent": "dev/loop6"]
+
+		//unix.Stat("/var/vcap/store") =>Stat.dev => Major(Stat.dev), Minor(Stat.dev)
+
 		dev := stats.DeviceName
 		slog.Info("got device name", "stats.DeviceName", dev)
+		//	MajorNumber uint32
+		//	MinorNumber uint32
+		// these map to stat's device number
+		// for test setup, see "mysql-metrics/bin/test" to configure docker container
+		// docker pull ghcr.io/cloudfoundry/ubuntu-jammy-stemcell:1.719
 
 		readIOS := stats.ReadIOs
 		slog.Info("got ReadIOs", "stats.ReadIOS", readIOS)
