@@ -1,9 +1,11 @@
 package metrics
 
 import (
+	"fmt"
 	"log/slog"
 
 	"github.com/prometheus/procfs/blockdevice"
+	"golang.org/x/sys/unix"
 
 	"github.com/cloudfoundry/mysql-metrics/config"
 )
@@ -28,52 +30,72 @@ func (t *ioMetricsCalculator) Calculate() ([]*Metric, error) {
 	return t.computeIOMetrics(), nil
 }
 
+// for test setup, see "mysql-metrics/bin/test" to configure docker container
+// docker pull ghcr.io/cloudfoundry/ubuntu-jammy-stemcell:1.719
 func (t *ioMetricsCalculator) computeIOMetrics() []*Metric {
+	var metrics []*Metric
+
 	fs, err := blockdevice.NewFS("/proc", "/sys")
 	if err != nil {
 		slog.Error("unable to create blockdevice", "error", err)
 		return nil
 	}
 	diskStats, err := fs.ProcDiskstats()
+
+	ephemeral := newDisk("/var/vcap/data")
+	slog.Info("ephemeral info: /var/vcap/data", "ephemeral", ephemeral)
+
+	persistent := newDisk("/var/vcap/store")
+	slog.Info("persistent info: /var/vcap/store", "persistent", persistent)
+
 	for _, stats := range diskStats {
-		//loop0-loop7,nvme0n1,nvme0n1p1,nvme0n1p2,sda,sda1,sdb,sdb1
+		if stats.MajorNumber == ephemeral.major && stats.MinorNumber == ephemeral.minor {
+			dev := stats.DeviceName
+			slog.Info("reporting metrics for ephemeral device", "path", ephemeral.path, "stats.DeviceName", dev, "major", stats.MajorNumber, "minor", stats.MinorNumber)
 
-		//# df -h
-		//Filesystem      Size  Used Avail Use% Mounted on
-		//overlay         303G  3.7G  299G   2% /
-		//tmpfs            15G     0   15G   0% /dev
-		//tmpfs            15G     0   15G   0% /dev/shm
-		///dev/nvme0n1p2  340G  8.3G  314G   3% /tmp/garden-init
-		///dev/sdb1       192G   28G  155G  16% /var/vcap/data
-		//tmpfs            16M  332K   16M   3% /var/vcap/data/sys/run
-		///dev/loop6      9.6G  2.6G  6.5G  29% /var/vcap/store
-		//tmpfs            15G     0   15G   0% /sys/fs/cgroup
+			readIOs := stats.ReadIOs
+			slog.Info("got ReadIOs", "stats.ReadIOS", readIOs)
 
-		//persistent = /var/vcap/store
-		//ephemeral = /var/vcap/data
+			key := t.metricMappings["ephemeral_disk_read_ios"].Key
+			unit := t.metricMappings["ephemeral_disk_read_ios"].Unit
+			metrics = append(metrics, &Metric{Key: key, Value: float64(readIOs), Unit: unit})
+		}
 
-		//TODO: try 'syscal.Stat /var/vcap/store'
-		// => { "ephemeral": "dev/sdb1", "persistent": "dev/loop6"]
+		if stats.MajorNumber == persistent.major && stats.MinorNumber == persistent.minor {
+			dev := stats.DeviceName
+			slog.Info("reporting metrics for persistent device", "path", persistent.path, "stats.DeviceName", dev, "major", stats.MajorNumber, "minor", stats.MinorNumber)
 
-		//unix.Stat("/var/vcap/store") =>Stat.dev => Major(Stat.dev), Minor(Stat.dev)
+			readIOs := stats.ReadIOs
+			slog.Info("got ReadIOs", "stats.ReadIOS", readIOs)
 
-		dev := stats.DeviceName
-		slog.Info("got device name", "stats.DeviceName", dev)
-		//	MajorNumber uint32
-		//	MinorNumber uint32
-		// these map to stat's device number
-		// for test setup, see "mysql-metrics/bin/test" to configure docker container
-		// docker pull ghcr.io/cloudfoundry/ubuntu-jammy-stemcell:1.719
-
-		readIOS := stats.ReadIOs
-		slog.Info("got ReadIOs", "stats.ReadIOS", readIOS)
+			key := t.metricMappings["persistent_disk_read_ios"].Key
+			unit := t.metricMappings["persistent_disk_read_ios"].Unit
+			metrics = append(metrics, &Metric{Key: key, Value: float64(readIOs), Unit: unit})
+		}
 	}
 
-	readIOs := 100
-	key := t.metricMappings["persistent_disk_read_ios"].Key
-	unit := t.metricMappings["persistent_disk_read_ios"].Unit
+	return metrics
+}
 
-	return []*Metric{
-		{Key: key, Value: float64(readIOs), Unit: unit},
+type disk struct {
+	major uint32
+	minor uint32
+	path  string
+}
+
+func newDisk(path string) disk {
+	stat := &unix.Stat_t{}
+	err := unix.Stat(path, stat)
+	if err != nil {
+		slog.Error("unable to read ephemeral stats", "error", err)
 	}
+	return disk{
+		major: unix.Major(uint64(stat.Dev)),
+		minor: unix.Minor(uint64(stat.Dev)),
+		path:  path,
+	}
+}
+
+func (d disk) String() string {
+	return fmt.Sprintf("major: %d, minor: %d, path: %s", d.major, d.minor, d.path)
 }

@@ -345,6 +345,10 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 				Key:  "system/persistent_disk_read_ios",
 				Unit: "integer",
 			},
+			"ephemeral_disk_read_ios": {
+				Key:  "system/ephemeral_disk_read_ios",
+				Unit: "integer",
+			},
 		},
 	}
 }
