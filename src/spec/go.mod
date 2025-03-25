@@ -5,9 +5,9 @@ go 1.23.0
 toolchain go1.23.3
 
 require (
-	github.com/cloudfoundry/cf-test-helpers/v2 v2.11.0
-	github.com/onsi/ginkgo/v2 v2.23.0
-	github.com/onsi/gomega v1.36.2
+	github.com/cloudfoundry/cf-test-helpers/v2 v2.12.0
+	github.com/onsi/ginkgo/v2 v2.23.3
+	github.com/onsi/gomega v1.36.3
 	gopkg.in/yaml.v3 v3.0.1
 )
 
