@@ -1,11 +1,11 @@
-# code.cloudfoundry.org/go-diodes v0.0.0-20250407090537-96fce8693346
+# code.cloudfoundry.org/go-diodes v0.0.0-20250417050917-333c2580673b
 ## explicit; go 1.23.0
 code.cloudfoundry.org/go-diodes
 # code.cloudfoundry.org/go-loggregator/v9 v9.2.1
 ## explicit; go 1.21
 code.cloudfoundry.org/go-loggregator/v9
 code.cloudfoundry.org/go-loggregator/v9/rpc/loggregator_v2
-# code.cloudfoundry.org/lager/v3 v3.33.0
+# code.cloudfoundry.org/lager/v3 v3.34.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/lager/v3
 code.cloudfoundry.org/lager/v3/internal/truncate
@@ -37,7 +37,7 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
-# github.com/google/pprof v0.0.0-20250403155104-27863c87afa6
+# github.com/google/pprof v0.0.0-20250418163039-24c5476c6587
 ## explicit; go 1.23
 github.com/google/pprof/profile
 # github.com/hashicorp/errwrap v1.1.0
@@ -177,11 +177,11 @@ golang.org/x/tools/internal/stdlib
 golang.org/x/tools/internal/typeparams
 golang.org/x/tools/internal/typesinternal
 golang.org/x/tools/internal/versions
-# google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e
+# google.golang.org/genproto/googleapis/rpc v0.0.0-20250421163800-61c742ae3ef0
 ## explicit; go 1.23.0
 google.golang.org/genproto/googleapis/rpc/status
-# google.golang.org/grpc v1.71.1
-## explicit; go 1.22.0
+# google.golang.org/grpc v1.72.0
+## explicit; go 1.23
 google.golang.org/grpc
 google.golang.org/grpc/attributes
 google.golang.org/grpc/backoff
