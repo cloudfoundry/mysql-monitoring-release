@@ -1,9 +1,12 @@
 package acceptance_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/cloudfoundry/mysql-monitoring-release/spec/utilities/bosh"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cloudfoundry/cf-test-helpers/v2/cf"
@@ -11,9 +14,6 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
-	"github.com/onsi/gomega/gexec"
-
-	"github.com/cloudfoundry/mysql-monitoring-release/spec/testhelpers"
 )
 
 var _ = Describe("Metrics are received", func() {
@@ -40,34 +40,21 @@ var _ = Describe("Metrics are received", func() {
 	})
 
 	Context("when ephemeral disk (/var/vcap/data) usage increases", func() {
-		var (
-			args                         []string
-			session                      *gexec.Session
-			ephemeralDiskUsedMetricRegex string
-		)
-
-		BeforeEach(func() {
-			ephemeralDiskUsedMetricRegex = `/` + SourceID + `/system/ephemeral_disk_used_percent:([0-9]+)`
-
-		})
 		AfterEach(func() {
-			args = []string{"ssh", "mysql/0", "-c", "sudo rm /var/vcap/data/file"}
-			session = testhelpers.ExecuteBosh(args, 20*time.Second)
+			_, err := bosh.RemoteCommand(deployment, "mysql/0", "sudo rm /var/vcap/data/file")
+			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("the corresponding metric increases", func() {
 			var (
 				availBytes              int
 				initialDiskUsePercent   int
-				finalDiskUsePercent     int
 				expectedDiskUsageChange int
 			)
 
 			By("Fetch available space on mysql/0 ephemeral disk", func() {
-				args = []string{"ssh", "mysql/0", "-c", "sudo stat -f /var/vcap/data"}
-				session = testhelpers.ExecuteBosh(args, 10*time.Second)
-				Expect(session.ExitCode()).To(BeZero())
-				statOutput := session.Out.Contents()
+				statOutput, err := bosh.RemoteCommand(deployment, "mysql/0", "sudo stat -f /var/vcap/data")
+				Expect(err).NotTo(HaveOccurred())
 
 				blockSizeRegex := `Block size:\s+([0-9]+)`
 				blockSize := extractIntMatchingRegex(statOutput, blockSizeRegex)
@@ -80,56 +67,104 @@ var _ = Describe("Metrics are received", func() {
 				totalBlocks := extractIntMatchingRegex(statOutput, totalBlocksRegex)
 
 				expectedDiskUsageChange = availBlocks * 100 / (2 * totalBlocks)
-
 			})
 
 			By("Capturing ephemeral disk usage metric before filling the disk", func() {
 				workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
-					session := cf.Cf("tail", "-f", SourceID)
-					Eventually(session.Out, 40*time.Second).Should(gbytes.Say(ephemeralDiskUsedMetricRegex))
-					ephDiskMetricsOutput := session.Out.Contents()
+					instances, err := bosh.Instances(deployment, bosh.MatchByIndexedName("mysql/0"))
+					Expect(err).NotTo(HaveOccurred())
+					Expect(instances).To(HaveLen(1))
 
-					initialDiskUsePercent = extractIntMatchingRegex(ephDiskMetricsOutput, ephemeralDiskUsedMetricRegex)
-					session.Terminate()
+					promQL := `_` + strings.ReplaceAll(SourceID, "-", "_") + `_system_ephemeral_disk_used_percent{source_id="` + SourceID + `",index="` + instances[0].Id() + `"}`
+
+					var query Query
+					Eventually(func() int {
+						session := cf.Cf("query", promQL).Wait(10 * time.Second)
+
+						err := json.Unmarshal(session.Out.Contents(), &query)
+						Expect(err).NotTo(HaveOccurred())
+
+						if query.Data.Result == nil {
+							return 0
+						}
+
+						return query.ValueAsInt()
+					}, "60s", "5s").Should(BeNumerically(">=", 0))
+
+					initialDiskUsePercent = query.ValueAsInt()
 				})
 			})
 
 			By("Writing 50% of available ephemeral disk", func() {
 				amountToAllocate := availBytes / 2
 				vmCommand := fmt.Sprintf("sudo fallocate -l%d /var/vcap/data/file", amountToAllocate)
-				args = []string{"ssh", "mysql/0", "-c", vmCommand}
-				session = testhelpers.ExecuteBosh(args, 10*time.Second)
-				Expect(session.ExitCode()).To(BeZero())
+				_, err := bosh.RemoteCommand(deployment, "mysql/0", vmCommand)
+				Expect(err).NotTo(HaveOccurred())
 			})
 
 			By("Capturing the ephemeral disk usage metric after allocating a file", func() {
 				workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
-					session := cf.Cf("tail", "-f", SourceID)
-					Eventually(session.Out, 40*time.Second).Should(gbytes.Say(ephemeralDiskUsedMetricRegex))
-					out := session.Out.Contents()
-					finalDiskUsePercent = extractIntMatchingRegex(out, ephemeralDiskUsedMetricRegex)
-					session.Terminate()
-				})
-			})
+					instances, err := bosh.Instances(deployment, bosh.MatchByIndexedName("mysql/0"))
+					Expect(err).NotTo(HaveOccurred())
+					Expect(instances).To(HaveLen(1))
 
-			By("Having measured a significant change in ephemeral disk usage", func() {
-				emittedDiskUsageChange := finalDiskUsePercent - initialDiskUsePercent
-				fmt.Printf("emittedDiskUsageChange: %d", emittedDiskUsageChange)
-				fmt.Printf("expectedDiskUsageChange: %d", expectedDiskUsageChange)
-				Expect(emittedDiskUsageChange).To(
-					BeNumerically(">=", expectedDiskUsageChange-2),
-					`Expected the increase in percent ephemeral disk used to close to or greater than the expected percent to write.
+					promQL := `_` + strings.ReplaceAll(SourceID, "-", "_") + `_system_ephemeral_disk_used_percent{source_id="` + SourceID + `",index="` + instances[0].Id() + `"}`
+
+					var query Query
+					Eventually(func() int {
+						session := cf.Cf("query", promQL).Wait(10 * time.Second)
+
+						err := json.Unmarshal(session.Out.Contents(), &query)
+						Expect(err).NotTo(HaveOccurred())
+
+						if query.Data.Result == nil {
+							return 0
+						}
+
+						finalDiskUsePercent := query.ValueAsInt()
+
+						return finalDiskUsePercent - initialDiskUsePercent
+					}, "60s", "5s").Should(BeNumerically(">=", expectedDiskUsageChange-2),
+						`Expected the increase in percent ephemeral disk used to close to or greater than the expected percent to write.
 Within 2 percent is acceptable because of rounding.`,
-				)
+					)
+				})
 			})
 		})
 	})
 })
 
-func extractIntMatchingRegex(source []byte, regexMatch string) int {
-	regexMatches := regexp.MustCompile(regexMatch).FindSubmatch(source)
+func extractIntMatchingRegex(source string, regexMatch string) int {
+	regexMatches := regexp.MustCompile(regexMatch).FindStringSubmatch(source)
 	Expect(len(regexMatches)).To(Equal(2))
-	match, err := strconv.Atoi(string(regexMatches[1]))
+	match, err := strconv.Atoi(regexMatches[1])
 	Expect(err).NotTo(HaveOccurred())
 	return match
+}
+
+type Query struct {
+	Status string `json:"status"`
+	Data   struct {
+		ResultType string `json:"resultType"`
+		Result     []struct {
+			Metric struct {
+				Deployment string `json:"deployment"`
+				Index      string `json:"index"`
+				Ip         string `json:"ip"`
+				Job        string `json:"job"`
+				Origin     string `json:"origin"`
+				SourceId   string `json:"source_id"`
+			} `json:"metric"`
+			Value []interface{} `json:"value"`
+		} `json:"result"`
+	} `json:"data"`
+}
+
+func (q Query) ValueAsInt() int {
+	value, ok := q.Data.Result[0].Value[1].(string)
+	Expect(ok).To(BeTrue())
+
+	valueAsInt, err := strconv.Atoi(value)
+	Expect(err).NotTo(HaveOccurred())
+	return valueAsInt
 }
