@@ -16,9 +16,12 @@ func TestAcceptance(t *testing.T) {
 	RunSpecs(t, "MySql monitoring release Acceptance Suite")
 }
 
-var TestSetup *workflowhelpers.ReproducibleTestSuiteSetup
-var Config *config.Config
-var SourceID string
+var (
+	TestSetup  *workflowhelpers.ReproducibleTestSuiteSetup
+	Config     *config.Config
+	SourceID   string
+	deployment string
+)
 
 var _ = BeforeSuite(func() {
 	var missingEnvs []string
@@ -44,6 +47,7 @@ var _ = BeforeSuite(func() {
 	TestSetup = workflowhelpers.NewTestSuiteSetup(Config)
 	TestSetup.Setup()
 
+	deployment = os.Getenv("BOSH_DEPLOYMENT")
 	SourceID = os.Getenv("METRICS_SOURCE_ID")
 })
 
