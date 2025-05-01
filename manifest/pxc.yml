@@ -1,0 +1,333 @@
+name: ((deployment_name))
+addons:
+- jobs:
+  - name: bpm
+    release: bpm
+  name: bpm
+instance_groups:
+- azs: ((azs))
+  instances: 3
+  jobs:
+  - name: pxc-mysql
+    properties:
+      admin_password: ((mysql_admin_password))
+      engine_config:
+        galera:
+          enabled: true
+      remote_admin_access: true
+      seeded_databases:
+      - name: metrics_db
+        password: ((mysql_metrics_password))
+        username: mysql-metrics
+      seeded_users:
+        mysql-diag:
+          host: any
+          password: ((mysql_diag_db_password))
+          role: minimal
+        smoke-tests-user:
+          host: any
+          password: ((smoke_tests_db_password))
+          role: schema-admin
+          schema: pxc_release_test_db
+      server_audit_excluded_users:
+      - mysql-metrics
+      tls:
+        galera: ((galera_server_certificate))
+        server: ((mysql_server_certificate))
+    release: pxc
+  - name: smoke-tests
+    properties:
+      db_password: ((smoke_tests_db_password))
+    release: pxc
+  - name: cluster-health-logger
+    properties:
+      db_password: ((cluster_health_logger_password))
+    release: pxc
+  - name: galera-agent
+    properties:
+      db_password: ((galera_healthcheck_db_password))
+      endpoint_password: ((galera_healthcheck_endpoint_password))
+      endpoint_tls:
+        ca: ((galera_healthcheck_endpoint_tls.ca))
+        certificate: ((galera_healthcheck_endpoint_tls.certificate))
+        enabled: true
+        private_key: ((galera_healthcheck_endpoint_tls.private_key))
+        server_name: galera_healthcheck_endpoint_tls
+      port: 9201
+    release: pxc
+  - name: gra-log-purger
+    release: pxc
+  - name: bootstrap
+    release: pxc
+  - name: mysql-diag-agent
+    properties:
+      mysql-monitoring:
+        mysql-diag-agent:
+          password: ((mysql_monitoring_mysql_diag_agent_password))
+    release: mysql-monitoring
+  - name: mysql-metrics
+    properties:
+      mysql-metrics:
+        origin: ((source_id))
+        password: ((mysql_metrics_password))
+        source_id: ((source_id))
+        tls:
+          ca: ((loggregator_tls_ca))
+          cert: ((loggregator_tls_client_cert))
+          key: ((loggregator_tls_client_key))
+    release: mysql-monitoring
+  - consumes:
+      doppler:
+        deployment: ((cf_deployment_name))
+    name: loggregator_agent
+    properties:
+      disable_udp: true
+      grpc_port: 3459
+      loggregator:
+        tls:
+          agent:
+            cert: ((loggregator_tls_client_cert))
+            key: ((loggregator_tls_client_key))
+          ca_cert: ((loggregator_tls_ca))
+      metrics:
+        ca_cert: ((loggregator_agent_metrics.ca))
+        cert: ((loggregator_agent_metrics.certificate))
+        key: ((loggregator_agent_metrics.private_key))
+        server_name: loggregator_agent_metrics
+    release: loggregator-agent
+  - name: prom_scraper
+    properties:
+      loggregator_agent:
+        grpc_port: 3458
+        tls:
+          ca_cert: ((loggregator_tls_ca))
+          cert: ((loggregator_tls_client_cert))
+          key: ((loggregator_tls_client_key))
+      metrics:
+        ca_cert: ((prom_scraper_metrics.ca))
+        cert: ((prom_scraper_metrics.certificate))
+        key: ((prom_scraper_metrics.private_key))
+        server_name: prom_scraper_metrics
+      scrape:
+        tls:
+          ca_cert: ((prom_scraper_tls.ca))
+          cert: ((prom_scraper_tls.certificate))
+          key: ((prom_scraper_tls.private_key))
+    release: loggregator-agent
+  - name: loggr-forwarder-agent
+    properties:
+      metrics:
+        ca_cert: ((forwarder_agent_metrics_tls.ca))
+        cert: ((forwarder_agent_metrics_tls.certificate))
+        key: ((forwarder_agent_metrics_tls.private_key))
+        server_name: forwarder_agent_metrics
+      tls:
+        ca_cert: ((loggregator_tls_ca))
+        cert: ((loggregator_tls_client_cert))
+        key: ((loggregator_tls_client_key))
+    release: loggregator-agent
+  - consumes:
+      binding_cache:
+        deployment: ((cf_deployment_name))
+        from: binding_cache
+    name: loggr-syslog-agent
+    properties:
+      cache:
+        tls:
+          ca_cert: ((loggregator_tls_ca))
+          cert: ((loggregator_tls_client_cert))
+          cn: binding-cache
+          key: ((loggregator_tls_client_key))
+      drain_ca_cert: ((loggregator_tls_ca))
+      metrics:
+        ca_cert: ((loggr_syslog_agent_metrics.ca))
+        cert: ((loggr_syslog_agent_metrics.certificate))
+        key: ((loggr_syslog_agent_metrics.private_key))
+        server_name: loggr_syslog_agent_metrics
+      port: 3460
+      tls:
+        ca_cert: ((loggregator_tls_ca))
+        cert: ((loggregator_tls_client_cert))
+        key: ((loggregator_tls_client_key))
+    release: loggregator-agent
+  name: mysql
+  networks:
+  - name: ((network_name))
+  persistent_disk: 10000
+  stemcell: default
+  vm_type: ((vm_type))
+- azs: ((azs))
+  instances: 2
+  jobs:
+  - name: proxy
+    properties:
+      api_password: ((proxy_api_password))
+      api_tls:
+        certificate: ((proxy-tls.certificate))
+        enabled: true
+        private_key: ((proxy-tls.private_key))
+      metrics:
+        server_name: proxy-tls
+    release: pxc
+  name: proxy
+  networks:
+  - name: ((network_name))
+  stemcell: default
+  vm_type: ((vm_type))
+- azs: ((azs))
+  instances: 1
+  jobs:
+  - name: mysql-diag
+    properties:
+      db_password: ((mysql_diag_db_password))
+      db_username: mysql-diag
+    release: mysql-monitoring
+  name: mysql-monitor
+  networks:
+  - name: ((network_name))
+  stemcell: default
+  vm_type: ((vm_type))
+releases:
+- name: pxc
+  version: latest
+- name: bpm
+  version: latest
+- name: mysql-monitoring
+  version: latest
+- name: loggregator-agent
+  version: latest
+stemcells:
+- alias: default
+  os: ubuntu-jammy
+  version: latest
+update:
+  canaries: 1
+  canary_watch_time: 10000-600000
+  max_in_flight: 1
+  serial: false
+  update_watch_time: 10000-600000
+variables:
+- name: mysql_admin_password
+  type: password
+- name: pxc_galera_ca
+  options:
+    common_name: pxc_galera_ca
+    is_ca: true
+  type: certificate
+- name: pxc_server_ca
+  options:
+    common_name: pxc_server_ca
+    is_ca: true
+  type: certificate
+- name: galera_server_certificate
+  options:
+    ca: pxc_galera_ca
+    common_name: galera_server_certificate
+    extended_key_usage:
+    - server_auth
+    - client_auth
+  type: certificate
+- name: mysql_server_certificate
+  options:
+    alternative_names:
+    - localhost
+    ca: pxc_server_ca
+    common_name: mysql_server_certificate
+  type: certificate
+- name: smoke_tests_db_password
+  type: password
+- name: cluster_health_logger_password
+  type: password
+- name: proxy_api_password
+  type: password
+- name: galera_healthcheck_db_password
+  type: password
+- name: galera_healthcheck_endpoint_password
+  type: password
+- name: galera_healthcheck_endpoint_tls
+  options:
+    alternative_names:
+    - galera_healthcheck_endpoint_tls
+    - e2e-tests
+    ca: pxc_galera_ca
+    common_name: galera_healthcheck_endpoint_tls
+    extended_key_usage:
+    - server_auth
+  type: certificate
+  update_mode: converge
+- name: proxy-tls
+  options:
+    alternative_names:
+    - proxy-tls
+    - e2e-tests
+    ca: pxc_galera_ca
+    common_name: proxy-tls-ca
+    extended_key_usage:
+    - server_auth
+  type: certificate
+  update_mode: converge
+- name: mysql_monitoring_mysql_diag_agent_password
+  type: password
+- name: mysql_diag_db_password
+  type: password
+- name: mysql_metrics_password
+  type: password
+- name: metric_scraper_ca
+  options:
+    common_name: metricScraperCA
+    is_ca: true
+  type: certificate
+- name: loggregator_agent_metrics_tls
+  options:
+    ca: metric_scraper_ca
+    common_name: loggregator_agent_metrics
+    extended_key_usage:
+    - server_auth
+  type: certificate
+- name: prom_scraper_tls
+  options:
+    alternative_names:
+    - prom_scraper_tls
+    ca: metric_scraper_ca
+    common_name: prom_scraper_tls
+    extended_key_usage:
+    - client_auth
+  type: certificate
+  update_mode: converge
+- name: prom_scraper_metrics
+  options:
+    alternative_names:
+    - prom_scraper_metrics
+    ca: metric_scraper_ca
+    common_name: prom_scraper_metrics
+    extended_key_usage:
+    - server_auth
+  type: certificate
+  update_mode: converge
+- name: forwarder_agent_metrics_tls
+  options:
+    alternative_names:
+    - forwarder_agent_metrics
+    ca: metric_scraper_ca
+    common_name: forwarder_agent_metrics
+  type: certificate
+- name: loggregator_agent_metrics
+  options:
+    alternative_names:
+    - loggregator_agent_metrics
+    ca: metric_scraper_ca
+    common_name: loggregator_agent_metrics
+    extended_key_usage:
+    - server_auth
+  type: certificate
+  update_mode: converge
+- name: loggr_syslog_agent_metrics
+  options:
+    alternative_names:
+    - loggr_syslog_agent_metrics
+    ca: metric_scraper_ca
+    common_name: loggr_syslog_agent_metrics
+    extended_key_usage:
+    - server_auth
+  type: certificate
+  update_mode: converge
