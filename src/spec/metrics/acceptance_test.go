@@ -3,11 +3,11 @@ package acceptance_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cloudfoundry/mysql-monitoring-release/spec/utilities/bosh"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/cloudfoundry/mysql-monitoring-release/spec/utilities/bosh"
 
 	"github.com/cloudfoundry/cf-test-helpers/v2/cf"
 	"github.com/cloudfoundry/cf-test-helpers/v2/workflowhelpers"
@@ -48,7 +48,7 @@ var _ = Describe("Metrics are received", func() {
 		It("the corresponding metric increases", func() {
 			var (
 				availBytes              int
-				initialDiskUsePercent   int
+				initialDiskUsePercent   int64
 				expectedDiskUsageChange int
 			)
 
@@ -74,24 +74,12 @@ var _ = Describe("Metrics are received", func() {
 					instances, err := bosh.Instances(deployment, bosh.MatchByIndexedName("mysql/0"))
 					Expect(err).NotTo(HaveOccurred())
 					Expect(instances).To(HaveLen(1))
+					instanceUUID := instances[0].Id()
 
-					promQL := `_` + strings.ReplaceAll(SourceID, "-", "_") + `_system_ephemeral_disk_used_percent{source_id="` + SourceID + `",index="` + instances[0].Id() + `"}`
-
-					var query Query
-					Eventually(func() int {
-						session := cf.Cf("query", promQL).Wait(10 * time.Second)
-
-						err := json.Unmarshal(session.Out.Contents(), &query)
-						Expect(err).NotTo(HaveOccurred())
-
-						if query.Data.Result == nil {
-							return 0
-						}
-
-						return query.ValueAsInt()
+					Eventually(func() int64 {
+						initialDiskUsePercent = queryEphemeralDisk(SourceID, instanceUUID)
+						return initialDiskUsePercent
 					}, "60s", "5s").Should(BeNumerically(">=", 0))
-
-					initialDiskUsePercent = query.ValueAsInt()
 				})
 			})
 
@@ -107,21 +95,10 @@ var _ = Describe("Metrics are received", func() {
 					instances, err := bosh.Instances(deployment, bosh.MatchByIndexedName("mysql/0"))
 					Expect(err).NotTo(HaveOccurred())
 					Expect(instances).To(HaveLen(1))
+					instanceUUID := instances[0].Id()
 
-					promQL := `_` + strings.ReplaceAll(SourceID, "-", "_") + `_system_ephemeral_disk_used_percent{source_id="` + SourceID + `",index="` + instances[0].Id() + `"}`
-
-					var query Query
-					Eventually(func() int {
-						session := cf.Cf("query", promQL).Wait(10 * time.Second)
-
-						err := json.Unmarshal(session.Out.Contents(), &query)
-						Expect(err).NotTo(HaveOccurred())
-
-						if query.Data.Result == nil {
-							return 0
-						}
-
-						finalDiskUsePercent := query.ValueAsInt()
+					Eventually(func() int64 {
+						finalDiskUsePercent := queryEphemeralDisk(SourceID, instanceUUID)
 
 						return finalDiskUsePercent - initialDiskUsePercent
 					}, "60s", "5s").Should(BeNumerically(">=", expectedDiskUsageChange-2),
@@ -142,29 +119,46 @@ func extractIntMatchingRegex(source string, regexMatch string) int {
 	return match
 }
 
+func queryEphemeralDisk(sourceId, instanceUUID string) int64 {
+	GinkgoHelper()
+
+	promqlMetricName := sanitizeMetricName(fmt.Sprintf("/%s/system/ephemeral_disk_used_percent", sourceId))
+	promqlQuery := fmt.Sprintf("%s{source_id=%q,index=%q}", promqlMetricName, sourceId, instanceUUID)
+
+	session := cf.Cf("query", promqlQuery).Wait(10 * time.Second)
+
+	var query Query
+	err := json.Unmarshal(session.Out.Contents(), &query)
+	Expect(err).NotTo(HaveOccurred())
+
+	if query.Data.Result == nil {
+		return 0
+	}
+
+	return query.ValueAsInt()
+}
+
+// github.com/cloudfoundry/log-cache-release/src/internal/promql/promql.go
+func sanitizeMetricName(name string) string {
+	GinkgoHelper()
+	// Forcefully convert all invalid separators to underscores
+	// First character: Match the if it's NOT A-z or underscore ^[^A-z_]
+	// All others: Match if they're NOT alphanumeric or understore [\W_]+?
+	var re = regexp.MustCompile(`^[^A-z_]|[\W_]+?`)
+	return re.ReplaceAllString(name, "_")
+}
+
 type Query struct {
-	Status string `json:"status"`
-	Data   struct {
-		ResultType string `json:"resultType"`
-		Result     []struct {
-			Metric struct {
-				Deployment string `json:"deployment"`
-				Index      string `json:"index"`
-				Ip         string `json:"ip"`
-				Job        string `json:"job"`
-				Origin     string `json:"origin"`
-				SourceId   string `json:"source_id"`
-			} `json:"metric"`
-			Value []interface{} `json:"value"`
+	Data struct {
+		Result []struct {
+			Value []json.Number `json:"value"`
 		} `json:"result"`
 	} `json:"data"`
 }
 
-func (q Query) ValueAsInt() int {
-	value, ok := q.Data.Result[0].Value[1].(string)
-	Expect(ok).To(BeTrue())
-
-	valueAsInt, err := strconv.Atoi(value)
+func (q Query) ValueAsInt() int64 {
+	GinkgoHelper()
+	value, err := q.Data.Result[0].Value[1].Int64()
 	Expect(err).NotTo(HaveOccurred())
-	return valueAsInt
+	return value
 }
