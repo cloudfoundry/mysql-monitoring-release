@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/cloudfoundry/mysql-monitoring-release/spec/utilities/cmd"
 	"sort"
 	"strings"
+
+	"github.com/cloudfoundry/mysql-monitoring-release/spec/utilities/cmd"
 
 	. "github.com/onsi/gomega"
 )
