@@ -5,12 +5,12 @@ code.cloudfoundry.org/go-diodes
 ## explicit; go 1.21
 code.cloudfoundry.org/go-loggregator/v9
 code.cloudfoundry.org/go-loggregator/v9/rpc/loggregator_v2
-# code.cloudfoundry.org/lager/v3 v3.36.0
+# code.cloudfoundry.org/lager/v3 v3.37.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/lager/v3
 code.cloudfoundry.org/lager/v3/internal/truncate
 code.cloudfoundry.org/lager/v3/lagerflags
-# code.cloudfoundry.org/tlsconfig v0.26.0
+# code.cloudfoundry.org/tlsconfig v0.27.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/tlsconfig
 # filippo.io/edwards25519 v1.1.0
