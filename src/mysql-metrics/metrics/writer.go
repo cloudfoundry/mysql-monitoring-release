@@ -1,12 +1,9 @@
 package metrics
 
-import "fmt"
-
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Logger
-type Logger interface {
-	Debug(string, map[string]interface{})
-	Error(string, error)
-}
+import (
+	"fmt"
+	"log/slog"
+)
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Writer
 type Writer interface {
@@ -15,12 +12,11 @@ type Writer interface {
 
 type MetricWriter struct {
 	sender Sender
-	logger Logger
 	origin string
 }
 
-func NewMetricWriter(sender Sender, logger Logger, origin string) *MetricWriter {
-	return &MetricWriter{sender, logger, origin}
+func NewMetricWriter(sender Sender, origin string) *MetricWriter {
+	return &MetricWriter{sender, origin}
 }
 
 func (writer *MetricWriter) Write(metrics []*Metric) error {
@@ -28,13 +24,13 @@ func (writer *MetricWriter) Write(metrics []*Metric) error {
 		metric := metrics[i]
 
 		if metric.Error != nil {
-			writer.logger.Debug("Metric had error", map[string]interface{}{"metric": metric})
+			slog.Debug("Metric had an error", "metric", metric, "error", metric.Error)
 		} else {
-			writer.logger.Debug("Emitted metric", map[string]interface{}{"metric": metric})
+			slog.Debug("Emitted metric", slog.Group("data", "metric", metric))
 			keyWithOrigin := fmt.Sprintf("/%s/%s", writer.origin, metric.Key)
 			err := writer.sender.SendValue(keyWithOrigin, metric.Value, metric.Unit)
 			if err != nil {
-				writer.logger.Error("Error calling metrics sender", err)
+				slog.Error("Error calling metrics sender", "error", err)
 			}
 		}
 	}
