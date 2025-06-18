@@ -47,6 +47,18 @@ type FakeGatherer struct {
 		result2 map[string]string
 		result3 error
 	}
+	DiskPerformanceStatsStub        func() (map[string]string, error)
+	diskPerformanceStatsMutex       sync.RWMutex
+	diskPerformanceStatsArgsForCall []struct {
+	}
+	diskPerformanceStatsReturns struct {
+		result1 map[string]string
+		result2 error
+	}
+	diskPerformanceStatsReturnsOnCall map[int]struct {
+		result1 map[string]string
+		result2 error
+	}
 	DiskStatsStub        func() (map[string]string, error)
 	diskStatsMutex       sync.RWMutex
 	diskStatsArgsForCall []struct {
@@ -280,6 +292,62 @@ func (fake *FakeGatherer) DatabaseMetadataReturnsOnCall(i int, result1 map[strin
 		result2 map[string]string
 		result3 error
 	}{result1, result2, result3}
+}
+
+func (fake *FakeGatherer) DiskPerformanceStats() (map[string]string, error) {
+	fake.diskPerformanceStatsMutex.Lock()
+	ret, specificReturn := fake.diskPerformanceStatsReturnsOnCall[len(fake.diskPerformanceStatsArgsForCall)]
+	fake.diskPerformanceStatsArgsForCall = append(fake.diskPerformanceStatsArgsForCall, struct {
+	}{})
+	stub := fake.DiskPerformanceStatsStub
+	fakeReturns := fake.diskPerformanceStatsReturns
+	fake.recordInvocation("DiskPerformanceStats", []interface{}{})
+	fake.diskPerformanceStatsMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeGatherer) DiskPerformanceStatsCallCount() int {
+	fake.diskPerformanceStatsMutex.RLock()
+	defer fake.diskPerformanceStatsMutex.RUnlock()
+	return len(fake.diskPerformanceStatsArgsForCall)
+}
+
+func (fake *FakeGatherer) DiskPerformanceStatsCalls(stub func() (map[string]string, error)) {
+	fake.diskPerformanceStatsMutex.Lock()
+	defer fake.diskPerformanceStatsMutex.Unlock()
+	fake.DiskPerformanceStatsStub = stub
+}
+
+func (fake *FakeGatherer) DiskPerformanceStatsReturns(result1 map[string]string, result2 error) {
+	fake.diskPerformanceStatsMutex.Lock()
+	defer fake.diskPerformanceStatsMutex.Unlock()
+	fake.DiskPerformanceStatsStub = nil
+	fake.diskPerformanceStatsReturns = struct {
+		result1 map[string]string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeGatherer) DiskPerformanceStatsReturnsOnCall(i int, result1 map[string]string, result2 error) {
+	fake.diskPerformanceStatsMutex.Lock()
+	defer fake.diskPerformanceStatsMutex.Unlock()
+	fake.DiskPerformanceStatsStub = nil
+	if fake.diskPerformanceStatsReturnsOnCall == nil {
+		fake.diskPerformanceStatsReturnsOnCall = make(map[int]struct {
+			result1 map[string]string
+			result2 error
+		})
+	}
+	fake.diskPerformanceStatsReturnsOnCall[i] = struct {
+		result1 map[string]string
+		result2 error
+	}{result1, result2}
 }
 
 func (fake *FakeGatherer) DiskStats() (map[string]string, error) {
@@ -571,6 +639,8 @@ func (fake *FakeGatherer) Invocations() map[string][][]interface{} {
 	defer fake.cPUStatsMutex.RUnlock()
 	fake.databaseMetadataMutex.RLock()
 	defer fake.databaseMetadataMutex.RUnlock()
+	fake.diskPerformanceStatsMutex.RLock()
+	defer fake.diskPerformanceStatsMutex.RUnlock()
 	fake.diskStatsMutex.RLock()
 	defer fake.diskStatsMutex.RUnlock()
 	fake.findLastBackupTimestampMutex.RLock()

@@ -14,6 +14,7 @@ import (
 	"github.com/cloudfoundry/mysql-metrics/cpu"
 	"github.com/cloudfoundry/mysql-metrics/database_client"
 	"github.com/cloudfoundry/mysql-metrics/disk"
+	"github.com/cloudfoundry/mysql-metrics/diskstat"
 	"github.com/cloudfoundry/mysql-metrics/emit"
 	"github.com/cloudfoundry/mysql-metrics/gather"
 	"github.com/cloudfoundry/mysql-metrics/metrics"
@@ -118,7 +119,12 @@ func main() {
 		panic(err)
 	}
 	cpustater := cpu.New(procStatFile)
-	gatherer := gather.NewGatherer(dbClient, stater, &cpustater)
+	monitor, err := diskstat.NewVolumeMonitor()
+	if err != nil {
+		metricsLogger.Error("failed to initialize volume monitor", err)
+		panic(err)
+	}
+	gatherer := gather.NewGatherer(dbClient, stater, &cpustater, monitor)
 
 	loggerWrapper := lagerLoggerWrapper{metricsLogger}
 	metricsComputer := metrics_computer.NewMetricsComputer(*metricMappingConfig)

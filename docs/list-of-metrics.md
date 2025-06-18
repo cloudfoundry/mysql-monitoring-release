@@ -74,6 +74,14 @@ Metric Name | Description | Units |
 | `system/persistent_disk_inodes_used_percent` | The percentage of persistent disk inodes used by both the system and user applications. | percent |
 | `system/persistent_disk_used` | The number of KB used on the persistent disk. | KB |
 | `system/persistent_disk_used_percent` | The percentage of persistent disk used by both the system and user applications. | percent |
+| `system/persistent_disk_read_latency_ms` | Average read latency for the persistent disk. | milliseconds |
+| `system/persistent_disk_write_latency_ms` | Average write latency for the persistent disk. | milliseconds |
+| `system/persistent_disk_read_iops` | Read operations per second for the persistent disk. | operations per second |
+| `system/persistent_disk_write_iops` | Write operations per second for the persistent disk. | operations per second |
+| `system/ephemeral_disk_read_latency_ms` | Average read latency for the ephemeral disk. | milliseconds |
+| `system/ephemeral_disk_write_latency_ms` | Average write latency for the ephemeral disk. | milliseconds |
+| `system/ephemeral_disk_read_iops` | Read operations per second for the ephemeral disk. | operations per second |
+| `system/ephemeral_disk_write_iops` | Write operations per second for the ephemeral disk. | operations per second |
 
 <a name='galera-metrics'>
 

@@ -262,7 +262,7 @@ var _ = Describe("MetricsComputer", func() {
 				MysqlMetricMappings:          mysqlMetricMappings,
 				GaleraMetricMappings:         galeraMetricMappings,
 				LeaderFollowerMetricMappings: leaderFollowerMetricMappings,
-				DiskMetricMappings:           diskMetricMappings,
+				DiskUsageMetricMappings:      diskMetricMappings,
 				BrokerMetricMappings:         brokerMetricMappings,
 				CPUMetricMappings:            cpuMetricMappings,
 			}
