@@ -39,7 +39,6 @@ func MatchByIndexedName(name string) MatchInstanceFunc {
 func Instances(deploymentName string, matchInstanceFunc MatchInstanceFunc) ([]Instance, error) {
 	var output bytes.Buffer
 
-	fmt.Printf("deploymentName: %s\n", deploymentName)
 	if err := cmd.RunWithoutOutput(&output,
 		"bosh",
 		"--non-interactive",
