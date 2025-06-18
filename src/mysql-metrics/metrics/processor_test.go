@@ -172,6 +172,56 @@ var _ = Describe("Processor", func() {
 				Expect(len(metricsToEmit)).To(Equal(1))
 				Expect(metricsToEmit[0]).To(Equal(diskMetric))
 			})
+
+			It("returns disk performance metrics", func() {
+				fakeGatherer.DiskPerformanceStatsReturns(map[string]string{
+					"persistent_disk_read_latency_ms":  "0.40",
+					"persistent_disk_write_latency_ms": "0.80",
+					"persistent_disk_read_iops":        "2250.00",
+					"persistent_disk_write_iops":       "600.00",
+				}, nil)
+				fakeMetricsComputer.ComputeDiskMetricsReturnsOnCall(0, []*metrics.Metric{
+					{
+						Key:   "persistent_disk_read_latency_ms",
+						Value: 0.40,
+					},
+					{
+						Key:   "persistent_disk_write_latency_ms",
+						Value: 0.80,
+					},
+					{
+						Key:   "persistent_disk_read_iops",
+						Value: 2250.00,
+					},
+					{
+						Key:   "persistent_disk_write_iops",
+						Value: 600.00,
+					},
+				})
+
+				err := processor.Process()
+				Expect(err).NotTo(HaveOccurred())
+
+				metricsToEmit := fakeMetricsWriter.WriteArgsForCall(0)
+				Expect(metricsToEmit).To(ConsistOf([]*metrics.Metric{
+					{
+						Key:   "persistent_disk_read_latency_ms",
+						Value: 0.40,
+					},
+					{
+						Key:   "persistent_disk_write_latency_ms",
+						Value: 0.80,
+					},
+					{
+						Key:   "persistent_disk_read_iops",
+						Value: 2250.00,
+					},
+					{
+						Key:   "persistent_disk_write_iops",
+						Value: 600.00,
+					},
+				}))
+			})
 		})
 
 		Context("when the database is available", func() {

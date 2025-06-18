@@ -1,11 +1,12 @@
 package metrics_test
 
 import (
-	"github.com/cloudfoundry/mysql-metrics/metrics"
+	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"io/ioutil"
+
+	"github.com/cloudfoundry/mysql-metrics/metrics"
 )
 
 var _ = Describe("DefaultMetricsMappingConfig()", func() {
@@ -15,7 +16,7 @@ var _ = Describe("DefaultMetricsMappingConfig()", func() {
 		mysqlMetricMappings := metricMappingConfig.MysqlMetricMappings
 		galeraMetricMappings := metricMappingConfig.GaleraMetricMappings
 		leaderFollowerMetricMappings := metricMappingConfig.LeaderFollowerMetricMappings
-		diskMetricMappings := metricMappingConfig.DiskMetricMappings
+		diskMetricMappings := metricMappingConfig.DiskUsageMetricMappings
 		brokerMetricMappings := metricMappingConfig.BrokerMetricMappings
 		cpuMetricMappings := metricMappingConfig.CPUMetricMappings
 
@@ -29,7 +30,7 @@ var _ = Describe("DefaultMetricsMappingConfig()", func() {
 		Expect(len(mysqlMetricMappings)).To(Equal(46))
 		Expect(len(galeraMetricMappings)).To(Equal(10))
 		Expect(len(leaderFollowerMetricMappings)).To(Equal(6))
-		Expect(len(diskMetricMappings)).To(Equal(12))
+		Expect(len(diskMetricMappings)).To(Equal(20))
 		Expect(len(brokerMetricMappings)).To(Equal(1))
 		Expect(len(cpuMetricMappings)).To(Equal(1))
 	})
@@ -39,7 +40,7 @@ var _ = Describe("DefaultMetricsMappingConfig()", func() {
 
 		BeforeEach(func() {
 			metricMappingConfig = metrics.DefaultMetricMappingConfig()
-			listOfMetricsDoc, err := ioutil.ReadFile("../../../docs/list-of-metrics.md")
+			listOfMetricsDoc, err := os.ReadFile("../../../docs/list-of-metrics.md")
 			Expect(err).NotTo(HaveOccurred())
 			metricsDocString = string(listOfMetricsDoc)
 
@@ -50,7 +51,7 @@ var _ = Describe("DefaultMetricsMappingConfig()", func() {
 			//MysqlMetricMappings          map[string]MetricDefinition
 			//GaleraMetricMappings         map[string]MetricDefinition
 			//LeaderFollowerMetricMappings map[string]MetricDefinition
-			//DiskMetricMappings           map[string]MetricDefinition
+			//DiskUsageMetricMappings           map[string]MetricDefinition
 			//BrokerMetricMappings         map[string]MetricDefinition
 			//CPUMetricMappings
 			for _, emittedMetric := range metricMappingConfig.MysqlMetricMappings {
@@ -72,7 +73,7 @@ var _ = Describe("DefaultMetricsMappingConfig()", func() {
 		})
 
 		It("have all Disk Metrics", func() {
-			for _, emittedMetric := range metricMappingConfig.DiskMetricMappings {
+			for _, emittedMetric := range metricMappingConfig.DiskUsageMetricMappings {
 				Expect(metricsDocString).To(ContainSubstring(emittedMetric.Key))
 			}
 		})

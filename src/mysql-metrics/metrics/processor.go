@@ -15,6 +15,7 @@ type Gatherer interface {
 	IsDatabaseFollower() (bool, error)
 	IsDatabaseAvailable() bool
 	DiskStats() (map[string]string, error)
+	DiskPerformanceStats() (map[string]string, error)
 	BrokerStats() (map[string]string, error)
 	CPUStats() (map[string]string, error)
 	FindLastBackupTimestamp() (time.Time, error)
@@ -31,6 +32,7 @@ type MetricsComputer interface {
 	ComputeGaleraMetrics(map[string]string) []*Metric
 	ComputeCPUMetrics(map[string]string) []*Metric
 	ComputeBackupMetric(time.Time) *Metric
+	ComputeDiskPerformanceMetrics(map[string]string) []*Metric
 }
 
 type Processor struct {
@@ -64,6 +66,12 @@ func (p Processor) Process() error {
 			collectedErrors = multierror.Append(collectedErrors, err)
 		}
 		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeDiskMetrics(diskStatMap)...)
+
+		diskPerformanceStatMap, err := p.gatherer.DiskPerformanceStats()
+		if err != nil {
+			collectedErrors = multierror.Append(collectedErrors, err)
+		}
+		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeDiskPerformanceMetrics(diskPerformanceStatMap)...)
 	}
 
 	if p.config.EmitBrokerMetrics {

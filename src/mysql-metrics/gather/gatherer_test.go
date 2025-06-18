@@ -1,31 +1,34 @@
 package gather_test
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
-	"errors"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/prometheus/procfs/blockdevice"
 
+	"github.com/cloudfoundry/mysql-metrics/diskstat"
 	"github.com/cloudfoundry/mysql-metrics/gather"
 	"github.com/cloudfoundry/mysql-metrics/gather/gatherfakes"
 )
 
 var _ = Describe("Gatherer", func() {
 	var (
-		databaseClient *gatherfakes.FakeDatabaseClient
-		stater         *gatherfakes.FakeStater
-		cpustater      *gatherfakes.FakeCpuStater
-		gatherer       *gather.Gatherer
+		databaseClient  *gatherfakes.FakeDatabaseClient
+		stater          *gatherfakes.FakeStater
+		cpustater       *gatherfakes.FakeCpuStater
+		diskstatsReader *gatherfakes.FakeDiskstatsReader
+		gatherer        *gather.Gatherer
 	)
 
 	BeforeEach(func() {
 		databaseClient = &gatherfakes.FakeDatabaseClient{}
 		stater = &gatherfakes.FakeStater{}
 		cpustater = &gatherfakes.FakeCpuStater{}
-		gatherer = gather.NewGatherer(databaseClient, stater, cpustater)
+		diskstatsReader = &gatherfakes.FakeDiskstatsReader{}
+		gatherer = gather.NewGatherer(databaseClient, stater, cpustater, diskstatsReader)
 	})
 
 	Describe("BrokerStats", func() {
@@ -76,7 +79,7 @@ var _ = Describe("Gatherer", func() {
 	})
 
 	Describe("DiskStats", func() {
-		It("returns disk information for ephemeral and persistand disks", func() {
+		It("returns disk information for ephemeral and persistent disks", func() {
 			statsMap := map[string]string{
 				"persistent_disk_used":                "2024",
 				"persistent_disk_free":                "1024",
@@ -124,6 +127,92 @@ var _ = Describe("Gatherer", func() {
 
 				Expect(stater.StatsCallCount()).To(Equal(2))
 				Expect(stater.StatsArgsForCall(1)).To(Equal("/var/vcap/data"))
+			})
+		})
+	})
+
+	Describe("DiskPerformanceStats", func() {
+		It("returns disk performance statistics for ephemeral and persistent disks", func() {
+			statsMap := map[string]string{
+				"persistent_disk_read_latency_ms":  "0.40",
+				"persistent_disk_write_latency_ms": "0.80",
+				"persistent_disk_read_iops":        "2250.00",
+				"persistent_disk_write_iops":       "600.00",
+
+				"ephemeral_disk_read_latency_ms":  "0.10",
+				"ephemeral_disk_write_latency_ms": "0.80",
+				"ephemeral_disk_read_iops":        "1950.00",
+				"ephemeral_disk_write_iops":       "600.00",
+			}
+
+			diskstatsReader.SampleMultipleReturns(map[string]diskstat.Delta{
+				"/var/vcap/store": {
+					Elapsed: time.Second,
+					Stats: diskstat.Stats{
+						IOStats: blockdevice.IOStats{
+							ReadIOs:     2250,
+							ReadMerges:  250,
+							ReadTicks:   1000, // 1000 ms of read io
+							WriteIOs:    600,
+							WriteMerges: 25,
+							WriteTicks:  500, // 500ms of write io
+						},
+					},
+				},
+				"/var/vcap/data": {
+					Elapsed: time.Second,
+					Stats: diskstat.Stats{
+						IOStats: blockdevice.IOStats{
+							ReadIOs:     1950,
+							ReadMerges:  50,
+							ReadTicks:   200, // 1000 ms of read io
+							WriteIOs:    600,
+							WriteMerges: 25,
+							WriteTicks:  500, // 500ms of write io
+						},
+					},
+				},
+			}, nil)
+
+			stats, err := gatherer.DiskPerformanceStats()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(stats).To(Equal(statsMap))
+		})
+
+		Context("error cases", func() {
+			It("returns an error when disks fails to be described", func() {
+				diskstatsReader.SampleMultipleReturns(nil, errors.New("some error about reading disk stats"))
+
+				_, err := gatherer.DiskPerformanceStats()
+				Expect(err).To(MatchError("some error about reading disk stats"))
+			})
+
+			It("still returns available metrics even when there are errors", func() {
+				diskstatsReader.SampleMultipleReturns(map[string]diskstat.Delta{
+					"/var/vcap/store": {
+						Elapsed: time.Second,
+						Stats: diskstat.Stats{
+							IOStats: blockdevice.IOStats{
+								ReadIOs:     2250,
+								ReadMerges:  250,
+								ReadTicks:   1000, // 1000 ms of read io
+								WriteIOs:    600,
+								WriteMerges: 25,
+								WriteTicks:  500, // 500ms of write io
+							},
+						},
+					},
+				}, errors.New("some error about reading ephemeral disk stats"))
+
+				results, err := gatherer.DiskPerformanceStats()
+				Expect(err).To(MatchError("some error about reading ephemeral disk stats"))
+
+				Expect(results).To(Equal(map[string]string{
+					"persistent_disk_read_latency_ms":  "0.40",
+					"persistent_disk_write_latency_ms": "0.80",
+					"persistent_disk_read_iops":        "2250.00",
+					"persistent_disk_write_iops":       "600.00",
+				}))
 			})
 		})
 	})

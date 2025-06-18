@@ -64,6 +64,17 @@ type FakeMetricsComputer struct {
 	computeDiskMetricsReturnsOnCall map[int]struct {
 		result1 []*metrics.Metric
 	}
+	ComputeDiskPerformanceMetricsStub        func(map[string]string) []*metrics.Metric
+	computeDiskPerformanceMetricsMutex       sync.RWMutex
+	computeDiskPerformanceMetricsArgsForCall []struct {
+		arg1 map[string]string
+	}
+	computeDiskPerformanceMetricsReturns struct {
+		result1 []*metrics.Metric
+	}
+	computeDiskPerformanceMetricsReturnsOnCall map[int]struct {
+		result1 []*metrics.Metric
+	}
 	ComputeGaleraMetricsStub        func(map[string]string) []*metrics.Metric
 	computeGaleraMetricsMutex       sync.RWMutex
 	computeGaleraMetricsArgsForCall []struct {
@@ -417,6 +428,67 @@ func (fake *FakeMetricsComputer) ComputeDiskMetricsReturnsOnCall(i int, result1 
 	}{result1}
 }
 
+func (fake *FakeMetricsComputer) ComputeDiskPerformanceMetrics(arg1 map[string]string) []*metrics.Metric {
+	fake.computeDiskPerformanceMetricsMutex.Lock()
+	ret, specificReturn := fake.computeDiskPerformanceMetricsReturnsOnCall[len(fake.computeDiskPerformanceMetricsArgsForCall)]
+	fake.computeDiskPerformanceMetricsArgsForCall = append(fake.computeDiskPerformanceMetricsArgsForCall, struct {
+		arg1 map[string]string
+	}{arg1})
+	stub := fake.ComputeDiskPerformanceMetricsStub
+	fakeReturns := fake.computeDiskPerformanceMetricsReturns
+	fake.recordInvocation("ComputeDiskPerformanceMetrics", []interface{}{arg1})
+	fake.computeDiskPerformanceMetricsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskPerformanceMetricsCallCount() int {
+	fake.computeDiskPerformanceMetricsMutex.RLock()
+	defer fake.computeDiskPerformanceMetricsMutex.RUnlock()
+	return len(fake.computeDiskPerformanceMetricsArgsForCall)
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskPerformanceMetricsCalls(stub func(map[string]string) []*metrics.Metric) {
+	fake.computeDiskPerformanceMetricsMutex.Lock()
+	defer fake.computeDiskPerformanceMetricsMutex.Unlock()
+	fake.ComputeDiskPerformanceMetricsStub = stub
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskPerformanceMetricsArgsForCall(i int) map[string]string {
+	fake.computeDiskPerformanceMetricsMutex.RLock()
+	defer fake.computeDiskPerformanceMetricsMutex.RUnlock()
+	argsForCall := fake.computeDiskPerformanceMetricsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskPerformanceMetricsReturns(result1 []*metrics.Metric) {
+	fake.computeDiskPerformanceMetricsMutex.Lock()
+	defer fake.computeDiskPerformanceMetricsMutex.Unlock()
+	fake.ComputeDiskPerformanceMetricsStub = nil
+	fake.computeDiskPerformanceMetricsReturns = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
+func (fake *FakeMetricsComputer) ComputeDiskPerformanceMetricsReturnsOnCall(i int, result1 []*metrics.Metric) {
+	fake.computeDiskPerformanceMetricsMutex.Lock()
+	defer fake.computeDiskPerformanceMetricsMutex.Unlock()
+	fake.ComputeDiskPerformanceMetricsStub = nil
+	if fake.computeDiskPerformanceMetricsReturnsOnCall == nil {
+		fake.computeDiskPerformanceMetricsReturnsOnCall = make(map[int]struct {
+			result1 []*metrics.Metric
+		})
+	}
+	fake.computeDiskPerformanceMetricsReturnsOnCall[i] = struct {
+		result1 []*metrics.Metric
+	}{result1}
+}
+
 func (fake *FakeMetricsComputer) ComputeGaleraMetrics(arg1 map[string]string) []*metrics.Metric {
 	fake.computeGaleraMetricsMutex.Lock()
 	ret, specificReturn := fake.computeGaleraMetricsReturnsOnCall[len(fake.computeGaleraMetricsArgsForCall)]
@@ -674,6 +746,8 @@ func (fake *FakeMetricsComputer) Invocations() map[string][][]interface{} {
 	defer fake.computeCPUMetricsMutex.RUnlock()
 	fake.computeDiskMetricsMutex.RLock()
 	defer fake.computeDiskMetricsMutex.RUnlock()
+	fake.computeDiskPerformanceMetricsMutex.RLock()
+	defer fake.computeDiskPerformanceMetricsMutex.RUnlock()
 	fake.computeGaleraMetricsMutex.RLock()
 	defer fake.computeGaleraMetricsMutex.RUnlock()
 	fake.computeGlobalMetricsMutex.RLock()

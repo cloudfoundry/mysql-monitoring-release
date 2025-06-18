@@ -1,8 +1,11 @@
 package gather
 
 import (
+	"fmt"
 	"strconv"
 	"time"
+
+	"github.com/cloudfoundry/mysql-metrics/diskstat"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . DatabaseClient
@@ -22,6 +25,11 @@ type Stater interface {
 	Stats(path string) (bytesFree, bytesTotal, inodesFree, inodesTotal uint64, err error)
 }
 
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . DiskstatsReader
+type DiskstatsReader interface {
+	SampleMultiple(mountpoints []string) (map[string]diskstat.Delta, error)
+}
+
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . CpuStater
 type CpuStater interface {
 	GetPercentage() (int, error)
@@ -32,13 +40,15 @@ type Gatherer struct {
 	stater          Stater
 	cpuStater       CpuStater
 	previousQueries int
+	diskstatsReader DiskstatsReader
 }
 
-func NewGatherer(client DatabaseClient, stater Stater, cpuStater CpuStater) *Gatherer {
+func NewGatherer(client DatabaseClient, stater Stater, cpuStater CpuStater, diskstatsReader DiskstatsReader) *Gatherer {
 	return &Gatherer{
 		client:          client,
 		stater:          stater,
 		cpuStater:       cpuStater,
+		diskstatsReader: diskstatsReader,
 		previousQueries: -1,
 	}
 }
@@ -86,6 +96,28 @@ func (g Gatherer) DiskStats() (map[string]string, error) {
 		"ephemeral_disk_inodes_free":          strconv.FormatUint(inodesFreeEphemeral, 10),
 		"ephemeral_disk_inodes_used_percent":  strconv.FormatUint(g.calculateWholePercent(ephemeralInodesUsed, inodesTotalEphemeral), 10),
 	}, nil
+}
+
+func (g Gatherer) DiskPerformanceStats() (map[string]string, error) {
+	samples, err := g.diskstatsReader.SampleMultiple([]string{"/var/vcap/data", "/var/vcap/store"})
+
+	result := make(map[string]string)
+
+	if persistentSample, ok := samples["/var/vcap/store"]; ok {
+		result["persistent_disk_read_latency_ms"] = fmt.Sprintf("%.2f", persistentSample.ReadResponseTime())
+		result["persistent_disk_write_latency_ms"] = fmt.Sprintf("%.2f", persistentSample.WriteResponseTime())
+		result["persistent_disk_read_iops"] = fmt.Sprintf("%.2f", persistentSample.ReadsPerSecond())
+		result["persistent_disk_write_iops"] = fmt.Sprintf("%.2f", persistentSample.WritesPerSecond())
+	}
+
+	if ephemeralSample, ok := samples["/var/vcap/data"]; ok {
+		result["ephemeral_disk_read_latency_ms"] = fmt.Sprintf("%.2f", ephemeralSample.ReadResponseTime())
+		result["ephemeral_disk_write_latency_ms"] = fmt.Sprintf("%.2f", ephemeralSample.WriteResponseTime())
+		result["ephemeral_disk_read_iops"] = fmt.Sprintf("%.2f", ephemeralSample.ReadsPerSecond())
+		result["ephemeral_disk_write_iops"] = fmt.Sprintf("%.2f", ephemeralSample.WritesPerSecond())
+	}
+
+	return result, err
 }
 
 func (Gatherer) calculateWholePercent(numerator, denominator uint64) uint64 {
