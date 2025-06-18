@@ -2,15 +2,17 @@ package emit_test
 
 import (
 	"errors"
+	"io"
+	"log/slog"
 	"sync"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gbytes"
 
 	"github.com/cloudfoundry/mysql-metrics/emit"
 	"github.com/cloudfoundry/mysql-metrics/emit/emitfakes"
-	"github.com/hashicorp/go-multierror"
 )
 
 type Sleeper struct {
@@ -45,15 +47,18 @@ func (s *Sleeper) LastDuration() time.Duration {
 var _ = Describe("Emitter", func() {
 	var (
 		fakeProcessor *emitfakes.FakeProcessor
-		fakeLogger    *emitfakes.FakeLogger
 		emitter       emit.Emitter
 		sleeper       *Sleeper
 		sleepDuration time.Duration
+		logBuffer     *gbytes.Buffer
 	)
 
 	BeforeEach(func() {
+		// Set up global slog to write to a buffer for test assertions
+		logBuffer = gbytes.NewBuffer()
+		slog.SetDefault(slog.New(slog.NewJSONHandler(io.MultiWriter(GinkgoWriter, logBuffer), &slog.HandlerOptions{Level: slog.LevelDebug})))
+
 		fakeProcessor = &emitfakes.FakeProcessor{}
-		fakeLogger = &emitfakes.FakeLogger{}
 		sleeper = &Sleeper{}
 		sleepDuration = time.Duration(2) * time.Second
 
@@ -61,7 +66,6 @@ var _ = Describe("Emitter", func() {
 			fakeProcessor,
 			sleepDuration,
 			sleeper.Sleep,
-			fakeLogger,
 		)
 	})
 
@@ -80,7 +84,8 @@ var _ = Describe("Emitter", func() {
 
 	Context("error cases", func() {
 		It("logs errors as they occur and continues to loop", func() {
-			errs := multierror.Append(errors.New("something bad happened"),
+			errs := errors.Join(
+				errors.New("something bad happened"),
 				errors.New("something else happened"),
 				errors.New("this thing is busted"),
 			)
@@ -92,18 +97,11 @@ var _ = Describe("Emitter", func() {
 				return fakeProcessor.ProcessCallCount()
 			}).Should(BeNumerically(">", 2))
 
-			errorMessage, err := fakeLogger.ErrorArgsForCall(0)
-			Expect(errorMessage).To(Equal("error processing metrics"))
-			Expect(err).To(MatchError("something bad happened"))
-
-			errorMessage, err = fakeLogger.ErrorArgsForCall(1)
-			Expect(errorMessage).To(Equal("error processing metrics"))
-			Expect(err).To(MatchError("something else happened"))
-
-			errorMessage, err = fakeLogger.ErrorArgsForCall(2)
-			Expect(errorMessage).To(Equal("error processing metrics"))
-			Expect(err).To(MatchError("this thing is busted"))
-
+			Eventually(logBuffer).Should(gbytes.Say(`"level":"ERROR"`))
+			Eventually(logBuffer).Should(gbytes.Say(`"msg":"error processing metrics"`))
+			Eventually(logBuffer).Should(gbytes.Say("something bad happened"))
+			Eventually(logBuffer).Should(gbytes.Say("something else happened"))
+			Eventually(logBuffer).Should(gbytes.Say("this thing is busted"))
 		})
 	})
 })
