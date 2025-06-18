@@ -1,11 +1,10 @@
 package metrics
 
 import (
-	"github.com/cloudfoundry/mysql-metrics/config"
-
+	"errors"
 	"time"
 
-	"github.com/hashicorp/go-multierror"
+	"github.com/cloudfoundry/mysql-metrics/config"
 )
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Gatherer
@@ -61,7 +60,7 @@ func (p Processor) Process() error {
 	if p.config.EmitDiskMetrics {
 		diskStatMap, err := p.gatherer.DiskStats()
 		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
+			collectedErrors = errors.Join(collectedErrors, err)
 		}
 		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeDiskMetrics(diskStatMap)...)
 	}
@@ -69,7 +68,7 @@ func (p Processor) Process() error {
 	if p.config.EmitBrokerMetrics {
 		brokerStatMap, err := p.gatherer.BrokerStats()
 		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
+			collectedErrors = errors.Join(collectedErrors, err)
 		}
 		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeBrokerMetrics(brokerStatMap)...)
 	}
@@ -77,7 +76,7 @@ func (p Processor) Process() error {
 	if p.config.EmitCPUMetrics {
 		cpuStatMap, err := p.gatherer.CPUStats()
 		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
+			collectedErrors = errors.Join(collectedErrors, err)
 		}
 		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeCPUMetrics(cpuStatMap)...)
 	}
@@ -85,7 +84,7 @@ func (p Processor) Process() error {
 	if p.config.EmitBackupMetrics {
 		backupTimestamp, err := p.gatherer.FindLastBackupTimestamp()
 		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
+			collectedErrors = errors.Join(collectedErrors, err)
 		} else {
 			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeBackupMetric(backupTimestamp))
 		}
@@ -98,7 +97,7 @@ func (p Processor) Process() error {
 		if isAvailable {
 			globalStatus, globalVariables, err := p.gatherer.DatabaseMetadata()
 			if err != nil {
-				collectedErrors = multierror.Append(collectedErrors, err)
+				collectedErrors = errors.Join(collectedErrors, err)
 			}
 
 			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeGlobalMetrics(globalStatus)...)
@@ -114,7 +113,7 @@ func (p Processor) Process() error {
 	if p.config.EmitLeaderFollowerMetrics {
 		isFollower, err := p.gatherer.IsDatabaseFollower()
 		if err != nil {
-			collectedErrors = multierror.Append(collectedErrors, err)
+			collectedErrors = errors.Join(collectedErrors, err)
 		}
 
 		collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeIsFollowerMetric(isFollower))
@@ -122,7 +121,7 @@ func (p Processor) Process() error {
 		if isFollower {
 			slaveStatus, heartbeatStatus, err := p.gatherer.FollowerMetadata()
 			if err != nil {
-				collectedErrors = multierror.Append(collectedErrors, err)
+				collectedErrors = errors.Join(collectedErrors, err)
 			}
 
 			collectedMetrics = append(collectedMetrics, p.metricsComputer.ComputeLeaderFollowerMetrics(heartbeatStatus)...)
@@ -131,7 +130,7 @@ func (p Processor) Process() error {
 	}
 
 	if err := p.metricsWriter.Write(collectedMetrics); err != nil {
-		collectedErrors = multierror.Append(collectedErrors, err)
+		collectedErrors = errors.Join(collectedErrors, err)
 	}
 
 	return collectedErrors

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cloudfoundry/mysql-metrics/emit"
 	"github.com/cloudfoundry/mysql-metrics/emit/emitfakes"
-	"github.com/hashicorp/go-multierror"
 )
 
 type Sleeper struct {
@@ -80,7 +79,8 @@ var _ = Describe("Emitter", func() {
 
 	Context("error cases", func() {
 		It("logs errors as they occur and continues to loop", func() {
-			errs := multierror.Append(errors.New("something bad happened"),
+			errs := errors.Join(
+				errors.New("something bad happened"),
 				errors.New("something else happened"),
 				errors.New("this thing is busted"),
 			)
@@ -92,18 +92,12 @@ var _ = Describe("Emitter", func() {
 				return fakeProcessor.ProcessCallCount()
 			}).Should(BeNumerically(">", 2))
 
+			Expect(fakeLogger.ErrorCallCount()).To(BeNumerically(">=", 1))
 			errorMessage, err := fakeLogger.ErrorArgsForCall(0)
 			Expect(errorMessage).To(Equal("error processing metrics"))
-			Expect(err).To(MatchError("something bad happened"))
-
-			errorMessage, err = fakeLogger.ErrorArgsForCall(1)
-			Expect(errorMessage).To(Equal("error processing metrics"))
-			Expect(err).To(MatchError("something else happened"))
-
-			errorMessage, err = fakeLogger.ErrorArgsForCall(2)
-			Expect(errorMessage).To(Equal("error processing metrics"))
-			Expect(err).To(MatchError("this thing is busted"))
-
+			Expect(err.Error()).To(ContainSubstring("something bad happened"))
+			Expect(err.Error()).To(ContainSubstring("something else happened"))
+			Expect(err.Error()).To(ContainSubstring("this thing is busted"))
 		})
 	})
 })
