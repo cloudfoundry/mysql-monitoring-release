@@ -16,6 +16,7 @@ director_name=$(bosh curl /info | jq -r .name)
 # Override these environment variables if cf or bosh is deployed differently
 # Defaults to cf-deployment and related OSS cloud-config values
 : "${BOSH_DEPLOYMENT=pxc}"
+: "${MYSQL_VERSION:=}"
 : "${cf_deployment_name:=cf}"
 : "${azs:=[z1,z2,z3]}"
 : "${network_name:='default'}"
@@ -27,17 +28,29 @@ director_name=$(bosh curl /info | jq -r .name)
 
 export BOSH_DEPLOYMENT
 
+deploy_opts=(
+    --vars-env=MANIFEST_VAR
+    --var="deployment_name=$BOSH_DEPLOYMENT"
+    --var="cf_deployment_name=${cf_deployment_name}"
+    --var="azs=${azs}"
+    --var="network_name=${network_name}"
+    --var="vm_type=${vm_type}"
+    --var="source_id=${source_id}"
+    --var="loggregator_tls_ca='${loggregator_tls_ca}'"
+    --var="loggregator_tls_client_cert='$loggregator_tls_client_cert'"
+    --var="loggregator_tls_client_key='$loggregator_tls_client_key'"
+)
+
+if [[ -n ${MYSQL_VERSION} ]]; then
+  deploy_opts+=(
+    --ops-file=operations/pxc-set-mysql-version.yml
+    --var=mysql_version="'${MYSQL_VERSION}'"
+  )
+fi
+
+deploy_opts+=("$@")
+
 run bosh deploy manifest/pxc.yml \
   --no-redact \
   --non-interactive \
-  --vars-env=MANIFEST_VAR \
-  --var="deployment_name=$BOSH_DEPLOYMENT" \
-  --var="cf_deployment_name=${cf_deployment_name}" \
-  --var="azs=${azs}" \
-  --var="network_name=${network_name}" \
-  --var="vm_type=${vm_type}" \
-  --var="source_id=${source_id}" \
-  --var="loggregator_tls_ca='${loggregator_tls_ca}'" \
-  --var="loggregator_tls_client_cert='$loggregator_tls_client_cert'" \
-  --var="loggregator_tls_client_key='$loggregator_tls_client_key'"
-"$@"
+  "${deploy_opts[@]}"
