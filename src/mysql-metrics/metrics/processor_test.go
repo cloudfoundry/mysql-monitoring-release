@@ -1,18 +1,15 @@
 package metrics_test
 
 import (
+	"errors"
 	"time"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 
 	"github.com/cloudfoundry/mysql-metrics/config"
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
-
-	"github.com/hashicorp/go-multierror"
-
-	"errors"
-
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Processor", func() {
@@ -474,7 +471,7 @@ var _ = Describe("Processor", func() {
 				Expect(err.Error()).To(ContainSubstring("DatabaseMetadata failed"))
 				Expect(err.Error()).To(ContainSubstring("FollowerMetadata failed"))
 				Expect(err.Error()).To(ContainSubstring("Disk Stats failed"))
-				Expect(err).To(BeAssignableToTypeOf(&multierror.Error{}))
+				Expect(err).ToNot(BeNil())
 
 				Expect(fakeMetricsWriter.WriteCallCount()).To(Equal(1))
 				metricsToEmit := fakeMetricsWriter.WriteArgsForCall(0)
@@ -488,7 +485,7 @@ var _ = Describe("Processor", func() {
 
 				err := processor.Process()
 				Expect(err.Error()).To(ContainSubstring("write failed"))
-				Expect(err).To(BeAssignableToTypeOf(&multierror.Error{}))
+				Expect(err).ToNot(BeNil())
 			})
 
 			It("returns an error if IsDatabaseFollower returns an error", func() {
@@ -497,7 +494,7 @@ var _ = Describe("Processor", func() {
 
 				err := processor.Process()
 				Expect(err.Error()).To(ContainSubstring("failed to determine follower state"))
-				Expect(err).To(BeAssignableToTypeOf(&multierror.Error{}))
+				Expect(err).ToNot(BeNil())
 			})
 		})
 	})

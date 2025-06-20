@@ -1,7 +1,6 @@
 package emit
 
 import (
-	"github.com/hashicorp/go-multierror"
 	"time"
 )
 
@@ -35,14 +34,7 @@ func (e Emitter) Start() {
 	for {
 		err := e.processor.Process()
 		if err != nil {
-			combinedErr, ok := err.(*multierror.Error)
-			if ok {
-				for _, wrappedError := range combinedErr.WrappedErrors() {
-					e.logger.Error("error processing metrics", wrappedError)
-				}
-			} else {
-				e.logger.Error("error processing metrics", err)
-			}
+			e.logger.Error("error processing metrics", err)
 		}
 		e.sleeper(e.interval)
 	}
