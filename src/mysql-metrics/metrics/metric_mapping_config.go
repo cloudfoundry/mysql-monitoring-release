@@ -1,13 +1,14 @@
 package metrics
 
 type MetricMappingConfig struct {
-	MysqlMetricMappings          map[string]MetricDefinition
-	GaleraMetricMappings         map[string]MetricDefinition
-	LeaderFollowerMetricMappings map[string]MetricDefinition
-	DiskMetricMappings           map[string]MetricDefinition
-	BrokerMetricMappings         map[string]MetricDefinition
-	CPUMetricMappings            map[string]MetricDefinition
-	BackupMetricMappings         map[string]MetricDefinition
+	MysqlMetricMappings           map[string]MetricDefinition
+	GaleraMetricMappings          map[string]MetricDefinition
+	LeaderFollowerMetricMappings  map[string]MetricDefinition
+	DiskUsageMetricMappings       map[string]MetricDefinition
+	DiskPerformanceMetricMappings map[string]MetricDefinition
+	BrokerMetricMappings          map[string]MetricDefinition
+	CPUMetricMappings             map[string]MetricDefinition
+	BackupMetricMappings          map[string]MetricDefinition
 }
 
 type MetricDefinition struct {
@@ -271,7 +272,7 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 				Unit: "boolean",
 			},
 		},
-		DiskMetricMappings: map[string]MetricDefinition{
+		DiskUsageMetricMappings: map[string]MetricDefinition{
 			"persistent_disk_used_percent": {
 				Key:  "system/persistent_disk_used_percent",
 				Unit: "percentage",
@@ -319,6 +320,72 @@ func DefaultMetricMappingConfig() *MetricMappingConfig {
 			"ephemeral_disk_inodes_free": {
 				Key:  "system/ephemeral_disk_inodes_free",
 				Unit: "kb",
+			},
+			"persistent_disk_read_latency_ms": {
+				Key:  "system/persistent_disk_read_latency_ms",
+				Unit: "millisecond",
+			},
+			"persistent_disk_write_latency_ms": {
+				Key:  "system/persistent_disk_write_latency_ms",
+				Unit: "millisecond",
+			},
+			"persistent_disk_read_iops": {
+				Key:  "system/persistent_disk_read_iops",
+				Unit: "ops_per_second",
+			},
+			"persistent_disk_write_iops": {
+				Key:  "system/persistent_disk_write_iops",
+				Unit: "ops_per_second",
+			},
+			"ephemeral_disk_read_latency_ms": {
+				Key:  "system/ephemeral_disk_read_latency_ms",
+				Unit: "millisecond",
+			},
+			"ephemeral_disk_write_latency_ms": {
+				Key:  "system/ephemeral_disk_write_latency_ms",
+				Unit: "millisecond",
+			},
+			"ephemeral_disk_read_iops": {
+				Key:  "system/ephemeral_disk_read_iops",
+				Unit: "ops_per_second",
+			},
+			"ephemeral_disk_write_iops": {
+				Key:  "system/ephemeral_disk_write_iops",
+				Unit: "ops_per_second",
+			},
+		},
+		DiskPerformanceMetricMappings: map[string]MetricDefinition{
+			"persistent_disk_read_latency_ms": {
+				Key:  "system/persistent_disk_read_latency_ms",
+				Unit: "millisecond",
+			},
+			"persistent_disk_write_latency_ms": {
+				Key:  "system/persistent_disk_write_latency_ms",
+				Unit: "millisecond",
+			},
+			"persistent_disk_read_iops": {
+				Key:  "system/persistent_disk_read_iops",
+				Unit: "ops_per_second",
+			},
+			"persistent_disk_write_iops": {
+				Key:  "system/persistent_disk_write_iops",
+				Unit: "ops_per_second",
+			},
+			"ephemeral_disk_read_latency_ms": {
+				Key:  "system/ephemeral_disk_read_latency_ms",
+				Unit: "millisecond",
+			},
+			"ephemeral_disk_write_latency_ms": {
+				Key:  "system/ephemeral_disk_write_latency_ms",
+				Unit: "millisecond",
+			},
+			"ephemeral_disk_read_iops": {
+				Key:  "system/ephemeral_disk_read_iops",
+				Unit: "ops_per_second",
+			},
+			"ephemeral_disk_write_iops": {
+				Key:  "system/ephemeral_disk_write_iops",
+				Unit: "ops_per_second",
 			},
 		},
 		BrokerMetricMappings: map[string]MetricDefinition{

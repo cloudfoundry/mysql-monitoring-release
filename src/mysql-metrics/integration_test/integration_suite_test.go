@@ -22,7 +22,7 @@ var (
 
 func TestMysqlMetrics(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Integration Suite")
+	RunSpecs(t, "Integration Suite", Label("integration"))
 }
 
 var _ = SynchronizedBeforeSuite(func() []byte {

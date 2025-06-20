@@ -32,7 +32,7 @@ func (c *cpuBurner) burnup() {
 
 }
 
-var _ = Describe("GetPercentage integration test", func() {
+var _ = Describe("GetPercentage integration test", Label("integration"), func() {
 	var (
 		burner cpuBurner
 		stater cpu.Stater

@@ -52,7 +52,11 @@ func (mc *MetricsComputer) ComputeGlobalMetrics(values map[string]string) []*met
 }
 
 func (mc *MetricsComputer) ComputeDiskMetrics(values map[string]string) []*metrics.Metric {
-	return mc.ComputeMetricsFromMapping(values, mc.metricMappingConfig.DiskMetricMappings)
+	return mc.ComputeMetricsFromMapping(values, mc.metricMappingConfig.DiskUsageMetricMappings)
+}
+
+func (mc *MetricsComputer) ComputeDiskPerformanceMetrics(values map[string]string) []*metrics.Metric {
+	return mc.ComputeMetricsFromMapping(values, mc.metricMappingConfig.DiskPerformanceMetricMappings)
 }
 
 func (mc *MetricsComputer) ComputeGaleraMetrics(values map[string]string) []*metrics.Metric {

@@ -2,47 +2,54 @@
 
 set -o errexit -o nounset -o pipefail
 
-base_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-topdir=$(git -C "${base_dir}" rev-parse --show-toplevel)
-source "${topdir}/src/test-helpers/linter.sh"
+: "${TEST_VOLUME:=/var/vcap/store}"
+: "${TEST_DURATION:=30}"
+: "${MONITOR_INTERVAL=1s}"
 
-run_in_docker() {
-	docker run \
-		--mount=type=tmpfs,destination=/var/vcap/store \
-		--mount=type=tmpfs,destination=/var/vcap/data \
-		--volume=/var/run/docker.sock:/var/run/docker.sock \
-		--volume="${topdir}:/workspace" \
-		--workdir=/workspace/src/mysql-metrics \
-		--network=host \
-		--interactive --tty \
-		cloudfoundry/cf-mysql-ci "$@"
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+module_dir=$(cd "${script_dir}/.." && pwd)
+repo_dir=$(cd "${module_dir}/../.." && pwd)
+
+cd "${module_dir}"
+
+run() {
+	echo "\$ $*"
+	"$@"
 }
 
-ginkgo=(
-	go run github.com/onsi/ginkgo/v2/ginkgo
-	-p
-	-r
-	-race
-	--fail-on-pending
-	--randomize-all
-	--randomize-suites
-)
+docker_build() {
+  run docker build \
+    --quiet \
+    --file=bin/Dockerfile \
+    --tag=mysql-metrics-test \
+    .
+}
 
-if [[ -n ${UNIT:-} ]]; then
-	ginkgo+=("--skip-package=integration_test")
-elif [[ -n ${INTEGRATION:-} ]]; then
-	ginkgo+=("integration_test")
-fi
+docker_run() {
+	run docker run \
+	  --volume="${repo_dir}:/workspace" \
+    --volume=/var/run/docker.sock:/var/run/docker.sock \
+    --volume=/var/vcap/store \
+    --volume=/var/vcap/data \
+    --env=TEST_VOLUME="${TEST_VOLUME}" \
+    --env=TEST_DURATION="${TEST_DURATION}" \
+    --env=MONITOR_INTERVAL="${MONITOR_INTERVAL}" \
+    --privileged \
+    --network=host \
+    --workdir=/workspace/src/mysql-metrics \
+		--rm \
+		mysql-metrics-test \
+		"$@"
+}
 
-if [[ $(uname) == Darwin ]]; then
-	ginkgo=("run_in_docker" "${ginkgo[@]}")
-else
-	# Needed for disk metrics; may need to create manually if permission denied
-	mkdir -p /var/vcap/store
-	mkdir -p /var/vcap/data
-fi
-
-echo "Running: ${ginkgo[*]}"
-cd "${base_dir}"
-"${ginkgo[@]}" "$@"
-cd -
+docker_build
+docker_run \
+	go run github.com/onsi/ginkgo/v2/ginkgo \
+	-r \
+	--compilers=2 \
+	--procs=4 \
+	-race \
+	--fail-on-pending \
+	--randomize-all \
+	--randomize-suites \
+	"$@"

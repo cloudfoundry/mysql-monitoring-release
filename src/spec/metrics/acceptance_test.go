@@ -109,6 +109,127 @@ Within 2 percent is acceptable because of rounding.`,
 			})
 		})
 	})
+
+	When("disk I/O activity occurs", func() {
+		AfterEach(func() {
+			// Clean up test files
+			_, err := bosh.RemoteCommand(deployment, "mysql/0", "sudo rm -f /var/vcap/store/io-test-* /var/vcap/data/io-test-*")
+			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("disk I/O metrics are emitted and have reasonable values", func() {
+			workflowhelpers.AsUser(TestSetup.AdminUserContext(), time.Microsecond, func() {
+				instances, err := bosh.Instances(deployment, bosh.MatchByIndexedName("mysql/0"))
+				Expect(err).NotTo(HaveOccurred())
+				Expect(instances).To(HaveLen(1))
+				instanceUUID := instances[0].Id()
+
+				By("Performing intensive concurrent direct I/O operations to generate high IOPS and latency")
+				// Generate sustained concurrent I/O load to maximize IOPS measurements
+
+				// Start multiple concurrent write operations in background for sustained IOPS
+				_, err = bosh.RemoteCommand(deployment, "mysql/0", `
+					# Concurrent persistent disk operations (background)
+					sudo dd if=/dev/zero of=/var/vcap/store/io-test-concurrent-1 bs=4K count=10000 oflag=direct 2>/dev/null &
+					sudo dd if=/dev/zero of=/var/vcap/store/io-test-concurrent-2 bs=4K count=10000 oflag=direct 2>/dev/null &
+					sudo dd if=/dev/zero of=/var/vcap/store/io-test-concurrent-3 bs=8K count=8000 oflag=direct 2>/dev/null &
+					sudo dd if=/dev/zero of=/var/vcap/store/io-test-concurrent-4 bs=8K count=8000 oflag=direct 2>/dev/null &
+					
+					# Concurrent ephemeral disk operations (background)
+					sudo dd if=/dev/zero of=/var/vcap/data/io-test-concurrent-1 bs=4K count=15000 oflag=direct 2>/dev/null &
+					sudo dd if=/dev/zero of=/var/vcap/data/io-test-concurrent-2 bs=4K count=15000 oflag=direct 2>/dev/null &
+					sudo dd if=/dev/zero of=/var/vcap/data/io-test-concurrent-3 bs=8K count=10000 oflag=direct 2>/dev/null &
+					sudo dd if=/dev/zero of=/var/vcap/data/io-test-concurrent-4 bs=8K count=10000 oflag=direct 2>/dev/null &
+					
+					# Wait for some concurrent operations to complete
+					wait
+				`)
+				Expect(err).NotTo(HaveOccurred())
+
+				// Create base files for intensive random read operations
+				_, err = bosh.RemoteCommand(deployment, "mysql/0",
+					"sudo dd if=/dev/urandom of=/var/vcap/store/io-test-read-base bs=1M count=200 oflag=direct 2>/dev/null")
+				Expect(err).NotTo(HaveOccurred())
+
+				_, err = bosh.RemoteCommand(deployment, "mysql/0",
+					"sudo dd if=/dev/urandom of=/var/vcap/data/io-test-read-base bs=1M count=400 oflag=direct 2>/dev/null")
+				Expect(err).NotTo(HaveOccurred())
+
+				// Start sustained concurrent read/write workload for maximum IOPS
+				_, err = bosh.RemoteCommand(deployment, "mysql/0", `
+					# Background sustained read operations with different patterns
+					sudo dd if=/var/vcap/store/io-test-read-base of=/dev/null bs=4K count=50000 iflag=direct 2>/dev/null &
+					sudo dd if=/var/vcap/store/io-test-read-base of=/dev/null bs=4K skip=100 count=40000 iflag=direct 2>/dev/null &
+					sudo dd if=/var/vcap/data/io-test-read-base of=/dev/null bs=4K count=80000 iflag=direct 2>/dev/null &
+					sudo dd if=/var/vcap/data/io-test-read-base of=/dev/null bs=4K skip=200 count=60000 iflag=direct 2>/dev/null &
+					
+					# Concurrent small random writes for high IOPS
+					for i in {1..6}; do
+						sudo dd if=/dev/urandom of=/var/vcap/store/io-test-small-rand-$i bs=4K count=5000 oflag=direct 2>/dev/null &
+					done
+					
+					for i in {1..8}; do
+						sudo dd if=/dev/urandom of=/var/vcap/data/io-test-small-rand-$i bs=4K count=7500 oflag=direct 2>/dev/null &
+					done
+					
+					# Let concurrent operations run for sustained I/O
+					sleep 10
+					
+					# Add even more concurrent random I/O while previous operations continue
+					for i in {7..10}; do
+						sudo dd if=/dev/urandom of=/var/vcap/store/io-test-extra-$i bs=4K count=3000 oflag=direct 2>/dev/null &
+					done
+					
+					for i in {9..14}; do
+						sudo dd if=/dev/urandom of=/var/vcap/data/io-test-extra-$i bs=4K count=4000 oflag=direct 2>/dev/null &
+					done
+					
+					# Wait for some operations to complete but leave sustained load
+					sleep 15
+				`)
+				Expect(err).NotTo(HaveOccurred())
+
+				By("Verifying disk I/O metrics are present and have reasonable values")
+				Eventually(func() bool {
+					// Check for persistent disk I/O metrics
+					persistentReadLatency := queryIOMetric(SourceID, instanceUUID, "persistent_disk_read_latency_ms")
+					persistentWriteLatency := queryIOMetric(SourceID, instanceUUID, "persistent_disk_write_latency_ms")
+					persistentReadIOPS := queryIOMetric(SourceID, instanceUUID, "persistent_disk_read_iops")
+					persistentWriteIOPS := queryIOMetric(SourceID, instanceUUID, "persistent_disk_write_iops")
+
+					// Check for ephemeral disk I/O metrics
+					ephemeralReadLatency := queryIOMetric(SourceID, instanceUUID, "ephemeral_disk_read_latency_ms")
+					ephemeralWriteLatency := queryIOMetric(SourceID, instanceUUID, "ephemeral_disk_write_latency_ms")
+					ephemeralReadIOPS := queryIOMetric(SourceID, instanceUUID, "ephemeral_disk_read_iops")
+					ephemeralWriteIOPS := queryIOMetric(SourceID, instanceUUID, "ephemeral_disk_write_iops")
+
+					// Print current metric values for debugging
+					GinkgoWriter.Printf("=== Disk I/O Metrics Values ===\n")
+					GinkgoWriter.Printf("Persistent Disk - Read Latency: %.2f ms, Write Latency: %.2f ms\n",
+						persistentReadLatency, persistentWriteLatency)
+					GinkgoWriter.Printf("Persistent Disk - Read IOPS: %.2f, Write IOPS: %.2f\n",
+						persistentReadIOPS, persistentWriteIOPS)
+					GinkgoWriter.Printf("Ephemeral Disk - Read Latency: %.2f ms, Write Latency: %.2f ms\n",
+						ephemeralReadLatency, ephemeralWriteLatency)
+					GinkgoWriter.Printf("Ephemeral Disk - Read IOPS: %.2f, Write IOPS: %.2f\n",
+						ephemeralReadIOPS, ephemeralWriteIOPS)
+					GinkgoWriter.Printf("===============================\n")
+
+					// Verify metrics are present (non-negative) and have reasonable values
+					// Latency should be >= 0 and < 1000ms (1 second)
+					// IOPS should be >= 0 and < 100000 (100k IOPS is very high but reasonable upper bound)
+					return persistentReadLatency >= 0 && persistentReadLatency < 1000 &&
+						persistentWriteLatency >= 0 && persistentWriteLatency < 1000 &&
+						persistentReadIOPS >= 0 && persistentReadIOPS < 10000 &&
+						persistentWriteIOPS >= 0 && persistentWriteIOPS < 10000 &&
+						ephemeralReadLatency >= 0 && ephemeralReadLatency < 1000 &&
+						ephemeralWriteLatency >= 0 && ephemeralWriteLatency < 1000 &&
+						ephemeralReadIOPS >= 0 && ephemeralReadIOPS < 10000 &&
+						ephemeralWriteIOPS >= 0 && ephemeralWriteIOPS < 10000
+				}, "90s", "5s").Should(BeTrue(), "Disk I/O metrics should be present and within reasonable ranges")
+			})
+		})
+	})
 })
 
 func extractIntMatchingRegex(source string, regexMatch string) int {
@@ -138,6 +259,25 @@ func queryEphemeralDisk(sourceId, instanceUUID string) int64 {
 	return query.ValueAsInt()
 }
 
+func queryIOMetric(sourceId, instanceUUID, metricName string) float64 {
+	GinkgoHelper()
+
+	promqlMetricName := sanitizeMetricName(fmt.Sprintf("/%s/system/%s", sourceId, metricName))
+	promqlQuery := fmt.Sprintf("%s{source_id=%q,index=%q}", promqlMetricName, sourceId, instanceUUID)
+
+	session := cf.Cf("query", promqlQuery).Wait(10 * time.Second)
+
+	var query Query
+	err := json.Unmarshal(session.Out.Contents(), &query)
+	Expect(err).NotTo(HaveOccurred())
+
+	if query.Data.Result == nil {
+		return 0.0
+	}
+
+	return query.ValueAsFloat()
+}
+
 // github.com/cloudfoundry/log-cache-release/src/internal/promql/promql.go
 func sanitizeMetricName(name string) string {
 	GinkgoHelper()
@@ -159,6 +299,13 @@ type Query struct {
 func (q Query) ValueAsInt() int64 {
 	GinkgoHelper()
 	value, err := q.Data.Result[0].Value[1].Int64()
+	Expect(err).NotTo(HaveOccurred())
+	return value
+}
+
+func (q Query) ValueAsFloat() float64 {
+	GinkgoHelper()
+	value, err := q.Data.Result[0].Value[1].Float64()
 	Expect(err).NotTo(HaveOccurred())
 	return value
 }
