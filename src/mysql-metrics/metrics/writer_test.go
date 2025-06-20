@@ -2,25 +2,34 @@ package metrics_test
 
 import (
 	"errors"
-
 	"fmt"
-	"github.com/cloudfoundry/mysql-metrics/metrics"
-	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
+	"log/slog"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gbytes"
+
+	"github.com/cloudfoundry/mysql-metrics/metrics"
+	"github.com/cloudfoundry/mysql-metrics/metrics/metricsfakes"
 )
 
 var _ = Describe("MetricWriter", func() {
 	var (
 		metricWriter *metrics.MetricWriter
 		origin       = "somewhere-nice"
+		logBuffer    *gbytes.Buffer
 	)
+
+	BeforeEach(func() {
+		// Set up global slog to write to a buffer for test assertions
+		logBuffer = gbytes.NewBuffer()
+		slog.SetDefault(slog.New(slog.NewJSONHandler(logBuffer, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	})
 
 	Describe("when the metric has an error", func() {
 		It("logs an error", func() {
 			fakeSender := new(metricsfakes.FakeSender)
-			fakeLogger := new(metricsfakes.FakeLogger)
-			metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, origin)
+			metricWriter = metrics.NewMetricWriter(fakeSender, origin)
 
 			key := "metrics-key"
 			value := 0.0
@@ -38,21 +47,17 @@ var _ = Describe("MetricWriter", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(fakeSender.SendValueCallCount()).To(Equal(0))
-			Expect(fakeLogger.DebugCallCount()).To(Equal(1))
-			debugMessage, debugData := fakeLogger.DebugArgsForCall(0)
-			Expect(debugMessage).To(Equal("Metric had error"))
-			metricFromDebug := debugData["metric"].(*metrics.Metric)
-			Expect(metricFromDebug).To(Equal(metric))
-
-			Expect(fakeLogger.ErrorCallCount()).To(Equal(0))
+			Eventually(logBuffer).Should(gbytes.Say(`"level":"DEBUG"`))
+			Eventually(logBuffer).Should(gbytes.Say(`"msg":"Metric had an error"`))
+			Eventually(logBuffer).Should(gbytes.Say(`"error":"something busted"`))
+			Consistently(logBuffer).ShouldNot(gbytes.Say(`"level":"ERROR"`))
 		})
 	})
 
 	Describe("when the metric has no error", func() {
 		It("sends a metric ", func() {
 			fakeSender := new(metricsfakes.FakeSender)
-			fakeLogger := new(metricsfakes.FakeLogger)
-			metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, origin)
+			metricWriter = metrics.NewMetricWriter(fakeSender, origin)
 
 			key1 := "metrics-key1"
 			value1 := 123.5
@@ -79,26 +84,15 @@ var _ = Describe("MetricWriter", func() {
 			Expect(valueArg).To(Equal(value2))
 			Expect(unitArg).To(Equal(unit2))
 
-			Expect(fakeLogger.DebugCallCount()).To(Equal(2))
-
-			debugMessage, data := fakeLogger.DebugArgsForCall(0)
-			Expect(debugMessage).To(ContainSubstring("Emitted metric"))
-			metricFromDebug := data["metric"].(*metrics.Metric)
-			Expect(metricFromDebug).To(Equal(metric1))
-
-			debugMessage, data = fakeLogger.DebugArgsForCall(1)
-			Expect(debugMessage).To(ContainSubstring("Emitted metric"))
-			metricFromDebug = data["metric"].(*metrics.Metric)
-			Expect(metricFromDebug).To(Equal(metric2))
-
-			Expect(fakeLogger.ErrorCallCount()).To(Equal(0))
+			Eventually(logBuffer).Should(gbytes.Say(`"level":"DEBUG"`))
+			Eventually(logBuffer).Should(gbytes.Say(`"msg":"Emitted metric"`))
+			Consistently(logBuffer).ShouldNot(gbytes.Say(`"level":"ERROR"`))
 		})
 
 		Describe("when the sender errors", func() {
 			It("log.debug's the metric, but logs an error", func() {
 				fakeSender := new(metricsfakes.FakeSender)
-				fakeLogger := new(metricsfakes.FakeLogger)
-				metricWriter = metrics.NewMetricWriter(fakeSender, fakeLogger, origin)
+				metricWriter = metrics.NewMetricWriter(fakeSender, origin)
 
 				key := "metrics-key"
 				value := 123.5
@@ -111,17 +105,12 @@ var _ = Describe("MetricWriter", func() {
 				err := metricWriter.Write([]*metrics.Metric{metric})
 				Expect(err).NotTo(HaveOccurred())
 
-				Expect(fakeLogger.DebugCallCount()).To(Equal(1))
-				debugMessage, debugData := fakeLogger.DebugArgsForCall(0)
-				Expect(debugMessage).To(ContainSubstring("Emitted metric"))
-				metricFromDebug := debugData["metric"].(*metrics.Metric)
-				Expect(metricFromDebug).To(Equal(metric))
-
+				Eventually(logBuffer).Should(gbytes.Say(`"level":"DEBUG"`))
+				Eventually(logBuffer).Should(gbytes.Say(`"msg":"Emitted metric"`))
 				Expect(fakeSender.SendValueCallCount()).To(Equal(1))
-				Expect(fakeLogger.ErrorCallCount()).To(Equal(1))
-				errorMessage, errorErr := fakeLogger.ErrorArgsForCall(0)
-				Expect(errorMessage).To(Equal("Error calling metrics sender"))
-				Expect(errorErr).To(Equal(dropsondeError))
+				Eventually(logBuffer).Should(gbytes.Say(`"level":"ERROR"`))
+				Eventually(logBuffer).Should(gbytes.Say(`"msg":"Error calling metrics sender"`))
+				Eventually(logBuffer).Should(gbytes.Say("dropsonde broke somehow"))
 			})
 		})
 	})
