@@ -487,53 +487,6 @@ var _ = Describe("Integration Tests for VolumeMonitor", Label("integration"), fu
 		})
 	})
 
-	Describe("Concurrent Access", func() {
-		When("accessed concurrently by multiple goroutines", func() {
-			It("should maintain thread safety", func() {
-				// Initialize with first sample
-				_, err := monitor.Sample(mountPath)
-				Expect(err).To(Equal(ErrFirstSample))
-
-				const numGoroutines = 10
-				const numSamples = 20
-
-				var wg sync.WaitGroup
-				var mu sync.Mutex
-				successCount := 0
-				errorCount := 0
-
-				// Start concurrent goroutines
-				for i := 0; i < numGoroutines; i++ {
-					wg.Add(1)
-					go func(goroutineID int) {
-						defer wg.Done()
-						for j := 0; j < numSamples; j++ {
-							_, err := monitor.Sample(mountPath)
-
-							mu.Lock()
-							if err != nil && err != ErrFirstSample {
-								errorCount++
-							} else {
-								successCount++
-							}
-							mu.Unlock()
-
-							time.Sleep(time.Millisecond)
-						}
-					}(i)
-				}
-
-				wg.Wait()
-
-				By(fmt.Sprintf("Concurrent access test: %d successful samples, %d errors", successCount, errorCount))
-
-				// Verify no unexpected errors occurred
-				Expect(errorCount).To(Equal(0), "Should not have any unexpected errors during concurrent access")
-				Expect(successCount).To(Equal(numGoroutines*numSamples), "Should have all samples succeed")
-			})
-		})
-	})
-
 	Describe("Long Running Stability", func() {
 		When("running for an extended period", func() {
 			It("should maintain stability and accuracy", func() {

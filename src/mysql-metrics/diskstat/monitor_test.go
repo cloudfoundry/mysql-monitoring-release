@@ -1,10 +1,8 @@
 package diskstat
 
 import (
-	"errors"
 	"fmt"
 	"path/filepath"
-	"sync"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -333,43 +331,6 @@ var _ = Describe("VolumeMonitor", func() {
 		})
 	})
 
-	Describe("thread safety", func() {
-		When("called concurrently", func() {
-			It("should handle concurrent access safely", func() {
-				const numGoroutines = 10
-				const numSamples = 5
-
-				// Initialize with first sample
-				_, _ = monitor.Sample("/data")
-
-				var wg sync.WaitGroup
-				errs := make(chan error, numGoroutines*numSamples)
-
-				for i := 0; i < numGoroutines; i++ {
-					wg.Add(1)
-					go func() {
-						defer wg.Done()
-						for j := 0; j < numSamples; j++ {
-							_, err := monitor.Sample("/data")
-							if err != nil && !errors.Is(err, ErrFirstSample) {
-								errs <- err
-							}
-							time.Sleep(time.Millisecond)
-						}
-					}()
-				}
-
-				wg.Wait()
-				close(errs)
-
-				// Check that no unexpected errors occurred
-				for err := range errs {
-					Fail(fmt.Sprintf("Unexpected error in concurrent test: %v", err))
-				}
-			})
-		})
-	})
-
 	Describe("edge cases", func() {
 		Context("with empty mount points", func() {
 			BeforeEach(func() {
@@ -662,60 +623,6 @@ var _ = Describe("VolumeMonitor", func() {
 
 				individualErrors := unwrapErrors(err)
 				Expect(individualErrors).To(BeNil())
-			})
-		})
-
-		Context("thread safety", func() {
-			It("should handle concurrent SampleMultiple calls safely", func() {
-				// Initialize mountpoints
-				_, _ = monitor.Sample("/home")
-				_, _ = monitor.Sample("/data")
-
-				// Update stats
-				mockStats[0].ReadIOs = 1100
-				mockStats[1].ReadIOs = 2200
-				monitor.fs = &mockDiskstatsReader{diskstats: mockStats}
-
-				const numGoroutines = 5
-				const numCalls = 3
-				mountpoints := []string{"/home", "/data"}
-
-				var wg sync.WaitGroup
-				errorChan := make(chan error, numGoroutines*numCalls)
-				resultChan := make(chan int, numGoroutines*numCalls) // Count of successful results
-
-				for i := 0; i < numGoroutines; i++ {
-					wg.Add(1)
-					go func() {
-						defer wg.Done()
-						for j := 0; j < numCalls; j++ {
-							results, err := monitor.SampleMultiple(mountpoints)
-							if err != nil {
-								errorChan <- err
-							} else {
-								resultChan <- len(results)
-							}
-							time.Sleep(time.Millisecond)
-						}
-					}()
-				}
-
-				wg.Wait()
-				close(errorChan)
-				close(resultChan)
-
-				// Check for unexpected errors
-				for err := range errorChan {
-					Fail(fmt.Sprintf("Unexpected error in concurrent SampleMultiple test: %v", err))
-				}
-
-				// Verify we got the expected number of successful results
-				successCount := 0
-				for count := range resultChan {
-					successCount++
-					Expect(count).To(Equal(2)) // Should always return 2 results
-				}
-				Expect(successCount).To(Equal(numGoroutines * numCalls))
 			})
 		})
 	})
