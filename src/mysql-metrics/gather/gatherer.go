@@ -12,7 +12,7 @@ import (
 type DatabaseClient interface {
 	ShowGlobalStatus() (map[string]string, error)
 	ShowGlobalVariables() (map[string]string, error)
-	ShowSlaveStatus() (map[string]string, error)
+	ShowReplicaStatus() (map[string]string, error)
 	HeartbeatStatus() (map[string]string, error)
 	ServicePlansDiskAllocated() (map[string]string, error)
 	IsAvailable() bool
@@ -167,15 +167,15 @@ func (g *Gatherer) DatabaseMetadata() (globalStatus map[string]string, globalVar
 	return
 }
 
-func (g Gatherer) FollowerMetadata() (slaveStatus map[string]string, heartbeatStatus map[string]string, err error) {
-	slaveStatus, err = g.client.ShowSlaveStatus()
+func (g Gatherer) FollowerMetadata() (replicaStatus map[string]string, heartbeatStatus map[string]string, err error) {
+	replicaStatus, err = g.client.ShowReplicaStatus()
 	if err != nil {
 		return nil, nil, err
 	}
 
 	heartbeatStatus, err = g.client.HeartbeatStatus()
 	if err != nil {
-		return slaveStatus, nil, err
+		return replicaStatus, nil, err
 	}
 
 	return

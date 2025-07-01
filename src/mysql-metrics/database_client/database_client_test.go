@@ -103,16 +103,16 @@ var _ = Describe("DatabaseClient", func() {
 		})
 	})
 
-	Describe("ShowSlaveStatus", func() {
-		It("returns an empty map when SHOW SLAVE STATUS returns an empty result (leader node)", func() {
-			mock.ExpectQuery("SHOW SLAVE STATUS").WillReturnRows(sqlmock.NewRows([]string{}))
+	Describe("ShowReplicaStatus", func() {
+		It("returns an empty map when SHOW REPLICA STATUS returns an empty result (leader node)", func() {
+			mock.ExpectQuery("SHOW REPLICA STATUS").WillReturnRows(sqlmock.NewRows([]string{}))
 
-			vars, err := dc.ShowSlaveStatus()
+			vars, err := dc.ShowReplicaStatus()
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars).To(Equal(map[string]string{}))
 		})
 
-		It("returns a map of lowercased slave status variables and their values when SHOW SLAVE STATUS returns a non-empty result", func() {
+		It("returns a map of lowercased slave status variables and their values when SHOW REPLICA STATUS returns a non-empty result", func() {
 			row := sqlmock.NewRows([]string{
 				"Some_Slave_Status_Metric",
 				"Slave_SQL_Running_State",
@@ -122,9 +122,9 @@ var _ = Describe("DatabaseClient", func() {
 				nil,
 				[]uint8(nil),
 			)
-			mock.ExpectQuery("SHOW SLAVE STATUS").WillReturnRows(row)
+			mock.ExpectQuery("SHOW REPLICA STATUS").WillReturnRows(row)
 
-			vars, err := dc.ShowSlaveStatus()
+			vars, err := dc.ShowReplicaStatus()
 			Expect(err).NotTo(HaveOccurred())
 			Expect(vars).To(Equal(map[string]string{
 				"some_slave_status_metric":  "123.4",
@@ -134,8 +134,8 @@ var _ = Describe("DatabaseClient", func() {
 		})
 
 		It("returns an error and no data when the query fails", func() {
-			mock.ExpectQuery(`SHOW SLAVE STATUS`).WillReturnError(errors.New("db unavailable"))
-			_, err := dc.ShowSlaveStatus()
+			mock.ExpectQuery(`SHOW REPLICA STATUS`).WillReturnError(errors.New("db unavailable"))
+			_, err := dc.ShowReplicaStatus()
 			Expect(err).To(MatchError("db unavailable"))
 		})
 	})
@@ -185,7 +185,7 @@ var _ = Describe("DatabaseClient", func() {
 			}).AddRow(
 				[]uint8("foobar"),
 			)
-			mock.ExpectQuery("SHOW SLAVE STATUS").WillReturnRows(rows)
+			mock.ExpectQuery("SHOW REPLICA STATUS").WillReturnRows(rows)
 
 			isFollower, err := dc.IsFollower()
 			Expect(isFollower).To(BeTrue())
@@ -194,7 +194,7 @@ var _ = Describe("DatabaseClient", func() {
 
 		It("returns false when the node is a leader or not in leader follower mode", func() {
 			rows := sqlmock.NewRows([]string{})
-			mock.ExpectQuery("SHOW SLAVE STATUS").WillReturnRows(rows)
+			mock.ExpectQuery("SHOW REPLICA STATUS").WillReturnRows(rows)
 
 			isFollower, err := dc.IsFollower()
 			Expect(isFollower).To(BeFalse())
@@ -202,7 +202,7 @@ var _ = Describe("DatabaseClient", func() {
 		})
 
 		It("returns an error when the query fails", func() {
-			mock.ExpectQuery(`SHOW SLAVE STATUS`).WillReturnError(errors.New("db unavailable"))
+			mock.ExpectQuery(`SHOW REPLICA STATUS`).WillReturnError(errors.New("db unavailable"))
 			_, err := dc.IsFollower()
 			Expect(err).To(MatchError("db unavailable"))
 		})

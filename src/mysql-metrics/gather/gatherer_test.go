@@ -272,14 +272,14 @@ var _ = Describe("Gatherer", func() {
 		})
 
 		Context("error cases", func() {
-			It("returns an errors when ShowSlaveStatus fails", func() {
-				databaseClient.ShowSlaveStatusReturns(nil, errors.New("ShowSlaveStatus failed"))
+			It("returns an errors when ShowReplicaStatus fails", func() {
+				databaseClient.ShowSlaveStatusReturns(nil, errors.New("ShowReplicaStatus failed"))
 
 				_, _, err := gatherer.FollowerMetadata()
-				Expect(err).To(MatchError("ShowSlaveStatus failed"))
+				Expect(err).To(MatchError("ShowReplicaStatus failed"))
 			})
 
-			It("returns ShowSlaveStatus even when HeartbeatStatus fails", func() {
+			It("returns ShowReplicaStatus even when HeartbeatStatus fails", func() {
 				slaveStatusMap := map[string]string{
 					"doesnt-matter": "345",
 				}

@@ -39,13 +39,13 @@ func (dc *DbClient) ShowGlobalVariables() (map[string]string, error) {
 	return dc.runKeyValueQuery("SHOW GLOBAL VARIABLES")
 }
 
-func (dc *DbClient) ShowSlaveStatus() (map[string]string, error) {
-	return dc.runSingleRowQuery("SHOW SLAVE STATUS", []interface{}{})
+func (dc *DbClient) ShowReplicaStatus() (map[string]string, error) {
+	return dc.runSingleRowQuery("SHOW REPLICA STATUS", []interface{}{})
 }
 
 func (dc *DbClient) IsFollower() (bool, error) {
-	slaveStatus, err := dc.ShowSlaveStatus()
-	return len(slaveStatus) > 0, err
+	replicaStatus, err := dc.ShowReplicaStatus()
+	return len(replicaStatus) > 0, err
 }
 
 func (dc *DbClient) HeartbeatStatus() (map[string]string, error) {

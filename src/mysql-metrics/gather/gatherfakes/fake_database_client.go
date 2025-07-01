@@ -496,14 +496,14 @@ func (fake *FakeDatabaseClient) ShowGlobalVariablesReturnsOnCall(i int, result1 
 	}{result1, result2}
 }
 
-func (fake *FakeDatabaseClient) ShowSlaveStatus() (map[string]string, error) {
+func (fake *FakeDatabaseClient) ShowReplicaStatus() (map[string]string, error) {
 	fake.showSlaveStatusMutex.Lock()
 	ret, specificReturn := fake.showSlaveStatusReturnsOnCall[len(fake.showSlaveStatusArgsForCall)]
 	fake.showSlaveStatusArgsForCall = append(fake.showSlaveStatusArgsForCall, struct {
 	}{})
 	stub := fake.ShowSlaveStatusStub
 	fakeReturns := fake.showSlaveStatusReturns
-	fake.recordInvocation("ShowSlaveStatus", []interface{}{})
+	fake.recordInvocation("ShowReplicaStatus", []interface{}{})
 	fake.showSlaveStatusMutex.Unlock()
 	if stub != nil {
 		return stub()
