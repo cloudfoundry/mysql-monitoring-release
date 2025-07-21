@@ -1,7 +1,7 @@
-# code.cloudfoundry.org/bytefmt v0.43.0
+# code.cloudfoundry.org/bytefmt v0.44.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/bytefmt
-# code.cloudfoundry.org/tlsconfig v0.30.0
+# code.cloudfoundry.org/tlsconfig v0.31.0
 ## explicit; go 1.23.0
 code.cloudfoundry.org/tlsconfig
 code.cloudfoundry.org/tlsconfig/certtest
