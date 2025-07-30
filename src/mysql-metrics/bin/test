@@ -13,8 +13,8 @@ repo_dir=$(cd "${module_dir}/../.." && pwd)
 cd "${module_dir}"
 
 run() {
-	echo "\$ $*"
-	"$@"
+  echo "\$ $*"
+  "$@"
 }
 
 docker_build() {
@@ -26,8 +26,8 @@ docker_build() {
 }
 
 docker_run() {
-	run docker run \
-	  --volume="${repo_dir}:/workspace" \
+  run docker run \
+    --volume="${repo_dir}:/workspace" \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
     --volume=/var/vcap/store \
     --volume=/var/vcap/data \
@@ -37,19 +37,19 @@ docker_run() {
     --privileged \
     --network=host \
     --workdir=/workspace/src/mysql-metrics \
-		--rm \
-		mysql-metrics-test \
-		"$@"
+    --rm \
+    mysql-metrics-test \
+    "$@"
 }
 
 docker_build
 docker_run \
-	go run github.com/onsi/ginkgo/v2/ginkgo \
-	-r \
-	--compilers=2 \
-	--procs=4 \
-	-race \
-	--fail-on-pending \
-	--randomize-all \
-	--randomize-suites \
-	"$@"
+  go run github.com/onsi/ginkgo/v2/ginkgo \
+  -r \
+  --compilers=2 \
+  --procs=4 \
+  -race \
+  --fail-on-pending \
+  --randomize-all \
+  --randomize-suites \
+  "$@"
