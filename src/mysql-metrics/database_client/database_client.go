@@ -40,7 +40,22 @@ func (dc *DbClient) ShowGlobalVariables() (map[string]string, error) {
 }
 
 func (dc *DbClient) ShowSlaveStatus() (map[string]string, error) {
-	return dc.runSingleRowQuery("SHOW SLAVE STATUS", []interface{}{})
+	replicaStatus, err := dc.runSingleRowQuery("SHOW REPLICA STATUS", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(replicaStatus) == 0 {
+		return nil, nil
+	}
+
+	return map[string]string{
+		"is_follower":           "true",
+		"seconds_behind_master": replicaStatus["seconds_behind_source"],
+		"relay_log_space":       replicaStatus["relay_log_space"],
+		"slave_io_running":      replicaStatus["replica_io_running"],
+		"slave_sql_running":     replicaStatus["replica_sql_running"],
+	}, err
 }
 
 func (dc *DbClient) IsFollower() (bool, error) {
