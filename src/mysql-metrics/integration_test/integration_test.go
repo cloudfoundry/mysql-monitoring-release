@@ -2,18 +2,29 @@ package integration_test
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"testing"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
+
+	"github.com/cloudfoundry/mysql-metrics/internal/testing/docker"
 )
+
+func TestMysqlMetrics(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Integration Suite", Label("integration"))
+}
 
 type MetricsConfig struct {
 	Host                      string `json:"host"`
@@ -32,31 +43,68 @@ type MetricsConfig struct {
 	LoggregatorClientKeyPath  string `json:"loggregator_client_key_path"`
 }
 
-var _ = Describe("mysql-metrics", func() {
+var _ = DescribeTableSubtree("mysql-metrics", Ordered, func(mysqlVersion string) {
 	var (
+		metricsBinPath  string
+		resource        string
+		mysqlPort       string
 		configFilepath  string
 		tempDir         string
 		password        string
 		username        string
-		err             error
 		session         *gexec.Session
 		metricFrequency int
-		config          *MetricsConfig
 	)
+
+	BeforeAll(func() {
+		var err error
+		metricsBinPath, err = gexec.Build("github.com/cloudfoundry/mysql-metrics", "-race")
+		Expect(err).ShouldNot(HaveOccurred())
+
+		DeferCleanup(func() {
+			gexec.Kill()
+			gexec.CleanupBuildArtifacts()
+		})
+
+		resource, err = docker.RunContainer(docker.ContainerSpec{
+			Image: "percona/percona-server:" + mysqlVersion,
+			Ports: []string{"3306/tcp"},
+			Env:   []string{"MYSQL_ALLOW_EMPTY_PASSWORD=1"},
+		})
+		Expect(err).NotTo(HaveOccurred())
+		DeferCleanup(func() {
+			Expect(docker.RemoveContainer(resource)).To(Succeed())
+		})
+
+		mysqlPort, err = docker.ContainerPort(resource, "3306/tcp")
+		Expect(err).NotTo(HaveOccurred())
+
+		db, err := sql.Open("mysql", fmt.Sprintf("root@tcp(localhost:%s)/", mysqlPort))
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(db.Ping, "5m", "1s").Should(Succeed())
+		Expect(db.Exec(`CHANGE REPLICATION SOURCE TO SOURCE_HOST = 'some-host', SOURCE_USER = 'some-user', SOURCE_PASSWORD = 'some-password'`)).
+			Error().NotTo(HaveOccurred())
+		Expect(db.Exec(`START REPLICA`)).
+			Error().NotTo(HaveOccurred())
+	})
 
 	BeforeEach(func() {
 		username = "root"
 		password = ""
 
 		metricFrequency = 1
+		var err error
 		tempDir, err = os.MkdirTemp("", "")
 		Expect(err).NotTo(HaveOccurred())
+		DeferCleanup(func() {
+			Expect(os.RemoveAll(tempDir)).To(Succeed())
+		})
 		configFilepath = filepath.Join(tempDir, "metric-config.yml")
 
 		port, err := strconv.Atoi(mysqlPort)
 		Expect(err).NotTo(HaveOccurred())
 
-		config = &MetricsConfig{
+		config := &MetricsConfig{
 			Host:                      "localhost",
 			Port:                      port,
 			Username:                  username,
@@ -73,20 +121,11 @@ var _ = Describe("mysql-metrics", func() {
 			LoggregatorClientKeyPath:  "../fixtures/certs/loggregator-agent.key",
 		}
 
-	})
-
-	JustBeforeEach(func() {
 		configBytes, err := json.Marshal(config)
 		Expect(err).NotTo(HaveOccurred())
 
 		err = os.WriteFile(configFilepath, configBytes, os.ModePerm)
 		Expect(err).NotTo(HaveOccurred())
-	})
-
-	AfterEach(func() {
-		err = os.RemoveAll(tempDir)
-		Expect(err).NotTo(HaveOccurred())
-		Eventually(session.Interrupt()).Should(gexec.Exit())
 	})
 
 	runMainWithArgs := func(args ...string) {
@@ -182,4 +221,7 @@ var _ = Describe("mysql-metrics", func() {
 			Expect(contentsAsString).NotTo(ContainSubstring("innodb/buffer_pool_pages_free"))
 		})
 	})
-})
+},
+	Entry("MySQL 8.0", "8.0"),
+	Entry("MySQL 8.4", "8.4"),
+)
