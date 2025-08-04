@@ -1,5 +1,5 @@
-code.cloudfoundry.org/bytefmt v0.44.0 h1:fGxUud1BMoQZrJGR2WF2JehhrmROKGRm63ZiQOWUutA=
-code.cloudfoundry.org/bytefmt v0.44.0/go.mod h1:fEfmMxNeDqAMcclw4eab0wqCRAbvpgxhneCTwbAE02o=
+code.cloudfoundry.org/bytefmt v0.45.0 h1:zovHNXUAbVdU/vmwsrAW/I8d+wajp0imYqMGIJ53gn4=
+code.cloudfoundry.org/bytefmt v0.45.0/go.mod h1:TIjKQBrQYQyXwOINgsewcpug74FlukVV1RLNQD1EkIE=
 code.cloudfoundry.org/tlsconfig v0.31.0 h1:rhpKoyBhxc3dHYKM9tF1DV4SMzgZRAlgtCMvu0fHMvc=
 code.cloudfoundry.org/tlsconfig v0.31.0/go.mod h1:gCPA3cUJEjXzzRAN4EAlcxob11eAjAtzXGgTZa445r4=
 filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
@@ -55,8 +55,8 @@ github.com/square/certstrap v1.3.0 h1:N9P0ZRA+DjT8pq5fGDj0z3FjafRKnBDypP0QHpMlaA
 github.com/square/certstrap v1.3.0/go.mod h1:wGZo9eE1B7WX2GKBn0htJ+B3OuRl2UsdCFySNooy9hU=
 github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
 github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-go.step.sm/crypto v0.67.0 h1:1km9LmxMKG/p+mKa1R4luPN04vlJYnRLlLQrWv7egGU=
-go.step.sm/crypto v0.67.0/go.mod h1:+AoDpB0mZxbW/PmOXuwkPSpXRgaUaoIK+/Wx/HGgtAU=
+go.step.sm/crypto v0.68.0 h1:PqiEolMb+MGJkamRzmbiEp6lWqbfGESCS5yehwNJ1Tk=
+go.step.sm/crypto v0.68.0/go.mod h1:YzEeTFSsXOJg7BV4uckv3lW5/OS+3E20clU136od/sU=
 go.uber.org/automaxprocs v1.6.0 h1:O3y2/QNTOdbF+e/dpXNNW7Rx2hZ4sTIPyybbxyNqTUs=
 go.uber.org/automaxprocs v1.6.0/go.mod h1:ifeIMSnPZuznNm6jmdzmU3/bfk01Fe2fotchwEFJ8r8=
 golang.org/x/crypto v0.40.0 h1:r4x+VvoG5Fm+eJcxMaY8CQM7Lb0l1lsmjGBQ6s8BfKM=
