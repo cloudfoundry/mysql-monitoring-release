@@ -5,19 +5,20 @@ go 1.23.0
 toolchain go1.23.3
 
 require (
-	code.cloudfoundry.org/bytefmt v0.45.0
-	code.cloudfoundry.org/tlsconfig v0.32.0
+	code.cloudfoundry.org/bytefmt v0.46.0
+	code.cloudfoundry.org/tlsconfig v0.33.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.18.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/olekukonko/tablewriter v1.0.9
-	github.com/onsi/ginkgo/v2 v2.23.4
+	github.com/onsi/ginkgo/v2 v2.24.0
 	github.com/onsi/gomega v1.38.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
