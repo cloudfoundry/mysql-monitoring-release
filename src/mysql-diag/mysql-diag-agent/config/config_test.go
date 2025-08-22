@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"code.cloudfoundry.org/tlsconfig/certtest"
 	. "github.com/onsi/ginkgo/v2"
@@ -213,7 +214,7 @@ var _ = Describe("config", func() {
 					errCh <- err
 				}()
 
-				address := fmt.Sprintf("%s:%d", rootConfig.BindAddress, rootConfig.Port)
+				address := net.JoinHostPort(rootConfig.BindAddress, strconv.FormatUint(uint64(rootConfig.Port), 10))
 				conn, err := net.Dial("tcp", address)
 				Expect(err).NotTo(HaveOccurred())
 
