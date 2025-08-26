@@ -1,13 +1,9 @@
 package emit
 
 import (
+	"log/slog"
 	"time"
 )
-
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Logger
-type Logger interface {
-	Error(string, error)
-}
 
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 . Processor
 type Processor interface {
@@ -18,15 +14,13 @@ type Emitter struct {
 	processor Processor
 	interval  time.Duration
 	sleeper   func(time.Duration)
-	logger    Logger
 }
 
-func NewEmitter(processor Processor, interval time.Duration, sleeper func(time.Duration), logger Logger) Emitter {
+func NewEmitter(processor Processor, interval time.Duration, sleeper func(time.Duration)) Emitter {
 	return Emitter{
 		processor: processor,
 		interval:  interval,
 		sleeper:   sleeper,
-		logger:    logger,
 	}
 }
 
@@ -34,7 +28,7 @@ func (e Emitter) Start() {
 	for {
 		err := e.processor.Process()
 		if err != nil {
-			e.logger.Error("error processing metrics", err)
+			slog.Error("error processing metrics", "error", err)
 		}
 		e.sleeper(e.interval)
 	}
