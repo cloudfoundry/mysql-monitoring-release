@@ -6,8 +6,8 @@ toolchain go1.24.6
 
 require (
 	github.com/cloudfoundry/cf-test-helpers/v2 v2.13.0
-	github.com/onsi/ginkgo/v2 v2.25.1
-	github.com/onsi/gomega v1.38.1
+	github.com/onsi/ginkgo/v2 v2.25.2
+	github.com/onsi/gomega v1.38.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -16,7 +16,7 @@ require (
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/pprof v0.0.0-20250820193118-f64d9cf942d6 // indirect
+	github.com/google/pprof v0.0.0-20250830080959-101d87ff5bc3 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
