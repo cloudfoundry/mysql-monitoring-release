@@ -2,6 +2,7 @@ package mysql_diag_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,89 +19,27 @@ import (
 )
 
 var _ = Describe("MySQLDiag", Ordered, func() {
-
 	When("the cluster is offline", func() {
-		var instances []Instance
-		BeforeAll(func() {
-			var err error
-			instances, err = Instances(MatchByInstanceGroup("mysql"))
-			Expect(err).NotTo(HaveOccurred())
-		})
 		It("can bootstrap the cluster", func() {
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
 			By("taking the cluster offline")
-			for _, i := range instances {
-				By("taking " + i.Instance + " offline.")
-				args := []string{"ssh", i.Instance, "--command=\"sudo monit stop galera-init\""}
-				session := testhelpers.ExecuteBosh(args, 10*time.Second)
-				Expect(session.ExitCode()).To(BeZero())
-			}
+			stopJob(ctx, "mysql", "galera-init")
 
-			By("emitting diagnostic output")
-			args := []string{"ssh", "mysql-monitor", "--command=mysql-diag"}
-			session := testhelpers.ExecuteBosh(args, 1*time.Minute)
-			Expect(session.ExitCode()).To(BeZero())
-			Expect(session).To(SatisfyAll(
-				gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
-				gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
-				gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
-				gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
-			))
-
-			By("Finding the node to bootstrap")
-			args = []string{"ssh", "mysql-monitor", "--command=mysql-diag"}
-			session = testhelpers.ExecuteBosh(args, 1*time.Minute)
-			Expect(session.ExitCode()).To(BeZero())
-			boostrapNode := ""
-			for _, line := range strings.Split(string(session.Out.Contents()), "\n") {
-				if strings.Contains(line, "Bootstrap node:") {
-					boostrapNode = strings.Split(line, ":")[2]
-					boostrapNode = strings.TrimSpace(boostrapNode)
-					// remove bold and quotes
-					boostrapNode = boostrapNode[1 : len(boostrapNode)-5]
-				}
-			}
-
-			By("Bootstrapping the node: " + boostrapNode)
-			args = []string{"-d", os.Getenv("BOSH_DEPLOYMENT"), "ssh", boostrapNode, `--command="sudo bash -c \"echo -n 'NEEDS_BOOTSTRAP' > /var/vcap/store/pxc-mysql/state.txt\""`}
-			session = testhelpers.ExecuteBosh(args, 10*time.Second)
-			Expect(session.ExitCode()).To(BeZero())
-
-			args = []string{"ssh", boostrapNode, "--command=\"sudo monit start galera-init\""}
-			session = testhelpers.ExecuteBosh(args, 10*time.Second)
-			Expect(session.ExitCode()).To(BeZero())
-
-			Eventually(func() *gbytes.Buffer {
-				args = []string{"ssh", boostrapNode, "--command=\"sudo monit summary | grep galera-init\""}
-				session = testhelpers.ExecuteBosh(args, 10*time.Second)
-				return session.Out
-			}, "2m", "1s").Should(gbytes.Say(`Process 'galera-init'\s+running`))
-
-			for _, i := range instances {
-				if i.Instance != boostrapNode {
-					By("Starting the remaining node: " + i.Instance)
-					args := []string{"ssh", i.Instance, "--command=\"sudo monit start galera-init\""}
-					session := testhelpers.ExecuteBosh(args, 10*time.Second)
-					Expect(session.ExitCode()).To(BeZero())
-					Eventually(func() *gbytes.Buffer {
-						args = []string{"ssh", i.Instance, "--command=\"sudo monit summary | grep galera-init\""}
-						session = testhelpers.ExecuteBosh(args, 10*time.Second)
-						return session.Out
-					}, "2m", "1s").Should(gbytes.Say(`Process 'galera-init'\s+running`))
-				}
-			}
-
-			By("emitting diagnostic output of a healthy cluster")
-			args = []string{"ssh", "mysql-monitor", "--command=mysql-diag"}
-			session = testhelpers.ExecuteBosh(args, 1*time.Minute)
-			Expect(session.ExitCode()).To(BeZero())
-			Expect(session).To(SatisfyAll(
-				gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
-				gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-				gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-				gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-			))
+			By("emitting diagnostic output", func() {
+				output := gbytes.NewBuffer()
+				Expect(runMySQLDiag(ctx, withStdout(output))).To(Succeed())
+				Expect(output).To(SatisfyAll(
+					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
+					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
+					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
+					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
+				))
+			})
 		})
 	})
+
 	When("the cluster is online", func() {
 		When("mysql is not accepting connections", func() {
 			var instances []Instance
@@ -128,10 +67,9 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				}, "2m", "1s").Should(gbytes.Say(`Process 'galera-init'\s+running`))
 			})
 			It("emits diagnostic output", func() {
-				args := []string{"ssh", "mysql-monitor", "--command=mysql-diag"}
-				session := testhelpers.ExecuteBosh(args, 90*time.Second)
-				Expect(session.ExitCode()).To(BeZero())
-				Expect(session).To(SatisfyAll(
+				output := gbytes.NewBuffer()
+				Expect(runMySQLDiag(context.Background(), withStdout(output))).To(Succeed())
+				Expect(output).To(SatisfyAll(
 					gbytes.Say(`error retrieving galera status from node `+downInstance),
 					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
 					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
@@ -199,4 +137,49 @@ func Instances(matchInstanceFunc MatchInstanceFunc) ([]Instance, error) {
 	}
 
 	return instances, nil
+}
+
+func runMySQLDiag(ctx context.Context, options ...func(*exec.Cmd)) error {
+	cmd := exec.CommandContext(ctx, "bosh", "ssh", "mysql-monitor", "--command=mysql-diag")
+	cmd.Env = append(os.Environ(), "BOSH_DEPLOYMENT="+os.Getenv("BOSH_DEPLOYMENT"))
+	cmd.Stderr = GinkgoWriter
+	cmd.Stdout = GinkgoWriter
+
+	for _, option := range options {
+		option(cmd)
+	}
+
+	GinkgoWriter.Println("$ ", strings.Join(cmd.Args, " "))
+	return cmd.Run()
+}
+
+func withStdout(w io.Writer) func(*exec.Cmd) {
+	return func(cmd *exec.Cmd) {
+		cmd.Stdout = w
+	}
+}
+
+func runErrand(ctx context.Context, errandName, instanceGroup string) {
+	GinkgoHelper()
+
+	cmd := exec.CommandContext(ctx, "bosh", "run-errand", errandName, "--instance="+instanceGroup)
+	cmd.Env = append(os.Environ(), "BOSH_DEPLOYMENT="+os.Getenv("BOSH_DEPLOYMENT"))
+	cmd.Stderr = GinkgoWriter
+	cmd.Stdout = GinkgoWriter
+	GinkgoWriter.Println("$ ", strings.Join(cmd.Args, " "))
+	Expect(cmd.Run()).To(Succeed())
+}
+
+func stopJob(ctx context.Context, instanceGroup, jobName string) {
+	GinkgoHelper()
+	GinkgoHelper()
+
+	cmd := exec.CommandContext(ctx, "bosh", "ssh", instanceGroup, "sudo monit stop "+jobName)
+	cmd.Env = append(os.Environ(), "BOSH_DEPLOYMENT="+os.Getenv("BOSH_DEPLOYMENT"))
+	cmd.Stderr = GinkgoWriter
+	cmd.Stdout = GinkgoWriter
+
+	GinkgoWriter.Println("$ ", strings.Join(cmd.Args, " "))
+	Expect(cmd.Run()).To(Succeed())
+
 }
