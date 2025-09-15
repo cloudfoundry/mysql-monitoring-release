@@ -15,10 +15,12 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 
-	"github.com/cloudfoundry/mysql-monitoring-release/spec/testhelpers"
+	"github.com/cloudfoundry/mysql-monitoring-release/spec/utilities/bosh"
 )
 
 var _ = Describe("MySQLDiag", Ordered, func() {
+	var deploymentName = os.Getenv("BOSH_DEPLOYMENT")
+
 	When("the cluster is offline", func() {
 		It("can bootstrap the cluster", func() {
 			ctx, cancel := context.WithCancel(context.Background())
@@ -37,6 +39,34 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
 				))
 			})
+
+			By("monitoring the bootstrap process in the background")
+			go func() {
+				ticker := time.NewTicker(time.Second)
+				defer ticker.Stop()
+				for range ticker.C {
+					select {
+					case <-ctx.Done():
+						return
+					default:
+						_ = runMySQLDiag(ctx, withStdout(io.Discard))
+					}
+				}
+			}()
+
+			By("Bootstrapping the cluster again")
+			runErrand(ctx, "bootstrap", "mysql/0")
+
+			By("emitting diagnostic output of a healthy cluster", func() {
+				output := gbytes.NewBuffer()
+				Expect(runMySQLDiag(ctx, withStdout(output))).To(Succeed())
+				Expect(output).To(SatisfyAll(
+					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
+					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
+					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
+					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
+				))
+			})
 		})
 	})
 
@@ -50,22 +80,20 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				Expect(err).NotTo(HaveOccurred())
 				downInstance = instances[0].Instance
 				By("stopping mysqld on " + downInstance)
-				args := []string{"ssh", downInstance, "-c", "sudo kill -s STOP $(pidof mysqld)"}
-				session := testhelpers.ExecuteBosh(args, 10*time.Second)
-
-				Expect(session.ExitCode()).To(BeZero())
+				Expect(bosh.RemoteCommand(deploymentName, downInstance, `sudo kill -s STOP $(pidof mysqld)`)).
+					Error().NotTo(HaveOccurred())
+				DeferCleanup(func() {
+					Expect(bosh.RemoteCommand(deploymentName, downInstance, `sudo kill -s CONT $(pidof mysqld)`)).
+						Error().NotTo(HaveOccurred())
+					Expect(bosh.RemoteCommand(deploymentName, downInstance, `sudo monit restart galera-init`)).
+						Error().NotTo(HaveOccurred())
+					Eventually(func() string {
+						output, _ := bosh.RemoteCommand(deploymentName, downInstance, `sudo monit summary | grep galera-init`)
+						return output
+					}, "2m", "1s").Should(MatchRegexp(`Process 'galera-init'\s+running`))
+				})
 			})
-			AfterEach(func() {
-				args := []string{"ssh", downInstance, "sudo monit restart galera-init"}
-				session := testhelpers.ExecuteBosh(args, 10*time.Second)
-				Expect(session.ExitCode()).To(BeZero())
 
-				Eventually(func() *gbytes.Buffer {
-					args = []string{"ssh", downInstance, "--command=\"sudo monit summary | grep galera-init\""}
-					session = testhelpers.ExecuteBosh(args, 10*time.Second)
-					return session.Out
-				}, "2m", "1s").Should(gbytes.Say(`Process 'galera-init'\s+running`))
-			})
 			It("emits diagnostic output", func() {
 				output := gbytes.NewBuffer()
 				Expect(runMySQLDiag(context.Background(), withStdout(output))).To(Succeed())
@@ -140,6 +168,8 @@ func Instances(matchInstanceFunc MatchInstanceFunc) ([]Instance, error) {
 }
 
 func runMySQLDiag(ctx context.Context, options ...func(*exec.Cmd)) error {
+	GinkgoHelper()
+
 	cmd := exec.CommandContext(ctx, "bosh", "ssh", "mysql-monitor", "--command=mysql-diag")
 	cmd.Env = append(os.Environ(), "BOSH_DEPLOYMENT="+os.Getenv("BOSH_DEPLOYMENT"))
 	cmd.Stderr = GinkgoWriter
@@ -149,7 +179,9 @@ func runMySQLDiag(ctx context.Context, options ...func(*exec.Cmd)) error {
 		option(cmd)
 	}
 
-	GinkgoWriter.Println("$ ", strings.Join(cmd.Args, " "))
+	GinkgoWriter.Println("$", strings.Join(cmd.Args, " "))
+	GinkgoWriter.Println()
+
 	return cmd.Run()
 }
 
