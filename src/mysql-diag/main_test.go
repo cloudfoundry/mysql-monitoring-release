@@ -177,6 +177,7 @@ var _ = Describe("mysql-diag cli", func() {
 
 		Eventually(session.Out).Should(gbytes.Say("INSTANCE"))
 		Eventually(session.Out).Should(gbytes.Say(`\[0\] mysql/uuid`))
+		//FOR PAIR REVIEW - this doesn't feel great
 		Consistently(session.Out).Should(Not(gbytes.Say("NOTE: Proxies will currently attempt to direct traffic to \"mysql/.*\"")))
 
 		Eventually(session, executableTimeout).Should(gexec.Exit(0))

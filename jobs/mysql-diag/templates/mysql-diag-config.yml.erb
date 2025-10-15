@@ -39,7 +39,21 @@ if_link('galera-agent') do |link|
       server_name: link.p('endpoint_tls.server_name'),
     },
   }
+end
 
+if_link('proxy') do |link|
+  proxies = link.instances.map do |instance|
+    {
+      username: link.p('api_username'),
+      password: link.p('api_password'),
+      host: instance.address,
+      port: link.p('api_port'),
+      backends_endpoint: 'v0/backends',
+      name: "#{instance.name}/#{instance.id}",
+    }
+  end
+
+  config[:proxies] = proxies
 end
 
 if_p('db_username', 'db_password') do |db_username, db_password|

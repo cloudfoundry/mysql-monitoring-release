@@ -17,6 +17,7 @@ import (
 type Config struct {
 	Mysql       MysqlConfig        `yaml:"mysql"`
 	GaleraAgent *GaleraAgentConfig `yaml:"galera_agent"`
+	Proxies     []Proxy            `yaml:"proxies"`
 }
 
 type GaleraAgentConfig struct {
@@ -58,6 +59,15 @@ type TLS struct {
 	Enabled    bool   `yaml:"enabled"`
 	CA         string `yaml:"ca"`
 	ServerName string `yaml:"server_name"`
+}
+
+type Proxy struct {
+	Username         string `yaml:"username"`
+	Password         string `yaml:"password"`
+	Host             string `yaml:"host"`
+	Port             int    `yaml:"port"`
+	BackendsEndpoint string `yaml:"backends_endpoint"`
+	Name             string `yaml:"name"`
 }
 
 func (mysqlConfig *MysqlConfig) ConnectionString(node MysqlNode) string {

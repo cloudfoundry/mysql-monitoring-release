@@ -9,6 +9,7 @@ import (
 	"github.com/cloudfoundry/mysql-diag/config"
 	"github.com/cloudfoundry/mysql-diag/data"
 	"github.com/cloudfoundry/mysql-diag/msg"
+	"github.com/cloudfoundry/mysql-diag/proxy"
 	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
@@ -33,7 +34,11 @@ func main() {
 
 	printCurrentTime()
 
-	aggregator := data.NewAggregator(c.Mysql, c.GaleraAgent)
+	var proxyClients []proxy.Client
+	for _, proxyConfig := range c.Proxies {
+		proxyClients = append(proxyClients, proxy.NewProxyClient(proxyConfig))
+	}
+	aggregator := data.NewAggregator(c.Mysql, c.GaleraAgent, proxyClients)
 	aggregatedData := aggregator.Aggregate()
 
 	table := ui.NewTable(os.Stdout)
@@ -45,6 +50,7 @@ func main() {
 		NeedsBootstrap:      aggregatedData.NeedsBootstrap,
 		DiskSpaceIssues:     aggregatedData.DiskSpaceIssues,
 		NodeClusterStatuses: aggregatedData.NodeClusterStatuses,
+		Proxies:             aggregatedData.Proxies,
 	})
 
 	for _, message := range messages {

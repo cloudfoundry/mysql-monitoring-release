@@ -16,6 +16,9 @@ consumes:
 - name: galera-agent
   type: galera-agent
   optional: true
+- name: proxy
+  type: proxy
+  optional: true
 
 properties:
   db_username:

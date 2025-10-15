@@ -5,6 +5,7 @@ import (
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/disk"
 	mysqlAgentClient "github.com/cloudfoundry/mysql-diag/galera-agent-client"
+	"github.com/cloudfoundry/mysql-diag/proxy"
 )
 
 type Data struct {
@@ -14,17 +15,26 @@ type Data struct {
 	DiskSpaceIssues []disk.DiskSpaceIssue
 
 	NeedsBootstrap bool
+
+	Proxies []Proxy
+}
+
+type Proxy struct {
+	Name     string
+	Backends []proxy.Backend
 }
 
 type aggregator struct {
-	mySQL       config.MysqlConfig
-	galeraAgent *config.GaleraAgentConfig
+	mySQL        config.MysqlConfig
+	galeraAgent  *config.GaleraAgentConfig
+	proxyClients []proxy.Client
 }
 
-func NewAggregator(mysql config.MysqlConfig, galeraAgent *config.GaleraAgentConfig) aggregator {
+func NewAggregator(mysql config.MysqlConfig, galeraAgent *config.GaleraAgentConfig, proxyClients []proxy.Client) aggregator {
 	return aggregator{
-		mySQL:       mysql,
-		galeraAgent: galeraAgent,
+		mySQL:        mysql,
+		galeraAgent:  galeraAgent,
+		proxyClients: proxyClients,
 	}
 }
 
@@ -47,10 +57,19 @@ func (a aggregator) Aggregate() Data {
 		statuses = append(statuses, value)
 	}
 
+	var proxies []Proxy
+	for _, client := range a.proxyClients {
+		backends := client.Backends()
+		proxies = append(proxies, Proxy{
+			Name:     client.Name,
+			Backends: backends,
+		})
+	}
 	return Data{
 		NodeClusterStatuses: statuses,
 		NodeDiskInfo:        nodeDiskInfos,
 		DiskSpaceIssues:     diskSpaceIssues,
 		NeedsBootstrap:      needsBootstrap,
+		Proxies:             proxies,
 	}
 }

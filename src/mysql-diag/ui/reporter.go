@@ -4,7 +4,9 @@ import (
 	"cmp"
 	"fmt"
 	"slices"
+	"strings"
 
+	"github.com/cloudfoundry/mysql-diag/data"
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/disk"
 	"github.com/cloudfoundry/mysql-diag/msg"
@@ -14,6 +16,7 @@ type ReporterParams struct {
 	NeedsBootstrap      bool
 	DiskSpaceIssues     []disk.DiskSpaceIssue
 	NodeClusterStatuses []*database.NodeClusterStatus
+	Proxies             []data.Proxy
 }
 
 func Report(params ReporterParams) []string {
@@ -46,17 +49,21 @@ Do not perform the following unless instructed by Pivotal Support:
 `)
 	}
 	if !params.NeedsBootstrap {
-
-		name := ""
-		minLocalIndex := maxUUID
-		for _, status := range params.NodeClusterStatuses {
-			if status.Status.LocalIndex != "" && status.Status.LocalIndex < minLocalIndex {
-				minLocalIndex = status.Status.LocalIndex
-				name = fmt.Sprintf("%s/%s", status.Node.Name, status.Node.UUID)
+		var activeBackends []string
+		for _, proxy := range params.Proxies {
+			for _, backend := range proxy.Backends {
+				if backend.Active {
+					activeBackends = append(activeBackends, backend.Name)
+				}
 			}
 		}
-
-		messages = append(messages, msg.Alert(fmt.Sprintf("NOTE: Proxies will currently attempt to direct traffic to \"%s\"", name)))
+		slices.Sort(activeBackends)
+		activeBackends = slices.Compact(activeBackends)
+		if len(activeBackends) > 1 {
+			messages = append(messages, msg.Error(fmt.Sprintf("MISMATCHED ACTIVE BACKENDS:\n%s\n", strings.Join(activeBackends, "\n"))))
+		} else {
+			messages = append(messages, msg.Alert(fmt.Sprintf("NOTE: Proxies will currently attempt to direct traffic to \"%s\"", activeBackends[0])))
+		}
 	}
 
 	return messages
