@@ -151,6 +151,8 @@ builds:
     version: "4"
   eebf3760-b0ac-4854-6d97-a7702f0953e6:
     version: 9.24.0
+  f27d929f-54f4-4e49-45c2-c32594c7049d:
+    version: 10.32.0
   f386deda-b520-450d-70e8-5d72de750246:
     version: 8.17.0
   f51eab8f-83a6-4ec6-7ef7-ba1f0ebce2d7:
