@@ -5,8 +5,10 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/cloudfoundry/mysql-diag/config"
+	"github.com/cloudfoundry/mysql-diag/data"
 	"github.com/cloudfoundry/mysql-diag/database"
 	"github.com/cloudfoundry/mysql-diag/disk"
+	"github.com/cloudfoundry/mysql-diag/proxy"
 	"github.com/cloudfoundry/mysql-diag/ui"
 )
 
@@ -53,6 +55,25 @@ var _ = Describe("Reporter", func() {
 				NeedsBootstrap:      needsBootstrap,
 				DiskSpaceIssues:     diskSpaceIssues,
 				NodeClusterStatuses: nodeClusterStatuses,
+				Proxies: []data.Proxy{
+					{
+						Name: "proxy/0",
+						Backends: []proxy.Backend{
+							{
+								Name:   "mysql/0",
+								Active: true,
+							},
+							{
+								Name:   "mysql/1",
+								Active: false,
+							},
+							{
+								Name:   "mysql/2",
+								Active: false,
+							},
+						},
+					},
+				},
 			})
 
 			Expect(len(messages)).To(Equal(1))
@@ -196,6 +217,25 @@ var _ = Describe("Reporter", func() {
 					},
 					Status: &database.GaleraStatus{
 						LocalIndex: "8e9483c8-beed",
+					},
+				},
+			},
+			Proxies: []data.Proxy{
+				{
+					Name: "proxy/0",
+					Backends: []proxy.Backend{
+						{
+							Name:   "mysql/cf85ed2f-3ec1-4cfe-98aa-1d9c56896ce8",
+							Active: true,
+						},
+						{
+							Name:   "mysql/1",
+							Active: false,
+						},
+						{
+							Name:   "mysql/2",
+							Active: false,
+						},
 					},
 				},
 			},

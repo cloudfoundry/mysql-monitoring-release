@@ -61,7 +61,7 @@ Do not perform the following unless instructed by Pivotal Support:
 		activeBackends = slices.Compact(activeBackends)
 		if len(activeBackends) > 1 {
 			messages = append(messages, msg.Error(fmt.Sprintf("MISMATCHED ACTIVE BACKENDS:\n%s\n", strings.Join(activeBackends, "\n"))))
-		} else {
+		} else if len(activeBackends) == 1 {
 			messages = append(messages, msg.Alert(fmt.Sprintf("NOTE: Proxies will currently attempt to direct traffic to \"%s\"", activeBackends[0])))
 		}
 	}

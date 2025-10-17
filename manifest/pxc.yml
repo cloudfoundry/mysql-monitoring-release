@@ -166,6 +166,8 @@ instance_groups:
         certificate: ((proxy-tls.certificate))
         enabled: true
         private_key: ((proxy-tls.private_key))
+        ca: ((proxy-tls.ca))
+        server_name: proxy-tls
       metrics:
         server_name: proxy-tls
     release: pxc

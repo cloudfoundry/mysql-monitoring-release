@@ -1,11 +1,13 @@
 package proxy
 
 import (
-	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
+
+	"code.cloudfoundry.org/tlsconfig"
 
 	"github.com/cloudfoundry/mysql-diag/config"
 )
@@ -21,20 +23,28 @@ type Client struct {
 }
 
 func NewProxyClient(config config.Proxy) Client {
+	httpClient := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+	if config.TLS.Enabled {
+		certPool := x509.NewCertPool()
+		certPool.AppendCertsFromPEM([]byte(config.TLS.CA))
+		tlsClientConfig, _ := tlsconfig.Build(
+			tlsconfig.WithInternalServiceDefaults(),
+		).Client(
+			tlsconfig.WithAuthority(certPool),
+			tlsconfig.WithServerName(config.TLS.ServerName),
+		)
+		httpClient.Transport = &http.Transport{TLSClientConfig: tlsClientConfig}
+	}
+
 	return Client{
 		username:         config.Username,
 		password:         config.Password,
 		host:             config.Host,
 		port:             config.Port,
 		backendsEndpoint: config.BackendsEndpoint,
-		httpClient: &http.Client{
-			Timeout: 10 * time.Second,
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			},
-		},
+		httpClient:       httpClient,
 	}
 }
 

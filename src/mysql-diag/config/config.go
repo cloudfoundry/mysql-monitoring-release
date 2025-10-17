@@ -68,6 +68,7 @@ type Proxy struct {
 	Port             int    `yaml:"port"`
 	BackendsEndpoint string `yaml:"backends_endpoint"`
 	Name             string `yaml:"name"`
+	TLS              TLS    `yaml:"tls"`
 }
 
 func (mysqlConfig *MysqlConfig) ConnectionString(node MysqlNode) string {

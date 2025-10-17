@@ -50,6 +50,14 @@ if_link('proxy') do |link|
       port: link.p('api_port'),
       backends_endpoint: 'v0/backends',
       name: "#{instance.name}/#{instance.id}",
+      # this assumes a dev PXC release is created, with proxy job that provides:
+      # - api_tls.enabled, job spec property already exists
+      # - api_tls.ca, new property that needs to be created
+      tls: {
+        enabled: link.p('api_tls.enabled'),
+        ca: link.p('api_tls.ca'),
+        server_name: link.p('api_tls.server_name'),
+      }
     }
   end
 
