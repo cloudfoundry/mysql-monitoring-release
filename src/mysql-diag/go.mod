@@ -5,8 +5,8 @@ go 1.24.0
 toolchain go1.24.6
 
 require (
-	code.cloudfoundry.org/bytefmt v0.54.0
-	code.cloudfoundry.org/tlsconfig v0.35.0
+	code.cloudfoundry.org/bytefmt v0.55.0
+	code.cloudfoundry.org/tlsconfig v0.36.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.18.0
 	github.com/go-sql-driver/mysql v1.9.3
@@ -29,7 +29,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/square/certstrap v1.3.0 // indirect
-	go.step.sm/crypto v0.71.0 // indirect
+	go.step.sm/crypto v0.72.0 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.43.0 // indirect
