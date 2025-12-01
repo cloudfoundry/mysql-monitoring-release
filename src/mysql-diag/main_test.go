@@ -184,7 +184,7 @@ var _ = Describe("mysql-diag cli", func() {
 
 	It("tells us that we need bootstrap", func() {
 		session := runMainWithArgs()
-		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] You must bootstrap the cluster. Follow these instructions: https://docs\.vmware\.com/en/VMware-SQL-with-MySQL-for-Tanzu-Application-Service/3\.2/mysql-for-tas/bootstrapping\.html`))
+		Eventually(session.Out).Should(gbytes.Say(`\[CRITICAL\] You must bootstrap the cluster. Follow these instructions: https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-mysql-tanzu-platform/10-1/mysql-tp/bootstrapping.html`))
 	})
 
 	It("renders a disk information table", func() {
