@@ -6,10 +6,10 @@ toolchain go1.24.6
 
 require (
 	code.cloudfoundry.org/go-loggregator/v9 v9.2.1
-	code.cloudfoundry.org/lager/v3 v3.54.0
+	code.cloudfoundry.org/lager/v3 v3.55.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/go-sql-driver/mysql v1.9.3
-	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.0
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.1
 	github.com/onsi/ginkgo/v2 v2.27.2
 	github.com/onsi/gomega v1.38.2
 	github.com/prometheus/procfs v0.19.2
@@ -17,8 +17,8 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/go-diodes v0.0.0-20251110090230-86c716268a29 // indirect
-	code.cloudfoundry.org/tlsconfig v0.39.0 // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20251124091730-becfb70ab838 // indirect
+	code.cloudfoundry.org/tlsconfig v0.41.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
@@ -34,7 +34,7 @@ require (
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251111163417-95abcf5c77ba // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251124214823-79d6a2a48846 // indirect
 	google.golang.org/grpc v1.77.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 )
