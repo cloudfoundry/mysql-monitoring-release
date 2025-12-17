@@ -152,7 +152,7 @@ instance_groups:
     release: loggregator-agent
   name: mysql
   networks:
-  - name: ((network_name))
+  - name: ((network))
   persistent_disk: 10000
   stemcell: default
   vm_type: ((vm_type))
@@ -171,7 +171,7 @@ instance_groups:
     release: pxc
   name: proxy
   networks:
-  - name: ((network_name))
+  - name: ((network))
   stemcell: default
   vm_type: ((vm_type))
 - azs: ((azs))
@@ -184,7 +184,7 @@ instance_groups:
     release: mysql-monitoring
   name: mysql-monitor
   networks:
-  - name: ((network_name))
+  - name: ((network))
   stemcell: default
   vm_type: ((vm_type))
 releases:
