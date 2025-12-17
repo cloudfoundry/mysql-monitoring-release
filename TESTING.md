@@ -63,14 +63,14 @@ System tests require a running BOSH environment with Cloud Foundry and MySQL dep
    export cf_deployment_name=$(bosh ds --json | yq '.Tables[].Rows[].name|select(test("^cf"))')
    
    # Set deployment configuration
-   export azs='[az-0,az-1,az-2]'
-   export network_name=deployment-network
-   export vm_type=medium
+   export BOSH_VAR_azs='[az-0,az-1,az-2]'
+   export BOSH_VAR_network=deployment-network
+   export BOSH_VAR_vm_type=medium
    
    # Extract TLS certificates from Ops Manager
-   export loggregator_tls_ca="$(om certificate-authority --cert-pem)"
-   export loggregator_tls_client_cert="((/opsmgr/$cf_deployment_name/doppler/metron_tls_cert.cert_pem))"
-   export loggregator_tls_client_key="((/opsmgr/$cf_deployment_name/doppler/metron_tls_cert.private_key_pem))"
+   export BOSH_VAR_loggregator_tls_ca="$(echo "|-"; om certificate-authority --cert-pem | sed 's/^/  /')"
+   export BOSH_VAR_loggregator_tls_client_cert="((/opsmgr/$cf_deployment_name/doppler/metron_tls_cert.cert_pem))"
+   export BOSH_VAR_loggregator_tls_client_key="((/opsmgr/$cf_deployment_name/doppler/metron_tls_cert.private_key_pem))"
    ```
 
 ### Deploy MySQL with Monitoring
@@ -173,7 +173,7 @@ Tests BOSH job templates:
 
 2. **Missing environment variables**: Verify all required environment variables are set:
    ```bash
-   env | grep -E "(cf_deployment_name|azs|network_name|vm_type|loggregator_)"
+   env | grep -E "(cf_deployment_name|azs|network|vm_type|loggregator_)"
    ```
 
 3. **Certificate issues**: If TLS certificate extraction fails, verify Ops Manager connectivity:
