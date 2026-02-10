@@ -4,7 +4,7 @@ go 1.24.9
 
 require (
 	code.cloudfoundry.org/go-loggregator/v9 v9.2.1
-	code.cloudfoundry.org/lager/v3 v3.60.0
+	code.cloudfoundry.org/lager/v3 v3.61.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.1
@@ -16,7 +16,7 @@ require (
 
 require (
 	code.cloudfoundry.org/go-diodes v0.0.0-20260209061029-a81ffbc46978 // indirect
-	code.cloudfoundry.org/tlsconfig v0.44.0 // indirect
+	code.cloudfoundry.org/tlsconfig v0.45.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
