@@ -135,6 +135,8 @@ builds:
     version: 10.14.0
   d9644cc9-602c-4294-b1ff-9e5d6be1e00b:
     version: 7.2.0
+  d972b49a-a1fa-4f66-7316-8c6f53bc8ac5:
+    version: 10.35.0
   dd9b7926-8a73-4148-7a6f-5f1b6d6f5797:
     version: 10.21.0
   e065ff09-35b4-4b91-57f8-31a5c8374dc2:
