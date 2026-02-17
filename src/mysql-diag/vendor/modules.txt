@@ -15,7 +15,7 @@ github.com/DATA-DOG/go-sqlmock
 # github.com/Masterminds/semver/v3 v3.4.0
 ## explicit; go 1.21
 github.com/Masterminds/semver/v3
-# github.com/clipperhouse/uax29/v2 v2.6.0
+# github.com/clipperhouse/uax29/v2 v2.7.0
 ## explicit; go 1.18
 github.com/clipperhouse/uax29/v2/graphemes
 # github.com/fatih/color v1.18.0
