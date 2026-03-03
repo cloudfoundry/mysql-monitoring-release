@@ -10,7 +10,7 @@ require (
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.1
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1
-	github.com/prometheus/procfs v0.20.0
+	github.com/prometheus/procfs v0.20.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -22,17 +22,17 @@ require (
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/pprof v0.0.0-20260202012954-cb029daf43ef // indirect
+	github.com/google/pprof v0.0.0-20260302011040-a15ffb7f9dcc // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/mod v0.33.0 // indirect
-	golang.org/x/net v0.50.0 // indirect
+	golang.org/x/net v0.51.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 	golang.org/x/tools v0.42.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260223185530-2f722ef697dc // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260226221140-a57be14db171 // indirect
 	google.golang.org/grpc v1.79.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
