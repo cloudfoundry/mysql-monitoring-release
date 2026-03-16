@@ -33,10 +33,10 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				output := gbytes.NewBuffer()
 				Expect(runMySQLDiag(ctx, withStdout(output))).To(Succeed())
 				Expect(output).To(SatisfyAll(
-					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
+					gbytes.Say(`INSTANCE\s+\|\s+STATE\s+\|\s+CLUSTER STATUS`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+N/A - ERROR\s+\|\s+N/A - ERROR\s+\|`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+N/A - ERROR\s+\|\s+N/A - ERROR\s+\|`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+N/A - ERROR\s+\|\s+N/A - ERROR\s+\|`),
 				))
 			})
 
@@ -61,10 +61,10 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				output := gbytes.NewBuffer()
 				Expect(runMySQLDiag(ctx, withStdout(output))).To(Succeed())
 				Expect(output).To(SatisfyAll(
-					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
+					gbytes.Say(`INSTANCE\s+\|\s+STATE\s+\|\s+CLUSTER STATUS`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
 				))
 			})
 		})
@@ -99,10 +99,10 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				Expect(runMySQLDiag(context.Background(), withStdout(output))).To(Succeed())
 				Expect(output).To(SatisfyAll(
 					gbytes.Say(`error retrieving galera status from node `+downInstance),
-					gbytes.Say(`SEQNO\s+|\s+PERSISTENT DISK USED\s+\|\s+EPHEMERAL DISK USED`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-					gbytes.Say(`\s+[0-9]+\s+|\s+Synced\s+\|\s+Primary\s+\|`),
-					gbytes.Say(`\s+-1+\s+|\s+N/A - ERROR\s+\|\s+ N/A - ERROR\s+\|`),
+					gbytes.Say(`INSTANCE\s+\|\s+STATE\s+\|\s+CLUSTER STATUS`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
+					gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+N/A - ERROR\s+\|\s+N/A - ERROR\s+\|`),
 				))
 			})
 		})
