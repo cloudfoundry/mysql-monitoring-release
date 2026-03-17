@@ -106,6 +106,78 @@ var _ = Describe("MySQLDiag", Ordered, func() {
 				))
 			})
 		})
+
+		When("a node initiates SST while mysql-diag is running", func() {
+			BeforeEach(func() {
+				ctx, cancel := context.WithCancel(context.Background())
+				defer cancel()
+
+				By("continuously running mysql-diag in the background")
+				go func() {
+					ticker := time.NewTicker(time.Second)
+					defer ticker.Stop()
+					for range ticker.C {
+						select {
+						case <-ctx.Done():
+							return
+						default:
+							_ = runMySQLDiag(ctx, withStdout(io.Discard))
+						}
+					}
+				}()
+			})
+
+			It("completes SST and rejoins the cluster", func() {
+				var downInstance string
+				instances, err := Instances(MatchByInstanceGroup("mysql"))
+				Expect(err).NotTo(HaveOccurred())
+				downInstance = instances[0].Instance
+
+				By("stopping galera-init on " + downInstance)
+				Expect(bosh.RemoteCommand(deploymentName, downInstance, `sudo monit stop galera-init`)).
+					Error().NotTo(HaveOccurred())
+				Eventually(func() string {
+					output, _ := bosh.RemoteCommand(deploymentName, downInstance, `sudo monit summary | grep galera-init`)
+					return output
+				}, "2m", "5s").Should(MatchRegexp(`Process 'galera-init'\s+not monitored`))
+				DeferCleanup(func() {
+					Expect(bosh.RemoteCommand(deploymentName, downInstance, `sudo monit restart galera-init`)).
+						Error().NotTo(HaveOccurred())
+					Eventually(func() string {
+						output, _ := bosh.RemoteCommand(deploymentName, downInstance, `sudo monit summary | grep galera-init`)
+						return output
+					}, "2m", "1s").Should(MatchRegexp(`Process 'galera-init'\s+running`))
+				})
+
+				By("purging state information to trigger SST upon node restart")
+				_, err = bosh.RemoteCommand(deploymentName, downInstance, `sudo bash -c 'rm -rf /var/vcap/store/pxc-mysql/grastate.dat'`)
+				Expect(err).NotTo(HaveOccurred())
+
+				By("(re)starting galera-init on " + downInstance)
+				Eventually(func() error {
+					_, e := bosh.RemoteCommand(deploymentName, downInstance, `sudo monit start galera-init`)
+					return e
+				}, "2m", "5s").Should(Succeed(), "galera-init failed to start")
+
+				By("seeing " + downInstance + " has rejoined the cluster successfully")
+				Eventually(func() string {
+					output, _ := bosh.RemoteCommand(deploymentName, downInstance, `sudo monit summary | grep galera-init`)
+					return output
+				}, "2m", "5s").Should(MatchRegexp(`Process 'galera-init'\s+running`))
+
+				By("seeing diagnostic output showing the previously-stopped node is synced")
+				Eventually(func(g Gomega) {
+					output := gbytes.NewBuffer()
+					g.Expect(runMySQLDiag(context.Background(), withStdout(output))).To(Succeed())
+					g.Expect(output).To(SatisfyAll(
+						gbytes.Say(`INSTANCE\s+\|\s+STATE\s+\|\s+CLUSTER STATUS`),
+						gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
+						gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
+						gbytes.Say(`mysql/[0-9a-f-]+\s+\|\s+Synced\s+\|\s+Primary\s+\|`),
+					))
+				}, "5m", "5s").Should(Succeed())
+			})
+		})
 	})
 })
 
