@@ -3,10 +3,10 @@ module github.com/cloudfoundry/mysql-diag
 go 1.25.0
 
 require (
-	code.cloudfoundry.org/bytefmt v0.66.0
-	code.cloudfoundry.org/tlsconfig v0.47.0
+	code.cloudfoundry.org/bytefmt v0.67.0
+	code.cloudfoundry.org/tlsconfig v0.48.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/fatih/color v1.18.0
+	github.com/fatih/color v1.19.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/olekukonko/tablewriter v1.1.3
 	github.com/onsi/ginkgo/v2 v2.28.1
@@ -27,7 +27,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.21 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/square/certstrap v1.3.0 // indirect
-	go.step.sm/crypto v0.76.2 // indirect
+	go.step.sm/crypto v0.77.1 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.49.0 // indirect
 	golang.org/x/mod v0.34.0 // indirect

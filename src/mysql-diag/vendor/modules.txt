@@ -1,7 +1,7 @@
-# code.cloudfoundry.org/bytefmt v0.66.0
+# code.cloudfoundry.org/bytefmt v0.67.0
 ## explicit; go 1.25.0
 code.cloudfoundry.org/bytefmt
-# code.cloudfoundry.org/tlsconfig v0.47.0
+# code.cloudfoundry.org/tlsconfig v0.48.0
 ## explicit; go 1.25.0
 code.cloudfoundry.org/tlsconfig
 code.cloudfoundry.org/tlsconfig/certtest
@@ -18,8 +18,8 @@ github.com/Masterminds/semver/v3
 # github.com/clipperhouse/uax29/v2 v2.7.0
 ## explicit; go 1.18
 github.com/clipperhouse/uax29/v2/graphemes
-# github.com/fatih/color v1.18.0
-## explicit; go 1.17
+# github.com/fatih/color v1.19.0
+## explicit; go 1.25.0
 github.com/fatih/color
 # github.com/go-logr/logr v1.4.3
 ## explicit; go 1.18
@@ -99,8 +99,8 @@ github.com/pkg/errors
 # github.com/square/certstrap v1.3.0
 ## explicit; go 1.18
 github.com/square/certstrap/pkix
-# go.step.sm/crypto v0.76.2
-## explicit; go 1.24.0
+# go.step.sm/crypto v0.77.1
+## explicit; go 1.25.0
 go.step.sm/crypto/fingerprint
 go.step.sm/crypto/internal/bcrypt_pbkdf
 go.step.sm/crypto/internal/emoji
