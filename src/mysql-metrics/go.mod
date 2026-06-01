@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	code.cloudfoundry.org/go-loggregator/v9 v9.2.1
-	code.cloudfoundry.org/lager/v3 v3.70.0
+	code.cloudfoundry.org/lager/v3 v3.71.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.12.2
@@ -15,8 +15,8 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/go-diodes v0.0.0-20260518082450-53acbbed6d0f // indirect
-	code.cloudfoundry.org/tlsconfig v0.55.0 // indirect
+	code.cloudfoundry.org/go-diodes v0.0.0-20260526122959-0284fcb5ac88 // indirect
+	code.cloudfoundry.org/tlsconfig v0.56.0 // indirect
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
@@ -32,7 +32,7 @@ require (
 	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
 	golang.org/x/tools v0.45.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260523011958-0a33c5d7ca68 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 	google.golang.org/grpc v1.81.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
