@@ -1,6 +1,7 @@
 package config
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"database/sql"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 	"os"
 
 	"code.cloudfoundry.org/tlsconfig"
+	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/yaml.v2"
 
@@ -28,12 +30,14 @@ type GaleraAgentConfig struct {
 }
 
 type MysqlConfig struct {
-	Username  string           `yaml:"username"`
-	Password  string           `yaml:"password"`
-	Port      uint             `yaml:"port"`
-	Agent     *AgentConfig     `yaml:"agent"`
-	Threshold *ThresholdConfig `yaml:"threshold"`
-	Nodes     []MysqlNode      `yaml:"nodes"`
+	Username   string           `yaml:"username"`
+	Password   string           `yaml:"password"`
+	Port       uint             `yaml:"port"`
+	Agent      *AgentConfig     `yaml:"agent"`
+	Threshold  *ThresholdConfig `yaml:"threshold"`
+	Nodes      []MysqlNode      `yaml:"nodes"`
+	CA         string           `yaml:"ca"`
+	ServerName string           `yaml:"server_name"`
 }
 
 type AgentConfig struct {
@@ -61,7 +65,7 @@ type TLS struct {
 }
 
 func (mysqlConfig *MysqlConfig) ConnectionString(node MysqlNode) string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/?timeout=10s&readTimeout=10s&tls=preferred", mysqlConfig.Username, mysqlConfig.Password, node.Host, mysqlConfig.Port)
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/?timeout=10s&readTimeout=10s&tls=mysql-diag", mysqlConfig.Username, mysqlConfig.Password, node.Host, mysqlConfig.Port)
 }
 
 func (mysqlConfig *MysqlConfig) Connection(node MysqlNode) *sql.DB {
@@ -116,5 +120,41 @@ func LoadFromFile(filepath string) (*Config, error) {
 		return nil, err
 	}
 
+	if err = initializeMySQLTLS(c.Mysql); err != nil {
+		return nil, err
+	}
+
 	return &c, nil
+}
+
+func initializeMySQLTLS(mysqlCfg MysqlConfig) error {
+	var tlsCfg *tls.Config
+
+	switch {
+	case mysqlCfg.CA != "" && mysqlCfg.ServerName != "":
+		pool, err := parseCACertPool(mysqlCfg.CA)
+		if err != nil {
+			return err
+		}
+		tlsCfg = &tls.Config{RootCAs: pool, ServerName: mysqlCfg.ServerName}
+
+	case mysqlCfg.CA != "" || mysqlCfg.ServerName != "":
+		return fmt.Errorf("db_tls.ca and db_tls.server_name must both be set or both be omitted")
+
+	default:
+		tlsCfg = &tls.Config{InsecureSkipVerify: true}
+	}
+
+	if err := mysql.RegisterTLSConfig("mysql-diag", tlsCfg); err != nil {
+		return fmt.Errorf("failed to register mysql TLS config: %v", err)
+	}
+	return nil
+}
+
+func parseCACertPool(ca string) (*x509.CertPool, error) {
+	pool := x509.NewCertPool()
+	if ok := pool.AppendCertsFromPEM([]byte(ca)); !ok {
+		return nil, fmt.Errorf("mysql CA: not valid PEM-encoded certificate data")
+	}
+	return pool, nil
 }

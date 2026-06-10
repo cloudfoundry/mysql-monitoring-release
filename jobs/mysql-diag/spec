@@ -22,3 +22,13 @@ properties:
     description: MySQL username to connect to cluster nodes
   db_password:
     description: MySQL password to connect to cluster nodes
+  db_tls.ca:
+    description: |
+      PEM-encoded CA certificate used to verify the MySQL server's TLS certificate.
+      When set, mysql-diag verifies the server's certificate chain (verify_ca mode).
+      When omitted, TLS is still used but the server certificate is not verified.
+  db_tls.server_name:
+    description: |
+      Expected server name (SNI) for the MySQL server's TLS certificate.
+      Required when db_tls.ca is set; enables full CA chain and hostname verification.
+      Must not be set without db_tls.ca.
