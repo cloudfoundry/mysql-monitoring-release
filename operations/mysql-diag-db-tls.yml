@@ -1,0 +1,15 @@
+# ensure bosh/credhub regenerates the mysql server crt with a new SAN
+- type: replace
+  path: /variables/name=mysql_server_certificate/update_mode?
+  value: converge
+
+# set a well-known SAN for test verification purposes
+- type: replace
+  path: /variables/name=mysql_server_certificate/options/alternative_names?
+  value: [mysql-diag-test]
+
+- type: replace
+  path: /instance_groups/name=mysql-monitor/jobs/name=mysql-diag/properties/db_tls?
+  value:
+    ca: ((mysql_server_certificate.ca))
+    server_name: mysql-diag-test
