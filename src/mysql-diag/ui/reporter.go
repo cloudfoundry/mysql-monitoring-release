@@ -12,12 +12,26 @@ import (
 
 type ReporterParams struct {
 	NeedsBootstrap      bool
+	TLSMisconfigured    bool
 	DiskSpaceIssues     []disk.DiskSpaceIssue
 	NodeClusterStatuses []*database.NodeClusterStatus
 }
 
 func Report(params ReporterParams) []string {
 	messages := []string{}
+
+	if params.TLSMisconfigured {
+		messages = append(messages, msg.Alert(
+			"\n[CRITICAL] mysql-diag cannot connect to one or more MySQL nodes: TLS certificate "+
+				"verification failed. Verify that db_tls.ca and db_tls.server_name are correctly configured.",
+		))
+		if params.NeedsBootstrap {
+			messages = append(messages, msg.Alert(
+				"\n[WARNING] Do not bootstrap — cluster health cannot be determined while TLS is misconfigured.",
+			))
+			return messages
+		}
+	}
 
 	if params.NeedsBootstrap {
 		slices.SortStableFunc(params.NodeClusterStatuses, func(i, j *database.NodeClusterStatus) int {

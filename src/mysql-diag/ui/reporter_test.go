@@ -59,6 +59,38 @@ var _ = Describe("Reporter", func() {
 		})
 	})
 
+	Context("when TLS is misconfigured and all nodes are unreachable", func() {
+		BeforeEach(func() {
+			messages = ui.Report(ui.ReporterParams{
+				NeedsBootstrap:   true,
+				TLSMisconfigured: true,
+				DiskSpaceIssues:  diskSpaceIssues,
+				// Status is nil on all nodes — connection failed before any query ran
+				NodeClusterStatuses: []*database.NodeClusterStatus{
+					{Node: config.MysqlNode{Name: "mysql", UUID: "uuid-1"}},
+					{Node: config.MysqlNode{Name: "mysql", UUID: "uuid-2"}},
+					{Node: config.MysqlNode{Name: "mysql", UUID: "uuid-3"}},
+				},
+			})
+		})
+
+		It("reports the TLS certificate error", func() {
+			Expect(messages).To(ContainElement(MatchRegexp(`\[CRITICAL\].*TLS certificate verification failed`)))
+		})
+
+		It("does not recommend bootstrapping", func() {
+			Expect(messages).NotTo(ContainElement(MatchRegexp(`\[CRITICAL\] You must bootstrap`)))
+		})
+
+		It("warns not to bootstrap due to the TLS error", func() {
+			Expect(messages).To(ContainElement(MatchRegexp(`\[WARNING\] Do not bootstrap`)))
+		})
+
+		It("does not suggest downloading logs", func() {
+			Expect(messages).NotTo(ContainElement(MatchRegexp(`\[CRITICAL\] Run the bosh logs command`)))
+		})
+	})
+
 	Context("when needing bootstrap", func() {
 		BeforeEach(func() {
 			needsBootstrap = true
