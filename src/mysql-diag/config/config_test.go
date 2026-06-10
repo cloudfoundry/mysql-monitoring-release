@@ -193,17 +193,45 @@ var _ = Describe("config", func() {
 		})
 	})
 
-	Describe("ConnectionString", func() {
-		It("builds a mysql connection string", func() {
-			Expect(mysqlConfig.ConnectionString(node)).To(Equal("someuser:somepassword@tcp(nowhere.example.com:3306)/?timeout=10s&readTimeout=10s&tls=preferred"))
+	Context("db_tls validation", func() {
+		writeMinimalConfig := func(ca, serverName string) {
+			formatted := fmt.Sprintf(`{"mysql":{"username":"u","password":"p","port":3306,"ca":%q,"server_name":%q,"nodes":[]}}`, ca, serverName)
+			err := os.WriteFile(configFilepath, []byte(formatted), os.ModePerm)
+			Expect(err).NotTo(HaveOccurred())
+		}
+
+		It("returns an error when ca is set but server_name is omitted", func() {
+			writeMinimalConfig("some-ca-pem", "")
+			_, err := config.LoadFromFile(configFilepath)
+			Expect(err).To(MatchError(ContainSubstring("both be set or both be omitted")))
+		})
+
+		It("returns an error when server_name is set but ca is omitted", func() {
+			writeMinimalConfig("", "mysql.internal")
+			_, err := config.LoadFromFile(configFilepath)
+			Expect(err).To(MatchError(ContainSubstring("both be set or both be omitted")))
+		})
+
+		It("returns an error when ca is not valid PEM", func() {
+			writeMinimalConfig("not-valid-pem-content", "mysql.internal")
+			_, err := config.LoadFromFile(configFilepath)
+			Expect(err).To(HaveOccurred())
 		})
 	})
 
-	It("provides a database connection object", func() {
-		conn := mysqlConfig.Connection(node)
+	Describe("ConnectionString", func() {
+		It("builds a mysql connection string", func() {
+			Expect(mysqlConfig.ConnectionString(node)).To(Equal("someuser:somepassword@tcp(nowhere.example.com:3306)/?timeout=10s&readTimeout=10s&tls=mysql-diag"))
+		})
+	})
 
-		// It's not really connected to the database, it's lazy, so there's not much to assert
-		Expect(conn).ToNot(BeNil())
+	Describe("Connection", func() {
+		It("provides a database connection object", func() {
+			conn := mysqlConfig.Connection(node)
+
+			// It's not really connected to the database, it's lazy, so there's not much to assert
+			Expect(conn).ToNot(BeNil())
+		})
 	})
 
 	It("provides a list of hosts with logs", func() {
