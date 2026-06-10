@@ -47,6 +47,21 @@ if_p('db_username', 'db_password') do |db_username, db_password|
   config[:mysql][:password] = db_password
 end
 
+db_tls_ca          = p('db_tls.ca', nil)
+db_tls_server_name = p('db_tls.server_name', nil)
+
+if db_tls_ca && !db_tls_server_name
+  raise 'db_tls.server_name is required when db_tls.ca is configured'
+end
+if db_tls_server_name && !db_tls_ca
+  raise 'db_tls.ca is required when db_tls.server_name is configured'
+end
+
+unless db_tls_ca.nil?
+  config[:mysql][:ca]          = db_tls_ca
+  config[:mysql][:server_name] = db_tls_server_name
+end
+
 if config[:mysql][:username].nil? or config[:mysql][:password].nil?
  raise 'No database credentials were configured. db_username and db_password properties must be specified for the mysql-diag job.'
 end
