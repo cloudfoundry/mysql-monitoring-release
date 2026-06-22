@@ -3,13 +3,13 @@ module github.com/cloudfoundry/mysql-diag
 go 1.25.8
 
 require (
-	code.cloudfoundry.org/bytefmt v0.76.0
-	code.cloudfoundry.org/tlsconfig v0.59.0
+	code.cloudfoundry.org/bytefmt v0.77.0
+	code.cloudfoundry.org/tlsconfig v0.60.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/fatih/color v1.19.0
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/olekukonko/tablewriter v1.1.3
-	github.com/onsi/ginkgo/v2 v2.31.0
+	github.com/onsi/ginkgo/v2 v2.32.0
 	github.com/onsi/gomega v1.42.0
 	gopkg.in/yaml.v2 v2.4.0
 )
