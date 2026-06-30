@@ -90,4 +90,58 @@ describe 'jobs/mysql-diag/config/mysql-diag-config.yml' do
     end
   end
 
+  context 'db_tls properties' do
+    context 'when neither db_tls.ca nor db_tls.server_name are set' do
+      it 'omits ca and server_name from the mysql config' do
+        expect(parsed_config['mysql']).not_to have_key('ca')
+        expect(parsed_config['mysql']).not_to have_key('server_name')
+      end
+    end
+
+    context 'when both db_tls.ca and db_tls.server_name are set' do
+      let(:spec) do
+        {
+          'db_username'  => 'mysql-diag-user',
+          'db_password'  => 'mysql-diag-password',
+          'db_tls' => { 'ca' => 'pem-encoded-ca-cert', 'server_name' => 'mysql.internal' },
+        }
+      end
+
+      it 'includes ca and server_name in the mysql config' do
+        expect(parsed_config).to include('mysql' => hash_including(
+          'ca'          => 'pem-encoded-ca-cert',
+          'server_name' => 'mysql.internal',
+        ))
+      end
+    end
+
+    context 'when db_tls.ca is set without db_tls.server_name' do
+      let(:spec) do
+        {
+          'db_username' => 'mysql-diag-user',
+          'db_password' => 'mysql-diag-password',
+          'db_tls' => { 'ca' => 'pem-encoded-ca-cert' },
+        }
+      end
+
+      it 'errors on rendering' do
+        expect { rendered_template }.to raise_error('db_tls.server_name is required when db_tls.ca is configured')
+      end
+    end
+
+    context 'when db_tls.server_name is set without db_tls.ca' do
+      let(:spec) do
+        {
+          'db_username' => 'mysql-diag-user',
+          'db_password' => 'mysql-diag-password',
+          'db_tls' => { 'server_name' => 'mysql.internal' },
+        }
+      end
+
+      it 'errors on rendering' do
+        expect { rendered_template }.to raise_error('db_tls.ca is required when db_tls.server_name is configured')
+      end
+    end
+  end
+
 end

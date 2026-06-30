@@ -43,6 +43,7 @@ func main() {
 
 	messages := ui.Report(ui.ReporterParams{
 		NeedsBootstrap:      aggregatedData.NeedsBootstrap,
+		TLSMisconfigured:    aggregatedData.TLSMisconfigured,
 		DiskSpaceIssues:     aggregatedData.DiskSpaceIssues,
 		NodeClusterStatuses: aggregatedData.NodeClusterStatuses,
 	})

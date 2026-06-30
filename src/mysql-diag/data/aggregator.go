@@ -13,7 +13,8 @@ type Data struct {
 	NodeDiskInfo    []disk.NodeDiskInfo
 	DiskSpaceIssues []disk.DiskSpaceIssue
 
-	NeedsBootstrap bool
+	NeedsBootstrap   bool
+	TLSMisconfigured bool
 }
 
 type aggregator struct {
@@ -38,6 +39,7 @@ func (a aggregator) Aggregate() Data {
 	}
 	database.GetNodeClusterStatuses(a.mySQL, nodeClusterStatuses)
 	needsBootstrap := database.CheckClusterBootstrapStatus(nodeClusterStatuses)
+	tlsMisconfigured := database.HasTLSErrors(nodeClusterStatuses)
 	mysqlAgentClient.GetSequenceNumbers(a.galeraAgent, nodeClusterStatuses)
 	nodeDiskInfos := disk.GetNodeDiskInfos(a.mySQL)
 	diskSpaceIssues := disk.CheckDiskStatus(nodeDiskInfos, a.mySQL.Threshold)
@@ -52,5 +54,6 @@ func (a aggregator) Aggregate() Data {
 		NodeDiskInfo:        nodeDiskInfos,
 		DiskSpaceIssues:     diskSpaceIssues,
 		NeedsBootstrap:      needsBootstrap,
+		TLSMisconfigured:    tlsMisconfigured,
 	}
 }

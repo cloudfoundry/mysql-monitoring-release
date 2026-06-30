@@ -1,5 +1,14 @@
 package database
 
+func HasTLSErrors(rows map[string]*NodeClusterStatus) bool {
+	for _, row := range rows {
+		if IsTLSError(row.Err) {
+			return true
+		}
+	}
+	return false
+}
+
 func DoWeNeedBootstrap(gs []*GaleraStatus) bool {
 	if len(gs) == 0 {
 		return false

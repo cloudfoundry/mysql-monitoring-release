@@ -1,6 +1,7 @@
 package database
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"errors"
 	"strconv"
@@ -21,6 +22,12 @@ type GaleraStatus struct {
 type NodeClusterStatus struct {
 	Node   config.MysqlNode
 	Status *GaleraStatus
+	Err    error
+}
+
+func IsTLSError(err error) bool {
+	var certErr *tls.CertificateVerificationError
+	return errors.As(err, &certErr)
 }
 
 type DatabaseClient struct {
@@ -125,7 +132,7 @@ func GetNodeClusterStatuses(mysqlConfig config.MysqlConfig, nodeClusterStatus ma
 			if galeraStatus == nil {
 				galeraStatus = s
 			}
-			channel <- NodeClusterStatus{Node: n, Status: galeraStatus}
+			channel <- NodeClusterStatus{Node: n, Status: galeraStatus, Err: err}
 		}()
 	}
 
