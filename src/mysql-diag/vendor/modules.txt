@@ -1,7 +1,7 @@
-# code.cloudfoundry.org/bytefmt v0.78.0
+# code.cloudfoundry.org/bytefmt v0.79.0
 ## explicit; go 1.25.0
 code.cloudfoundry.org/bytefmt
-# code.cloudfoundry.org/tlsconfig v0.60.0
+# code.cloudfoundry.org/tlsconfig v0.61.0
 ## explicit; go 1.25.8
 code.cloudfoundry.org/tlsconfig
 code.cloudfoundry.org/tlsconfig/certtest
@@ -144,7 +144,7 @@ golang.org/x/sync/errgroup
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/text v0.38.0
+# golang.org/x/text v0.39.0
 ## explicit; go 1.25.0
 golang.org/x/text/encoding
 golang.org/x/text/encoding/charmap
