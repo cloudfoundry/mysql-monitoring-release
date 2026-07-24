@@ -47,6 +47,8 @@ var _ = Describe("mysql-diag TLS config", Ordered, Label("integration"), func() 
 
 		certDir, err := os.MkdirTemp("", "mysql-tls-certs-*")
 		Expect(err).NotTo(HaveOccurred())
+		// Ensure cert dir is readable by docker
+		Expect(os.Chmod(certDir, 0o755)).To(Succeed())
 		DeferCleanup(func() { _ = os.RemoveAll(certDir) })
 
 		for name, data := range map[string][]byte{
