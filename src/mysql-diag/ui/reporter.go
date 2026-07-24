@@ -35,7 +35,14 @@ func Report(params ReporterParams) []string {
 
 	if params.NeedsBootstrap {
 		slices.SortStableFunc(params.NodeClusterStatuses, func(i, j *database.NodeClusterStatus) int {
-			return cmp.Compare(i.Status.LastApplied, j.Status.LastApplied)
+			var iLast, jLast int
+			if i.Status != nil {
+				iLast = i.Status.LastApplied
+			}
+			if j.Status != nil {
+				jLast = j.Status.LastApplied
+			}
+			return cmp.Compare(iLast, jLast)
 		})
 		bootstrapNode := fmt.Sprintf("%s/%s", params.NodeClusterStatuses[len(params.NodeClusterStatuses)-1].Node.Name, params.NodeClusterStatuses[len(params.NodeClusterStatuses)-1].Node.UUID)
 		messages = append(messages, msg.Alert("\n[CRITICAL] You must bootstrap the cluster. Follow these instructions: https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-mysql-tanzu-platform/10-1/mysql-tp/bootstrapping.html"))
@@ -64,7 +71,7 @@ Do not perform the following unless instructed by Pivotal Support:
 		name := ""
 		minLocalIndex := maxUUID
 		for _, status := range params.NodeClusterStatuses {
-			if status.Status.LocalIndex != "" && status.Status.LocalIndex < minLocalIndex {
+			if status.Status != nil && status.Status.LocalIndex != "" && status.Status.LocalIndex < minLocalIndex {
 				minLocalIndex = status.Status.LocalIndex
 				name = fmt.Sprintf("%s/%s", status.Node.Name, status.Node.UUID)
 			}
