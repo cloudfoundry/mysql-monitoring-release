@@ -181,6 +181,55 @@ var _ = Describe("Reporter", func() {
 		})
 	})
 
+	Context("when needing bootstrap and some nodes have nil Status", func() {
+		It("does not panic when sorting nodes with nil Status", func() {
+			Expect(func() {
+				ui.Report(ui.ReporterParams{
+					NeedsBootstrap: true,
+					NodeClusterStatuses: []*database.NodeClusterStatus{
+						{Node: config.MysqlNode{Name: "mysql", UUID: "uuid-1"}, Status: nil},
+						{
+							Node:   config.MysqlNode{Name: "mysql", UUID: "uuid-2"},
+							Status: &database.GaleraStatus{LastApplied: 500},
+						},
+						{Node: config.MysqlNode{Name: "mysql", UUID: "uuid-3"}, Status: nil},
+					},
+				})
+			}).NotTo(Panic())
+		})
+	})
+
+	Context("when healthy and some nodes have nil Status", func() {
+		It("does not panic when iterating nodes with nil Status", func() {
+			Expect(func() {
+				ui.Report(ui.ReporterParams{
+					NeedsBootstrap: false,
+					NodeClusterStatuses: []*database.NodeClusterStatus{
+						{Node: config.MysqlNode{Name: "mysql", UUID: "uuid-1"}, Status: nil},
+						{
+							Node:   config.MysqlNode{Name: "mysql", UUID: "uuid-2"},
+							Status: &database.GaleraStatus{LocalIndex: "8e9483c8-beed"},
+						},
+					},
+				})
+			}).NotTo(Panic())
+		})
+
+		It("still identifies the writable node from nodes that do have a Status", func() {
+			messages = ui.Report(ui.ReporterParams{
+				NeedsBootstrap: false,
+				NodeClusterStatuses: []*database.NodeClusterStatus{
+					{Node: config.MysqlNode{Name: "mysql", UUID: "uuid-1"}, Status: nil},
+					{
+						Node:   config.MysqlNode{Name: "mysql", UUID: "uuid-2"},
+						Status: &database.GaleraStatus{LocalIndex: "8e9483c8-beed"},
+					},
+				},
+			})
+			Expect(messages).To(ContainElement(MatchRegexp(`NOTE: Proxies will currently attempt to direct traffic to "mysql/uuid-2"`)))
+		})
+	})
+
 	Context("when everything is wrong", func() {
 		BeforeEach(func() {
 			isCanaryHealthy = false
