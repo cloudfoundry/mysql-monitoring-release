@@ -134,7 +134,13 @@ func ContainerPort(containerID, portSpec string) (string, error) {
 		return "", err
 	}
 
-	_, port, err := net.SplitHostPort(hostPort)
+	trimmed := strings.TrimSpace(hostPort)
+	if trimmed == "" {
+		return "", fmt.Errorf("no port mappings found")
+	}
+
+	portLines := strings.Split(trimmed, "\n")
+	_, port, err := net.SplitHostPort(portLines[0])
 	if err != nil {
 		return "", err
 	}

@@ -78,8 +78,6 @@ func (fake *FakeProcessor) ProcessReturnsOnCall(i int, result1 error) {
 func (fake *FakeProcessor) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.processMutex.RLock()
-	defer fake.processMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

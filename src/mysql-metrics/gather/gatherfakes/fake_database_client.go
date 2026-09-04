@@ -555,22 +555,6 @@ func (fake *FakeDatabaseClient) ShowSlaveStatusReturnsOnCall(i int, result1 map[
 func (fake *FakeDatabaseClient) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.findLastBackupTimestampMutex.RLock()
-	defer fake.findLastBackupTimestampMutex.RUnlock()
-	fake.heartbeatStatusMutex.RLock()
-	defer fake.heartbeatStatusMutex.RUnlock()
-	fake.isAvailableMutex.RLock()
-	defer fake.isAvailableMutex.RUnlock()
-	fake.isFollowerMutex.RLock()
-	defer fake.isFollowerMutex.RUnlock()
-	fake.servicePlansDiskAllocatedMutex.RLock()
-	defer fake.servicePlansDiskAllocatedMutex.RUnlock()
-	fake.showGlobalStatusMutex.RLock()
-	defer fake.showGlobalStatusMutex.RUnlock()
-	fake.showGlobalVariablesMutex.RLock()
-	defer fake.showGlobalVariablesMutex.RUnlock()
-	fake.showSlaveStatusMutex.RLock()
-	defer fake.showSlaveStatusMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

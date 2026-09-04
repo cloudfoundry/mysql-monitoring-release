@@ -20,6 +20,10 @@ var _ = Describe("Config", func() {
 		password                  string
 		username                  string
 		instanceId                string
+		deployment                string
+		jobName                   string
+		jobIndex                  string
+		jobIP                     string
 		metricFrequency           int
 		sourceId                  string
 		origin                    string
@@ -45,6 +49,10 @@ var _ = Describe("Config", func() {
 			sourceId = "p-mysql"
 			origin = "origin"
 			instanceId = "vm-123456"
+			deployment = "service-instance-xyz"
+			jobName = "mysql"
+			jobIndex = "0"
+			jobIP = "10.0.0.1"
 			metricFrequency = 1
 			emitBrokerMetrics = true
 			emitMysqlMetrics = true
@@ -55,12 +63,17 @@ var _ = Describe("Config", func() {
 			heartbeatDatabase = "someDatabase"
 			heartbeatTable = "someTable"
 
-			tempDir, err := os.MkdirTemp("", "")
+			var err error
+			tempDir, err = os.MkdirTemp("", "")
 			Expect(err).NotTo(HaveOccurred())
 
 			configFilepath = filepath.Join(tempDir, "metric-config.yml")
 			configString := fmt.Sprintf(`{
 				"instance_id":"%s",
+				"deployment":"%s",
+				"job_name":"%s",
+				"job_index":"%s",
+				"job_ip":"%s",
 				"host":"%s",
 				"port":6033,
 				"username":"%s",
@@ -75,8 +88,11 @@ var _ = Describe("Config", func() {
 				"emit_disk_metrics":%t,
 				"emit_backup_metrics":%t,
 				"heartbeat_database":"%s",
-				"heartbeat_table":"%s"
-			}`, instanceId, host, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, emitBackupMetrics, heartbeatDatabase, heartbeatTable)
+				"heartbeat_table":"%s",
+				"loggregator_ca_path":"/var/vcap/jobs/mysql-metrics/certs/loggregator-ca.pem",
+				"loggregator_client_cert_path":"/var/vcap/jobs/mysql-metrics/certs/loggregator-client-cert.pem",
+				"loggregator_client_key_path":"/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem"
+			}`, instanceId, deployment, jobName, jobIndex, jobIP, host, username, password, metricFrequency, sourceId, origin, emitBrokerMetrics, emitMysqlMetrics, emitLeaderFollowerMetrics, emitGaleraMetrics, emitDiskMetrics, emitBackupMetrics, heartbeatDatabase, heartbeatTable)
 
 			err = os.WriteFile(configFilepath, []byte(configString), os.ModePerm)
 			Expect(err).NotTo(HaveOccurred())
@@ -87,13 +103,17 @@ var _ = Describe("Config", func() {
 			Expect(err).NotTo(HaveOccurred())
 		})
 
-		It("reads the config file", func() {
+		It("reads the config file and applies default otel settings", func() {
 			var err error
 			err = LoadFromFile(configFilepath, config)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(config).NotTo(BeNil())
 			Expect(config.InstanceID).To(Equal(instanceId))
+			Expect(config.Deployment).To(Equal(deployment))
+			Expect(config.JobName).To(Equal(jobName))
+			Expect(config.JobIndex).To(Equal(jobIndex))
+			Expect(config.JobIP).To(Equal(jobIP))
 			Expect(config.Host).To(Equal(host))
 			Expect(config.Port).To(Equal(6033))
 			Expect(config.Username).To(Equal(username))
@@ -109,13 +129,54 @@ var _ = Describe("Config", func() {
 			Expect(config.EmitBackupMetrics).To(Equal(emitBackupMetrics))
 			Expect(config.HeartbeatDatabase).To(Equal(heartbeatDatabase))
 			Expect(config.HeartbeatTable).To(Equal(heartbeatTable))
+			Expect(config.OtelEndpoint).To(Equal(DefaultOtelEndpoint))
+			Expect(config.OtelCAPath).To(Equal(DefaultOtelCAPath))
+			Expect(config.OtelCertPath).To(Equal(DefaultOtelCertPath))
+			Expect(config.OtelKeyPath).To(Equal(DefaultOtelKeyPath))
+			Expect(config.OtelServerName).To(Equal(DefaultOtelServerName))
+		})
+	})
+
+	Describe("with custom otel configurations", func() {
+		BeforeEach(func() {
+			var err error
+			tempDir, err = os.MkdirTemp("", "")
+			Expect(err).NotTo(HaveOccurred())
+
+			configFilepath = filepath.Join(tempDir, "metric-config.yml")
+			configString := `{
+				"otel_endpoint": "custom-endpoint:1234",
+				"otel_ca_path": "/custom/ca.crt",
+				"otel_cert_path": "/custom/cert.crt",
+				"otel_key_path": "/custom/key.key",
+				"otel_server_name": "custom-server"
+			}`
+
+			err = os.WriteFile(configFilepath, []byte(configString), os.ModePerm)
+			Expect(err).NotTo(HaveOccurred())
+		})
+
+		AfterEach(func() {
+			err := os.RemoveAll(tempDir)
+			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("preserves custom otel settings", func() {
+			err := LoadFromFile(configFilepath, config)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(config.OtelEndpoint).To(Equal("custom-endpoint:1234"))
+			Expect(config.OtelCAPath).To(Equal("/custom/ca.crt"))
+			Expect(config.OtelCertPath).To(Equal("/custom/cert.crt"))
+			Expect(config.OtelKeyPath).To(Equal("/custom/key.key"))
+			Expect(config.OtelServerName).To(Equal("custom-server"))
 		})
 	})
 
 	Describe("when the yaml file is not fully formed", func() {
 		BeforeEach(func() {
 			configString := `"field1value1"}`
-			tempDir, err := os.MkdirTemp("", "")
+			var err error
+			tempDir, err = os.MkdirTemp("", "")
 			Expect(err).NotTo(HaveOccurred())
 
 			configFilepath = filepath.Join(tempDir, "metric-config.yml")

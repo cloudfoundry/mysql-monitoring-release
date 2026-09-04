@@ -13,6 +13,10 @@ end
 
 {
   "instance_id"                  => spec.id,
+  "deployment"                   => spec.deployment,
+  "job_name"                     => spec.name,
+  "job_index"                    => spec.index.to_s,
+  "job_ip"                       => spec.ip,
   "host"                         => db_host,
   "port"                         => db_port,
   "username"                     => p('mysql-metrics.username'),
@@ -34,4 +38,3 @@ end
   "loggregator_client_key_path"  => '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem'
 }.to_yaml
 %>
-

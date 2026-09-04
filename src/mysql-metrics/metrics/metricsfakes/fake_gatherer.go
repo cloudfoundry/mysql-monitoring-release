@@ -633,24 +633,6 @@ func (fake *FakeGatherer) IsDatabaseFollowerReturnsOnCall(i int, result1 bool, r
 func (fake *FakeGatherer) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.brokerStatsMutex.RLock()
-	defer fake.brokerStatsMutex.RUnlock()
-	fake.cPUStatsMutex.RLock()
-	defer fake.cPUStatsMutex.RUnlock()
-	fake.databaseMetadataMutex.RLock()
-	defer fake.databaseMetadataMutex.RUnlock()
-	fake.diskPerformanceStatsMutex.RLock()
-	defer fake.diskPerformanceStatsMutex.RUnlock()
-	fake.diskStatsMutex.RLock()
-	defer fake.diskStatsMutex.RUnlock()
-	fake.findLastBackupTimestampMutex.RLock()
-	defer fake.findLastBackupTimestampMutex.RUnlock()
-	fake.followerMetadataMutex.RLock()
-	defer fake.followerMetadataMutex.RUnlock()
-	fake.isDatabaseAvailableMutex.RLock()
-	defer fake.isDatabaseAvailableMutex.RUnlock()
-	fake.isDatabaseFollowerMutex.RLock()
-	defer fake.isDatabaseFollowerMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

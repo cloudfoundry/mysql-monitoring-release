@@ -24,6 +24,8 @@ func NewMetricWriter(sender Sender, logger Logger, origin string) *MetricWriter 
 }
 
 func (writer *MetricWriter) Write(metrics []*Metric) error {
+	batch := make([]MetricDatum, 0, len(metrics))
+
 	for i := range metrics {
 		metric := metrics[i]
 
@@ -32,11 +34,20 @@ func (writer *MetricWriter) Write(metrics []*Metric) error {
 		} else {
 			writer.logger.Debug("Emitted metric", map[string]interface{}{"metric": metric})
 			keyWithOrigin := fmt.Sprintf("/%s/%s", writer.origin, metric.Key)
-			err := writer.sender.SendValue(keyWithOrigin, metric.Value, metric.Unit)
-			if err != nil {
-				writer.logger.Error("Error calling metrics sender", err)
-			}
+			batch = append(batch, MetricDatum{
+				Name:  keyWithOrigin,
+				Value: metric.Value,
+				Unit:  metric.Unit,
+			})
 		}
 	}
+
+	if len(batch) > 0 {
+		err := writer.sender.SendBatch(batch)
+		if err != nil {
+			writer.logger.Error("Error calling metrics sender", err)
+		}
+	}
+
 	return nil
 }

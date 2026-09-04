@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"syscall"
 	"time"
 
+	"code.cloudfoundry.org/lager/v3"
 	"code.cloudfoundry.org/lager/v3/lagerflags"
 
 	"github.com/cloudfoundry/mysql-metrics/config"
@@ -19,9 +21,6 @@ import (
 	"github.com/cloudfoundry/mysql-metrics/gather"
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics_computer"
-
-	"code.cloudfoundry.org/go-loggregator/v9"
-	"code.cloudfoundry.org/lager/v3"
 )
 
 const (
@@ -40,10 +39,6 @@ func (d lagerLoggerWrapper) Debug(action string, message map[string]interface{})
 	}
 
 	d.logger.Debug(action, data)
-}
-
-func (d lagerLoggerWrapper) Info(action string) {
-	d.logger.Info(action)
 }
 
 func (d lagerLoggerWrapper) Error(action string, err error) {
@@ -88,27 +83,17 @@ func main() {
 
 	metricMappingConfig := metrics.DefaultMetricMappingConfig()
 
-	tlsConfig, err := loggregator.NewIngressTLSConfig(
-		mysqlMetricsConfig.LoggregatorCAPath,
-		mysqlMetricsConfig.LoggregatorClientCertPath,
-		mysqlMetricsConfig.LoggregatorClientKeyPath,
-	)
+	loggerWrapper := lagerLoggerWrapper{metricsLogger}
+	sender, err := metrics.NewSender(*mysqlMetricsConfig, loggerWrapper)
 	if err != nil {
-		metricsLogger.Error("loggregator tls config failed to initialize", err)
+		metricsLogger.Error("failed to initialize metrics sender", err)
 		panic(err)
 	}
-
-	ingressClient, err := loggregator.NewIngressClient(
-		tlsConfig,
-		loggregator.WithAddr("localhost:3458"),
-		loggregator.WithTag("source_id", mysqlMetricsConfig.SourceID),
-		loggregator.WithTag("origin", mysqlMetricsConfig.Origin),
-	)
-	if err != nil {
-		metricsLogger.Error("loggregator client failed to initialize", err)
-		panic(err)
-	}
-	sender := metrics.NewLoggregatorSender(ingressClient, mysqlMetricsConfig.SourceID)
+	defer func() {
+		if closer, ok := sender.(io.Closer); ok {
+			_ = closer.Close()
+		}
+	}()
 
 	conn := Connection(mysqlMetricsConfig)
 	dbClient := database_client.NewDatabaseClient(conn, mysqlMetricsConfig)
@@ -126,7 +111,6 @@ func main() {
 	}
 	gatherer := gather.NewGatherer(dbClient, stater, &cpustater, monitor)
 
-	loggerWrapper := lagerLoggerWrapper{metricsLogger}
 	metricsComputer := metrics_computer.NewMetricsComputer(*metricMappingConfig)
 	metricsWriter := metrics.NewMetricWriter(sender, loggerWrapper, mysqlMetricsConfig.Origin)
 	processor := metrics.NewProcessor(gatherer, metricsComputer, metricsWriter, mysqlMetricsConfig)
