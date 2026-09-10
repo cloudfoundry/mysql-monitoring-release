@@ -736,26 +736,6 @@ func (fake *FakeMetricsComputer) ComputeLeaderFollowerMetricsReturnsOnCall(i int
 func (fake *FakeMetricsComputer) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.computeAvailabilityMetricMutex.RLock()
-	defer fake.computeAvailabilityMetricMutex.RUnlock()
-	fake.computeBackupMetricMutex.RLock()
-	defer fake.computeBackupMetricMutex.RUnlock()
-	fake.computeBrokerMetricsMutex.RLock()
-	defer fake.computeBrokerMetricsMutex.RUnlock()
-	fake.computeCPUMetricsMutex.RLock()
-	defer fake.computeCPUMetricsMutex.RUnlock()
-	fake.computeDiskMetricsMutex.RLock()
-	defer fake.computeDiskMetricsMutex.RUnlock()
-	fake.computeDiskPerformanceMetricsMutex.RLock()
-	defer fake.computeDiskPerformanceMetricsMutex.RUnlock()
-	fake.computeGaleraMetricsMutex.RLock()
-	defer fake.computeGaleraMetricsMutex.RUnlock()
-	fake.computeGlobalMetricsMutex.RLock()
-	defer fake.computeGlobalMetricsMutex.RUnlock()
-	fake.computeIsFollowerMetricMutex.RLock()
-	defer fake.computeIsFollowerMetricMutex.RUnlock()
-	fake.computeLeaderFollowerMetricsMutex.RLock()
-	defer fake.computeLeaderFollowerMetricsMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

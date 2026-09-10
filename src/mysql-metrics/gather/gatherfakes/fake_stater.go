@@ -107,8 +107,6 @@ func (fake *FakeStater) StatsReturnsOnCall(i int, result1 uint64, result2 uint64
 func (fake *FakeStater) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.statsMutex.RLock()
-	defer fake.statsMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

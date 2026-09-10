@@ -83,8 +83,6 @@ func (fake *FakeCpuStater) GetPercentageReturnsOnCall(i int, result1 int, result
 func (fake *FakeCpuStater) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.getPercentageMutex.RLock()
-	defer fake.getPercentageMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

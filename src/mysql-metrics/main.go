@@ -4,10 +4,13 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"syscall"
 	"time"
 
+	"code.cloudfoundry.org/go-loggregator/v9"
+	"code.cloudfoundry.org/lager/v3"
 	"code.cloudfoundry.org/lager/v3/lagerflags"
 
 	"github.com/cloudfoundry/mysql-metrics/config"
@@ -19,9 +22,6 @@ import (
 	"github.com/cloudfoundry/mysql-metrics/gather"
 	"github.com/cloudfoundry/mysql-metrics/metrics"
 	"github.com/cloudfoundry/mysql-metrics/metrics_computer"
-
-	"code.cloudfoundry.org/go-loggregator/v9"
-	"code.cloudfoundry.org/lager/v3"
 )
 
 const (
@@ -40,10 +40,6 @@ func (d lagerLoggerWrapper) Debug(action string, message map[string]interface{})
 	}
 
 	d.logger.Debug(action, data)
-}
-
-func (d lagerLoggerWrapper) Info(action string) {
-	d.logger.Info(action)
 }
 
 func (d lagerLoggerWrapper) Error(action string, err error) {
@@ -87,28 +83,62 @@ func main() {
 	}
 
 	metricMappingConfig := metrics.DefaultMetricMappingConfig()
+	loggerWrapper := lagerLoggerWrapper{metricsLogger}
 
-	tlsConfig, err := loggregator.NewIngressTLSConfig(
-		mysqlMetricsConfig.LoggregatorCAPath,
-		mysqlMetricsConfig.LoggregatorClientCertPath,
-		mysqlMetricsConfig.LoggregatorClientKeyPath,
-	)
-	if err != nil {
-		metricsLogger.Error("loggregator tls config failed to initialize", err)
-		panic(err)
+	var senders []metrics.Sender
+
+	// 1. Prometheus Scrape Sender (Always enabled by default for pull-based scraping via prom_scraper / otel-collector)
+	if mysqlMetricsConfig.EnablePrometheusExporter {
+		promSender := metrics.NewPrometheusSender(
+			mysqlMetricsConfig.PrometheusPort,
+			mysqlMetricsConfig.SourceID,
+			mysqlMetricsConfig.Origin,
+			mysqlMetricsConfig.InstanceID,
+			mysqlMetricsConfig.Deployment,
+			mysqlMetricsConfig.JobName,
+			mysqlMetricsConfig.JobIndex,
+			mysqlMetricsConfig.JobIP,
+			loggerWrapper,
+		)
+		senders = append(senders, promSender)
+		metricsLogger.Info(fmt.Sprintf("Prometheus metrics server started on port %d", mysqlMetricsConfig.PrometheusPort))
 	}
 
-	ingressClient, err := loggregator.NewIngressClient(
-		tlsConfig,
-		loggregator.WithAddr("localhost:3458"),
-		loggregator.WithTag("source_id", mysqlMetricsConfig.SourceID),
-		loggregator.WithTag("origin", mysqlMetricsConfig.Origin),
-	)
-	if err != nil {
-		metricsLogger.Error("loggregator client failed to initialize", err)
-		panic(err)
+	// 2. Legacy Loggregator Sender (Active if enabled in config and certs exist)
+	if mysqlMetricsConfig.EnableLoggregatorEmitter && mysqlMetricsConfig.LoggregatorCAPath != "" {
+		tlsConfig, err := loggregator.NewIngressTLSConfig(
+			mysqlMetricsConfig.LoggregatorCAPath,
+			mysqlMetricsConfig.LoggregatorClientCertPath,
+			mysqlMetricsConfig.LoggregatorClientKeyPath,
+		)
+		if err == nil {
+			ingressClient, err := loggregator.NewIngressClient(
+				tlsConfig,
+				loggregator.WithAddr("localhost:3458"),
+				loggregator.WithTag("source_id", mysqlMetricsConfig.SourceID),
+				loggregator.WithTag("origin", mysqlMetricsConfig.Origin),
+			)
+			if err == nil {
+				senders = append(senders, metrics.NewLoggregatorSender(ingressClient, mysqlMetricsConfig.SourceID))
+				metricsLogger.Info("Loggregator metrics sender started")
+			} else {
+				metricsLogger.Error("loggregator client failed to initialize", err)
+			}
+		} else {
+			metricsLogger.Error("loggregator tls config failed to initialize", err)
+		}
 	}
-	sender := metrics.NewLoggregatorSender(ingressClient, mysqlMetricsConfig.SourceID)
+
+	if len(senders) == 0 {
+		panic("no metrics sender enabled or initialized")
+	}
+
+	multiSender := metrics.NewMultiSender(senders...)
+	defer func() {
+		if closer, ok := interface{}(multiSender).(io.Closer); ok {
+			_ = closer.Close()
+		}
+	}()
 
 	conn := Connection(mysqlMetricsConfig)
 	dbClient := database_client.NewDatabaseClient(conn, mysqlMetricsConfig)
@@ -126,9 +156,8 @@ func main() {
 	}
 	gatherer := gather.NewGatherer(dbClient, stater, &cpustater, monitor)
 
-	loggerWrapper := lagerLoggerWrapper{metricsLogger}
 	metricsComputer := metrics_computer.NewMetricsComputer(*metricMappingConfig)
-	metricsWriter := metrics.NewMetricWriter(sender, loggerWrapper, mysqlMetricsConfig.Origin)
+	metricsWriter := metrics.NewMetricWriter(multiSender, loggerWrapper, mysqlMetricsConfig.Origin)
 	processor := metrics.NewProcessor(gatherer, metricsComputer, metricsWriter, mysqlMetricsConfig)
 	metricsInterval := time.Duration(mysqlMetricsConfig.MetricsFrequency) * time.Second
 	emitter := emit.NewEmitter(processor, metricsInterval, time.Sleep, loggerWrapper)

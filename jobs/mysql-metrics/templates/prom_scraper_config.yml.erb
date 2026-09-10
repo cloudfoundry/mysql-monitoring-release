@@ -1,0 +1,10 @@
+<% if p('mysql-metrics.prometheus_exporter.enabled', true) %>
+---
+port: <%= p('mysql-metrics.prometheus_exporter.port', 14828) %>
+source_id: <%= p('mysql-metrics.source_id', 'p-mysql') %>
+instance_id: <%= spec.id || spec.index.to_s %>
+path: /metrics
+scheme: http
+labels:
+  origin: <%= p('mysql-metrics.origin', 'p-mysql') %>
+<% end %>

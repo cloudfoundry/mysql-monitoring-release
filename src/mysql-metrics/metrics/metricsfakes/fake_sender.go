@@ -8,6 +8,17 @@ import (
 )
 
 type FakeSender struct {
+	SendBatchStub        func([]metrics.MetricDatum) error
+	sendBatchMutex       sync.RWMutex
+	sendBatchArgsForCall []struct {
+		arg1 []metrics.MetricDatum
+	}
+	sendBatchReturns struct {
+		result1 error
+	}
+	sendBatchReturnsOnCall map[int]struct {
+		result1 error
+	}
 	SendValueStub        func(string, float64, string) error
 	sendValueMutex       sync.RWMutex
 	sendValueArgsForCall []struct {
@@ -23,6 +34,72 @@ type FakeSender struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *FakeSender) SendBatch(arg1 []metrics.MetricDatum) error {
+	var arg1Copy []metrics.MetricDatum
+	if arg1 != nil {
+		arg1Copy = make([]metrics.MetricDatum, len(arg1))
+		copy(arg1Copy, arg1)
+	}
+	fake.sendBatchMutex.Lock()
+	ret, specificReturn := fake.sendBatchReturnsOnCall[len(fake.sendBatchArgsForCall)]
+	fake.sendBatchArgsForCall = append(fake.sendBatchArgsForCall, struct {
+		arg1 []metrics.MetricDatum
+	}{arg1Copy})
+	stub := fake.SendBatchStub
+	fakeReturns := fake.sendBatchReturns
+	fake.recordInvocation("SendBatch", []interface{}{arg1Copy})
+	fake.sendBatchMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeSender) SendBatchCallCount() int {
+	fake.sendBatchMutex.RLock()
+	defer fake.sendBatchMutex.RUnlock()
+	return len(fake.sendBatchArgsForCall)
+}
+
+func (fake *FakeSender) SendBatchCalls(stub func([]metrics.MetricDatum) error) {
+	fake.sendBatchMutex.Lock()
+	defer fake.sendBatchMutex.Unlock()
+	fake.SendBatchStub = stub
+}
+
+func (fake *FakeSender) SendBatchArgsForCall(i int) []metrics.MetricDatum {
+	fake.sendBatchMutex.RLock()
+	defer fake.sendBatchMutex.RUnlock()
+	argsForCall := fake.sendBatchArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeSender) SendBatchReturns(result1 error) {
+	fake.sendBatchMutex.Lock()
+	defer fake.sendBatchMutex.Unlock()
+	fake.SendBatchStub = nil
+	fake.sendBatchReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeSender) SendBatchReturnsOnCall(i int, result1 error) {
+	fake.sendBatchMutex.Lock()
+	defer fake.sendBatchMutex.Unlock()
+	fake.SendBatchStub = nil
+	if fake.sendBatchReturnsOnCall == nil {
+		fake.sendBatchReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.sendBatchReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
 }
 
 func (fake *FakeSender) SendValue(arg1 string, arg2 float64, arg3 string) error {
@@ -91,8 +168,6 @@ func (fake *FakeSender) SendValueReturnsOnCall(i int, result1 error) {
 func (fake *FakeSender) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.sendValueMutex.RLock()
-	defer fake.sendValueMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

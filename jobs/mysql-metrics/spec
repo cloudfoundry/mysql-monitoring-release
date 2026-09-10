@@ -6,6 +6,7 @@ templates:
   loggregator-ca.erb: certs/loggregator-ca.pem
   loggregator-client-cert.erb: certs/loggregator-client-cert.pem
   loggregator-client-key.erb: certs/loggregator-client-key.pem
+  prom_scraper_config.yml.erb: config/prom_scraper_config.yml
   bpm.yml.erb: config/bpm.yml
 
 packages:
@@ -43,6 +44,18 @@ properties:
   mysql-metrics.source_id:
     description: "the source_id when metrics are emitted"
     default: p-mysql
+
+  mysql-metrics.prometheus_exporter.enabled:
+    description: "Enable Prometheus /metrics scraping endpoint"
+    default: true
+  mysql-metrics.prometheus_exporter.port:
+    description: "Port for serving Prometheus metrics"
+    default: 14828
+
+  mysql-metrics.loggregator.enabled:
+    description: "Enable legacy Loggregator metrics emission"
+    default: true
+
   mysql-metrics.log_metrics_to_disk:
     description: "when enabled, metrics will be emitted through the firehose and also logged onto disk"
     default: true
@@ -78,10 +91,10 @@ properties:
 
   logging.format.timestamp:
     description: |
-      Format for timestamp in component logs. Valid values are 'rfc3339', 'unix-epoch'. 'rfc3339' is the recommended
+      Format for timestamp in component logs. Valid values are rfc3339, unix-epoch. rfc3339 is the recommended
       format. It will result in all timestamps controlled by this job to be in RFC3339 format, which is human readable.
       This includes stdout, pre-start, and post-start logs. This does not include stderr logs from golang libraries.
-      'unix-epoch' will result in all timestamps being in the format they were before the rfc3339 flag was introduced.
+      unix-epoch will result in all timestamps being in the format they were before the rfc3339 flag was introduced.
       This format is different for different logs. We do not recommend using this flag unless you have scripts that
       expect a particular timestamp format.
     default: "rfc3339"

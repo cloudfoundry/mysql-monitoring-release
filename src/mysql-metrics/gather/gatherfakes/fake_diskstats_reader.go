@@ -98,8 +98,6 @@ func (fake *FakeDiskstatsReader) SampleMultipleReturnsOnCall(i int, result1 map[
 func (fake *FakeDiskstatsReader) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.sampleMultipleMutex.RLock()
-	defer fake.sampleMultipleMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

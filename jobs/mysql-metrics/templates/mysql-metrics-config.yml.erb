@@ -13,6 +13,10 @@ end
 
 {
   "instance_id"                  => spec.id,
+  "deployment"                   => spec.deployment,
+  "job_name"                     => spec.name,
+  "job_index"                    => spec.index.to_s,
+  "job_ip"                       => spec.ip,
   "host"                         => db_host,
   "port"                         => db_port,
   "username"                     => p('mysql-metrics.username'),
@@ -20,6 +24,9 @@ end
   "metrics_frequency"            => p('mysql-metrics.metrics_frequency'),
   "origin"                       => p('mysql-metrics.origin'),
   "source_id"                    => p('mysql-metrics.source_id'),
+  "enable_prometheus_exporter"   => p('mysql-metrics.prometheus_exporter.enabled', true),
+  "prometheus_port"              => p('mysql-metrics.prometheus_exporter.port', 14828),
+  "enable_loggregator_emitter"   => p('mysql-metrics.loggregator.enabled', true),
   "emit_broker_metrics"          => p('mysql-metrics.broker_metrics_enabled'),
   "emit_disk_metrics"            => p('mysql-metrics.disk_metrics_enabled'),
   "emit_cpu_metrics"             => p('mysql-metrics.cpu_metrics_enabled'),
@@ -34,4 +41,3 @@ end
   "loggregator_client_key_path"  => '/var/vcap/jobs/mysql-metrics/certs/loggregator-client-key.pem'
 }.to_yaml
 %>
-

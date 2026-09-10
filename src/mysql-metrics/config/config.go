@@ -6,6 +6,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	DefaultPrometheusPort = 14828
+)
+
 type Config struct {
 	MetricsFrequency          int    `yaml:"metrics_frequency"`
 	Host                      string `yaml:"host"`
@@ -13,8 +17,15 @@ type Config struct {
 	Password                  string `yaml:"password"`
 	Username                  string `yaml:"username"`
 	InstanceID                string `yaml:"instance_id"`
+	Deployment                string `yaml:"deployment"`
+	JobName                   string `yaml:"job_name"`
+	JobIndex                  string `yaml:"job_index"`
+	JobIP                     string `yaml:"job_ip"`
 	Origin                    string `yaml:"origin"`
 	SourceID                  string `yaml:"source_id"`
+	EnablePrometheusExporter  bool   `yaml:"enable_prometheus_exporter"`
+	PrometheusPort            int    `yaml:"prometheus_port"`
+	EnableLoggregatorEmitter  bool   `yaml:"enable_loggregator_emitter"`
 	EmitCPUMetrics            bool   `yaml:"emit_cpu_metrics"`
 	EmitMysqlMetrics          bool   `yaml:"emit_mysql_metrics"`
 	EmitLeaderFollowerMetrics bool   `yaml:"emit_leader_follower_metrics"`
@@ -39,5 +50,13 @@ func LoadFromFile(filepath string, cfg *Config) error {
 		return err
 	}
 
-	return err
+	cfg.applyDefaults()
+
+	return nil
+}
+
+func (c *Config) applyDefaults() {
+	if c.PrometheusPort == 0 {
+		c.PrometheusPort = DefaultPrometheusPort
+	}
 }
