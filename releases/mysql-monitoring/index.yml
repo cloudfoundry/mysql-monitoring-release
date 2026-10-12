@@ -181,6 +181,8 @@ builds:
     version: 10.31.0
   f5b7f4fa-922b-4b3c-60f9-c8967c8e20c4:
     version: 10.1.0
+  f627dd51-8a59-4682-64c7-ed768a9bde67:
+    version: 10.45.0
   f8093295-0f1c-48a1-61ea-90810d55f130:
     version: 9.1.0
   f8e640a4-a2f6-4810-a2ea-b366e1e288ea:
