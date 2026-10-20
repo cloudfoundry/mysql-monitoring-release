@@ -1,0 +1,46 @@
+name: mysql-monitoring
+version: 10.46.0
+commit_hash: 99b492f0
+uncommitted_changes: false
+jobs:
+- name: mysql-diag
+  version: 509ab8c4794bd6842fbb472bb4f173cfd6a45e9c234686ee499908652cebd1b5
+  fingerprint: 509ab8c4794bd6842fbb472bb4f173cfd6a45e9c234686ee499908652cebd1b5
+  sha1: sha256:105221483c777790cf947441cf638cc6548dd812d7a2cdd9fd9c3fd3100f7c46
+  packages:
+  - mysql-diag
+- name: mysql-diag-agent
+  version: 701b46f98f7cedabb1e4bf4b28031923fe017515cdd9b1b2a585a4de60e1fb9f
+  fingerprint: 701b46f98f7cedabb1e4bf4b28031923fe017515cdd9b1b2a585a4de60e1fb9f
+  sha1: sha256:d17ad3d5246a1cdf1f8eed9c5112748ea36e520766b8a00600faef67975a31c6
+  packages:
+  - mysql-diag
+- name: mysql-metrics
+  version: 9af30a57f1cf56938b25888c9b0fcdb393fa291ed1cc662dc95ba2913ae7cb6f
+  fingerprint: 9af30a57f1cf56938b25888c9b0fcdb393fa291ed1cc662dc95ba2913ae7cb6f
+  sha1: sha256:6ffbcccad57be387222837a907d9041c9d44e45394405a965e1dcb6c6c97a1da
+  packages:
+  - mysql-metrics
+packages:
+- name: golang-1-linux
+  version: 803d6abe1fb7886295f7a5a3a0a47b6d51c577af33635c2bb5e0cbfe0a11365a
+  fingerprint: 803d6abe1fb7886295f7a5a3a0a47b6d51c577af33635c2bb5e0cbfe0a11365a
+  sha1: sha256:424e95b6bcf43c282ca4cbe8740a00692c1d46bc6f5dd5c73a789d3ccfa6687d
+  dependencies: []
+- name: mysql-diag
+  version: ac9fbc482d8a9482666cdbf9976f0794b8bfd7a38fa8d90c3083b487f0788f66
+  fingerprint: ac9fbc482d8a9482666cdbf9976f0794b8bfd7a38fa8d90c3083b487f0788f66
+  sha1: sha256:f639807f293eacd9c755589296577c1db209c230bc525ba51ab6dba2f0511e93
+  dependencies:
+  - golang-1-linux
+- name: mysql-metrics
+  version: ede5c3c7ce8a372d2220f04abfdabd14a14c9dbef1d634ef0bd1ab42db1a1044
+  fingerprint: ede5c3c7ce8a372d2220f04abfdabd14a14c9dbef1d634ef0bd1ab42db1a1044
+  sha1: sha256:7d957017ddbe8cfbe4f767b2fee010a82036d39ba3ce25c825923560557c7340
+  dependencies:
+  - golang-1-linux
+license:
+  version: 3aadce127741a6d3b0f03182ae9acccc9fa1b40f09da6bd7882a2b2578531c41
+  fingerprint: 3aadce127741a6d3b0f03182ae9acccc9fa1b40f09da6bd7882a2b2578531c41
+  sha1: sha256:d7682fdae2066999c48f0e2f4387633c98fc8f86958b7f8b7d81f0c8edba7415
+no_compression: false
